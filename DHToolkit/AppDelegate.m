@@ -7,6 +7,14 @@
 //
 
 #import "AppDelegate.h"
+#import "TestFlight.h"
+#import "DHStreamTVC.h"
+
+@interface AppDelegate()
+{
+  int mNetworkActivityCounter;  
+}
+@end
 
 @implementation AppDelegate
 
@@ -15,13 +23,53 @@
 @synthesize managedObjectModel = __managedObjectModel;
 @synthesize persistentStoreCoordinator = __persistentStoreCoordinator;
 
+#define kTestFlightTeamID @"bd3d87cddcb2bc398c93be36bbbf4307_MjQ3MzAyMDExLTA4LTIyIDEzOjMzOjA5LjQ4MDY3OA"
+
+- (void)configureAppearance
+{
+    [[UINavigationBar appearance] setBarStyle:UIBarStyleBlackOpaque];
+    [[UINavigationBar appearance] setTintColor:[UIColor blackColor]];
+    [[UINavigationBar appearance] setTitleTextAttributes:
+     [NSDictionary dictionaryWithObjectsAndKeys:
+      [UIColor whiteColor], UITextAttributeTextColor, 
+      [UIFont fontWithName:@"ITCLubalinGraph LT" size:0.0], UITextAttributeFont, nil]];
+    
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    // Override point for customization after application launch.
-    self.window.backgroundColor = [UIColor whiteColor];
-    [self.window makeKeyAndVisible];
+    [self configureAppearance];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(incrementNetworkActivity:) name:kDHIncrementNetworkActivityNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deccrementNetworkActivity:) name:kDHDecrementNetworkActivityNotification object:nil];
+    id rootVC = self.window.rootViewController;
+    if ([rootVC isKindOfClass:[UINavigationController class]]) {
+        UINavigationController *rootNav = (UINavigationController *)rootVC;
+        id navVisibleVC = rootNav.visibleViewController;
+        if ([navVisibleVC isKindOfClass:[DHStreamTVC class]]) {
+            DHStreamTVC *streamTVC = (DHStreamTVC *)navVisibleVC;
+            streamTVC.managedObjectContext = self.managedObjectContext;
+        }
+    }
+//    [TestFlight takeOff:kTestFlightTeamID];
     return YES;
+}
+
+#pragma mark - NetworkActivityIndicator
+
+- (void)incrementNetworkActivity:(NSNotification *)notify {
+    ++mNetworkActivityCounter;
+    if (1 == mNetworkActivityCounter) {
+        UIApplication *app = [UIApplication sharedApplication];
+        [app setNetworkActivityIndicatorVisible:YES];
+    }
+}
+
+- (void)decrementNetworkActivity:(NSNotification *)notify {
+    --mNetworkActivityCounter;
+    if (0 == mNetworkActivityCounter) {
+        UIApplication *app = [UIApplication sharedApplication];
+        [app setNetworkActivityIndicatorVisible:NO];
+    }
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

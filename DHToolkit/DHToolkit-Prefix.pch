@@ -12,4 +12,6 @@
     #import <UIKit/UIKit.h>
     #import <Foundation/Foundation.h>
     #import <CoreData/CoreData.h>
+    #define kDHIncrementNetworkActivityNotification @"dhIncrementNetworkActivity"
+    #define kDHDecrementNetworkActivityNotification @"dhDecrementNetworkActivity"
 #endif
