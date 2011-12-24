@@ -40,7 +40,7 @@
 {
     [self configureAppearance];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(incrementNetworkActivity:) name:kDHIncrementNetworkActivityNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deccrementNetworkActivity:) name:kDHDecrementNetworkActivityNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(decrementNetworkActivity:) name:kDHDecrementNetworkActivityNotification object:nil];
     id rootVC = self.window.rootViewController;
     if ([rootVC isKindOfClass:[UINavigationController class]]) {
         UINavigationController *rootNav = (UINavigationController *)rootVC;

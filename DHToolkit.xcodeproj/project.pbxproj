@@ -44,6 +44,7 @@
 		4B9BB0A514A32C140062C1EE /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B9BB0A414A32C140062C1EE /* QuartzCore.framework */; };
 		4B9BB0A814A4724B0062C1EE /* ParseFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B9BB0A714A4724B0062C1EE /* ParseFetcher.m */; };
 		4B9BB0AB14A4749A0062C1EE /* NSManagedObject+safeSetValuesKeysWithDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B9BB0AA14A4749A0062C1EE /* NSManagedObject+safeSetValuesKeysWithDictionary.m */; };
+		4B9BB0AE14A65EE00062C1EE /* ParsePoster.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B9BB0AD14A65EE00062C1EE /* ParsePoster.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -107,6 +108,8 @@
 		4B9BB0A714A4724B0062C1EE /* ParseFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParseFetcher.m; sourceTree = "<group>"; };
 		4B9BB0A914A4749A0062C1EE /* NSManagedObject+safeSetValuesKeysWithDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObject+safeSetValuesKeysWithDictionary.h"; sourceTree = "<group>"; };
 		4B9BB0AA14A4749A0062C1EE /* NSManagedObject+safeSetValuesKeysWithDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObject+safeSetValuesKeysWithDictionary.m"; sourceTree = "<group>"; };
+		4B9BB0AC14A65EDF0062C1EE /* ParsePoster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParsePoster.h; sourceTree = "<group>"; };
+		4B9BB0AD14A65EE00062C1EE /* ParsePoster.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParsePoster.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -197,6 +200,8 @@
 				4B34354314A26EB8002831BD /* AppDelegate.m */,
 				4B9BB0A614A4724B0062C1EE /* ParseFetcher.h */,
 				4B9BB0A714A4724B0062C1EE /* ParseFetcher.m */,
+				4B9BB0AC14A65EDF0062C1EE /* ParsePoster.h */,
+				4B9BB0AD14A65EE00062C1EE /* ParsePoster.m */,
 				4B9BB09814A31F3C0062C1EE /* Outside Source */,
 				4B34353A14A26EB8002831BD /* Supporting Files */,
 			);
@@ -411,6 +416,7 @@
 				4B9BB0A314A32B6F0062C1EE /* DHPhoto+Photo_PF.m in Sources */,
 				4B9BB0A814A4724B0062C1EE /* ParseFetcher.m in Sources */,
 				4B9BB0AB14A4749A0062C1EE /* NSManagedObject+safeSetValuesKeysWithDictionary.m in Sources */,
+				4B9BB0AE14A65EE00062C1EE /* ParsePoster.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -525,6 +531,7 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DHToolkit/DHToolkit-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = "RELEASE=1";
 				INFOPLIST_FILE = "DHToolkit/DHToolkit-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

@@ -8,6 +8,7 @@
 
 #import "DHPhoto+Photo_PF.h"
 #import "Parse/PFObject.h"
+#import "Parse/PFUser.h"
 #import "NSManagedObject+safeSetValuesKeysWithDictionary.h"
 
 @implementation DHPhoto (Photo_PF)
@@ -36,6 +37,12 @@
                 [keyedValues setValue:[photoObject objectId] forKey:@"pfObjectID"];
             } else if ([attribute isEqualToString:@"photoData"]) {
                 continue;
+            } else if ([attribute isEqualToString:@"photographerUsername"]) {
+                id possibleUser = [photoObject objectForKey:@"pfUser"];
+                if ([possibleUser isKindOfClass:[PFUser class]]) {
+                    PFUser *photographer = (PFUser *)possibleUser;
+                    [keyedValues setObject:[photographer username] forKey:@"photographerUsername"];
+                }
             } else {
                 [keyedValues setValue:[photoObject objectForKey:attribute] forKey:attribute];
             }

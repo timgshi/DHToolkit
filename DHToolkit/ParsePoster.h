@@ -8,6 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ParsePoster : NSObject
+@interface ParsePoster
 
 @end

@@ -8,6 +8,11 @@
 
 #import "DHPhoto.h"
 
+@class PFObject;
+
 @interface DHPhoto (Photo_PF)
+
++ (DHPhoto *)photoWithPFObject:(PFObject *)photoObject 
+        inManagedObjectContext:(NSManagedObjectContext *)context;
 
 @end

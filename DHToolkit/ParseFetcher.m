@@ -16,6 +16,7 @@
 + (PFQuery *)newDHPhotosQuery
 {
     PFQuery *query = [PFQuery queryWithClassName:@"DHPhoto"];
+    [query includeKey:@"pfUser"];
     [query orderByDescending:@"DHDataTimestamp"];
     [query setLimit:[NSNumber numberWithInt:kDH_STANDARD_PHOTO_LIMIT]];
     return query;
