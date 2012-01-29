@@ -9,6 +9,8 @@
 #import "ParsePoster.h"
 #import "Parse/PFObject.h"
 #import "Parse/PFFile.h"
+#import "Parse/PFUser.h"
+#import "Parse/PFACL.h"
 
 @implementation ParsePoster
 
@@ -18,7 +20,13 @@
     for (NSString *key in [metaDict allKeys]) {
         [newPhoto setObject:[metaDict objectForKey:key] forKey:key];
     }
+    PFACL *acl = [PFACL ACLWithUser:[PFUser currentUser]];
+    if ([[metaDict objectForKey:@"isPrivate"] boolValue]) {
+        [acl setPublicReadAccess:NO];
+    }
+    newPhoto.ACL = acl;
     PFFile *photoFile = [PFFile fileWithData:photoData];
+    [[NSNotificationCenter defaultCenter] postNotificationName:DH_PHOTO_UPLOAD_BEGIN_NOTIFICATION object:nil];
     [photoFile saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error1) {
         if (error1 != nil) {
             NSLog(@"%@", [error1 description]);
@@ -30,7 +38,9 @@
                     NSLog(@"%@", [error2 description]);
                 }
                 if (succeeded) {
-                    
+                    [[NSNotificationCenter defaultCenter] postNotificationName:DH_PHOTO_UPLOAD_SUCCESS_NOTIFICATION object:nil];
+                } else {
+                    [[NSNotificationCenter defaultCenter] postNotificationName:DH_PHOTO_UPLOAD_FAILURE_NOTIFICATION object:nil];
                 }
             }];
         }

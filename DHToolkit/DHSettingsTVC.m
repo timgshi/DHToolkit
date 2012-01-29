@@ -7,7 +7,14 @@
 //
 
 #import "DHSettingsTVC.h"
+#import "Parse/PFUser.h"
+#import "Parse/PFPush.h"
+#import "DHSignInAccountTVC.h"
+#import "DHCreateAccountTVC.h"
 
+@interface DHSettingsTVC() <DHSignInAccountTVCDelegate, DHCreateAccountTVCDelegate, UIAlertViewDelegate, PF_FBRequestDelegate>
+- (void)useFacebookSignin;
+@end
 
 @implementation DHSettingsTVC
 
@@ -28,29 +35,110 @@
     // Release any cached data, images, etc that aren't in use.
 }
 
+#pragma mark - Account Signin
+
+- (UIBarButtonItem *)signoutButton
+{
+    return [[UIBarButtonItem alloc] initWithTitle:@"Sign Out" style:UIBarButtonItemStyleDone target:self action:@selector(signoutButtonPressed)];
+}
+
+- (UIBarButtonItem *)signinButton
+{
+    return [[UIBarButtonItem alloc] initWithTitle:@"Sign In" style:UIBarButtonItemStyleDone target:self action:@selector(signinButtonPressed)];
+}
+
+- (void)signinButtonPressed
+{
+    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Sign in with..." delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Facebook", @"Existing Account", @"Create Account", nil];
+    [actionSheet showInView:self.view];
+}
+
+- (void)signoutButtonPressed
+{
+    NSString *userChannel = [NSString stringWithFormat:@"user-%@", ((PFUser *)[PFUser currentUser]).username];
+    [PFPush unsubscribeFromChannelInBackground:userChannel];
+    [PFUser logOut];
+    self.navigationItem.rightBarButtonItem = [self signinButton];
+    [self.tableView reloadData];
+}
+
+- (void)signinSuccess
+{
+    NSString *userChannel = [NSString stringWithFormat:@"user-%@", ((PFUser *)[PFUser currentUser]).username];
+    [PFPush subscribeToChannelInBackground:userChannel];
+    self.navigationItem.rightBarButtonItem = [self signoutButton];
+    [self.tableView reloadData];
+}
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == 0) {
+        [actionSheet dismissWithClickedButtonIndex:0 animated:YES];
+        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:kDHIncrementNetworkActivityNotification object:nil]];
+        [self useFacebookSignin];
+        
+    } else if (buttonIndex == 1) {
+        DHSignInAccountTVC *signinTVC = [[DHSignInAccountTVC alloc] initWithStyle:UITableViewStyleGrouped];
+        signinTVC.delegate = self;
+        UINavigationController *signinNav = [[UINavigationController alloc] initWithRootViewController:signinTVC];
+        [self presentModalViewController:signinNav animated:YES];
+    } else if (buttonIndex == 2) {
+        DHCreateAccountTVC *createTVC = [[DHCreateAccountTVC alloc] initWithStyle:UITableViewStyleGrouped];
+        createTVC.delegate = self;
+        UINavigationController *createNav = [[UINavigationController alloc] initWithRootViewController:createTVC];
+        [self presentModalViewController:createNav animated:YES];
+    }
+}
+
+#pragma mark - CreateAccountTVCDelegate Methods
+
+- (void)createAccountDidSave
+{
+    self.navigationItem.rightBarButtonItem = [self signoutButton];
+    [self.tableView reloadData];
+    [self dismissModalViewControllerAnimated:YES];
+    NSString *userChannel = [NSString stringWithFormat:@"user-%@", ((PFUser *)[PFUser currentUser]).username];
+    [PFPush subscribeToChannelInBackground:userChannel];
+    
+}
+
+- (void)createAccountDidCancel
+{
+    [self dismissModalViewControllerAnimated:YES];
+}
+
+#pragma mark - SignInAccountTVCDelegate Methods
+
+- (void)signinAccountDidSucceed
+{
+    [self dismissModalViewControllerAnimated:YES];
+    [self.tableView reloadData];
+    NSString *userChannel = [NSString stringWithFormat:@"user-%@", ((PFUser *)[PFUser currentUser]).username];
+    [PFPush subscribeToChannelInBackground:userChannel];
+}
+
+- (void)signinAccountDidCancel
+{
+    [self dismissModalViewControllerAnimated:YES];
+}
+
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-}
-
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
+    self.title = @"Settings";
+    self.tableView.allowsSelection = NO;
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    if (![PFUser currentUser]) {
+        self.navigationItem.rightBarButtonItem = [self signinButton];
+    } else {
+        self.navigationItem.rightBarButtonItem = [self signoutButton];
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -78,82 +166,164 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-#warning Potentially incomplete method implementation.
-    // Return the number of sections.
-    return 0;
+    return 2;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    return @"";
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-#warning Incomplete method implementation.
-    // Return the number of rows in the section.
-    return 0;
+    if (section == 1) {
+        return 1;
+    }
+    return 2;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    UILabel *label = (UILabel *)[super tableView:tableView viewForHeaderInSection:section];
+    NSString *text;
+    switch (section) {
+        case 0:
+            text = @"  Account Details";
+            break;
+        case 1:
+            text = @"  Sharing Settings";
+        default:
+            break;
+    }
+    [label setText:text];
+    return label;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"Cell";
-    
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+    UITableViewCell *cell = [super tableView:tableView cellForRowAtIndexPath:indexPath];
+    PFUser *currentUser = (PFUser *)[PFUser currentUser];
+    switch ([indexPath section]) {
+        case 0:
+            if ([indexPath row] == 0) {
+                cell.textLabel.text = @"Username:";
+                NSString *detailText = (currentUser) ? currentUser.username : @"";
+                cell.detailTextLabel.text = detailText;
+            } else {
+                cell.textLabel.text = @"Email:";
+                NSString *detailText = (currentUser) ? currentUser.email : @"";
+                cell.detailTextLabel.text = detailText;
+            }
+            break;
+        case 1:
+            cell.textLabel.text = @"Make everything private:";
+            break;
+        default:
+            break;
     }
-    
-    // Configure the cell...
-    
+    if (indexPath.section == 1) {
+        UISwitch *onOff = [[UISwitch alloc] init];
+        CGRect frame = CGRectMake(231, 6, 10, 10);
+        onOff.frame = frame;
+        onOff.transform = CGAffineTransformMakeScale(0.70, 0.70);
+        onOff.onTintColor = [UIColor colorWithRed:253/255.0 green:193/255.0 blue:49/255.0 alpha:1];
+        [onOff addTarget:self action:@selector(privateSwitchAction:) forControlEvents:UIControlEventValueChanged];
+        onOff.on = [[NSUserDefaults standardUserDefaults] boolForKey:kPRIVACY_PREF_KEY];
+        [cell.contentView addSubview:onOff];
+    }
     return cell;
 }
 
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
 
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
-{
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
 
 #pragma mark - Table view delegate
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+
+
+#pragma mark - UIAlertViewDelegate Methods
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     */
+    if ([[alertView title] isEqualToString:@"Account Create"]) {
+        UITextField *usernameField = [alertView textFieldAtIndex:0];
+        NSString *username = usernameField.text;
+        PFUser *currentUser = [PFUser currentUser];
+        currentUser.username = username;
+        [currentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            if (!succeeded) {
+                UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Username Error" message:[[error userInfo] objectForKey:@"error"] delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Retry", nil];
+                [errorAlert show];
+            } else {
+                [self signinSuccess];
+            }
+        }];
+    } else if ([[alertView title] isEqualToString:@"Username Error"]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Account Create" message:@"Please select a username" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Enter", nil];
+        alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+        [alert show];
+    }
+}
+
+- (void)alertViewCancel:(UIAlertView *)alertView
+{
+    if ([[alertView title] isEqualToString:@"Account Create"] || [[alertView title] isEqualToString:@"Username Error"]) {
+        PFUser *currentUser = [PFUser currentUser];
+        [currentUser deleteInBackground];
+        [self.tableView reloadData];
+    }
+}
+
+#pragma mark - Facebook Methods
+
+- (void)useFacebookSignin
+{
+    [PFUser logInWithFacebook:[NSArray arrayWithObjects:@"email", nil] block:^(PFUser *user, NSError *error) {
+        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:kDHDecrementNetworkActivityNotification object:nil]];
+        if (error) {
+            NSLog(@"%@", [error description]);
+        }
+        if (user) {
+            if (user.isNew) {
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Account Create" message:@"Please select a username" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Enter", nil];
+                alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+                [alert show];
+                [[PFUser facebook] requestWithGraphPath:@"me" andDelegate:self];
+            } else {
+                [self signinSuccess];
+            }
+        }
+    }];
+}
+
+#pragma mark - Facebook Delegate Methods
+
+- (void)request:(PF_FBRequest *)request didLoad:(id)result
+{
+    if ([result isKindOfClass:[NSDictionary class]]) {
+        NSDictionary *resultDict = (NSDictionary *)result;
+        NSString *email = [resultDict objectForKey:@"email"];
+        PFUser *currentUser = [PFUser currentUser];
+        currentUser.email = email;
+        [currentUser saveInBackground];
+    }
+}
+
+#pragma mark - Private Switch Target Methods
+
+
+
+- (void)privateSwitchAction:(id)sender
+{
+    if ([sender isKindOfClass:[UISwitch class]]) {
+        UISwitch *onOff = (UISwitch *)sender;
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        id obj = [defaults objectForKey:kPRIVACY_PREF_KEY];
+        if (!obj) {
+            [defaults registerDefaults:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:NO] forKey:kPRIVACY_PREF_KEY]];
+            [defaults synchronize];
+        }
+        [defaults setBool:onOff.on forKey:kPRIVACY_PREF_KEY];
+    }
 }
 
 @end

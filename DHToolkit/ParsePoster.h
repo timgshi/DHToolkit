@@ -10,4 +10,6 @@
 
 @interface ParsePoster
 
++ (void)postPhotoWithMetaInfo:(NSDictionary *)metaDict andPhotoData:(NSData *)photoData;
+
 @end

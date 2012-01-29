@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "DHTableViewController.h"
 
-@interface DHSettingsTVC : UITableViewController
+@interface DHSettingsTVC : DHTableViewController <UIActionSheetDelegate>
 
 @end

@@ -7,14 +7,16 @@
 //
 
 #import "DHGalleryVC.h"
-#import "Photo+Photo_PF.h"
 #import "UIImage+Resize.h"
 #import "DHGalleryPresenterVC.h"
+#import "Parse/PFObject.h"
+#import "DHPhoto+Photo_PF.h"
 
 @interface DHGalleryVC() <DHGalleryPresenterDelegate>
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) UIView *containerView;
 @property (nonatomic, strong) DHGalleryPresenterVC *galleryPresenter;
+@property (nonatomic, strong) NSCache *thumbnailCache;
 @end
 
 @implementation DHGalleryVC
@@ -22,6 +24,8 @@
 @synthesize fetchedResultsController;
 @synthesize scrollView, containerView;
 @synthesize galleryPresenter;
+@synthesize galleryDelegate;
+@synthesize thumbnailCache;
 
 - (UIScrollView *)scrollView
 {
@@ -41,6 +45,15 @@
     return containerView;
 }
 
+- (NSCache *)thumbnailCache
+{
+    if (!thumbnailCache) {
+        thumbnailCache = [[NSCache alloc] init];
+        thumbnailCache.countLimit = 25;
+    }
+    return thumbnailCache;
+}
+
 
 - (void)setFetchedResultsController:(NSFetchedResultsController *)controller
 {
@@ -55,7 +68,7 @@
         self = [super init];
         NSFetchRequest *fetchRequest = nil;
         fetchRequest = [[NSFetchRequest alloc] init];
-        fetchRequest.entity = [NSEntityDescription entityForName:@"Photo"
+        fetchRequest.entity = [NSEntityDescription entityForName:@"DHPhoto"
                                           inManagedObjectContext:context];
         fetchRequest.sortDescriptors = [NSArray arrayWithObject:
                                         [NSSortDescriptor sortDescriptorWithKey:@"timestamp"
@@ -101,21 +114,34 @@
 #define DEFAULT_BIG_IMAGE_WIDTH 250
 #define DEFAULT_BIG_IMAGE_HEIGHT 250
 
-- (UIImage *)thumbForDHPhoto:(Photo *)photo
+- (UIImage *)thumbForDHPhoto:(DHPhoto *)photo
 {
     UIImage *thumb = nil;
-    if (photo.smallThumbData == nil) {
-        if (photo.thumbnailData != nil) {
-            UIImage *bigThumb = [UIImage imageWithData:photo.thumbnailData];
+    if (photo.photoDataThumb == nil) {
+        if (photo.photoData != nil) {
+            UIImage *bigThumb = [UIImage imageWithData:photo.photoData];
             thumb = [bigThumb thumbnailImage:DEFAULT_THUMB_WIDTH transparentBorder:0 cornerRadius:0 interpolationQuality:kCGInterpolationHigh];
-            photo.smallThumbData = UIImageJPEGRepresentation(thumb, 1.0);
-            [self.fetchedResultsController.managedObjectContext save:nil];
+            photo.photoDataThumb = UIImageJPEGRepresentation(thumb, 1.0);
+//            [self.fetchedResultsController.managedObjectContext save:nil];
+            [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:@"AutoSaveRequested" object:nil]];
         }
     } else {
-        thumb = [UIImage imageWithData:photo.smallThumbData];
+        thumb = [UIImage imageWithData:photo.photoDataThumb];
     }
     return thumb;
 }
+
+//- (UIImage *)thumbForDHPhotoObject:(PFObject *)photoObject
+//{
+//    UIImage *large = [self.galleryDelegate imageForPhoto:photoObject];
+//    UIImage *thumb;
+//    if (<#condition#>) {
+//        <#statements#>
+//    } else {
+//        thumb = [large thumbnailImage:DEFAULT_THUMB_WIDTH transparentBorder:0 cornerRadius:0 interpolationQuality:kCGInterpolationHigh];
+//    }
+//    return thumb;
+//}
 
 - (void)updateDisplay
 {
@@ -127,9 +153,11 @@
     int row = 0;
 	int column = 0;
 	for(int i = 0; i < [self.fetchedResultsController.fetchedObjects count]; ++i) {
-        NSIndexPath *indexPathForCurrentIndex = [NSIndexPath indexPathForRow:i inSection:0];
+//    for(int i = 0; i < [[self.galleryDelegate objectsArray] count]; ++i) {
+    NSIndexPath *indexPathForCurrentIndex = [NSIndexPath indexPathForRow:i inSection:0];
 		UIImage *thumb = [self thumbForDHPhoto:[self.fetchedResultsController objectAtIndexPath:indexPathForCurrentIndex]];
-		UIButton * button = [UIButton buttonWithType:UIButtonTypeCustom];
+//        UIImage *thumb = [self thumbForDHPhotoObject:[[self.galleryDelegate objectsArray] objectAtIndex:i]];
+		UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
 		button.frame = CGRectMake(column * DEFAULT_THUMB_WIDTH, 
                                   row * DEFAULT_THUMB_HEIGHT, 
                                   DEFAULT_THUMB_WIDTH, 
@@ -156,7 +184,7 @@
 	}
     for (UIView *subview in [scrollView subviews]) {
         if (![subview isKindOfClass:[UIButton class]]) {
-            NSLog(@"Bring to Front %@", NSStringFromClass([subview class]));
+//            NSLog(@"Bring to Front %@", NSStringFromClass([subview class]));
             [self.scrollView bringSubviewToFront:subview];
         }
     }
@@ -185,9 +213,11 @@
     if (!galleryPresenter) {
         NSInteger index = button.tag;
         NSIndexPath *indexPathForCurrentIndex = [NSIndexPath indexPathForRow:index inSection:0];
-        Photo *photo = [self.fetchedResultsController objectAtIndexPath:indexPathForCurrentIndex];
+        DHPhoto *photo = [self.fetchedResultsController objectAtIndexPath:indexPathForCurrentIndex];
         galleryPresenter = [[DHGalleryPresenterVC alloc] initWithPhoto:photo];
         galleryPresenter.delegate = self;
+        UITapGestureRecognizer *tapgr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(galleryXButtonPressed)];
+        [galleryPresenter.view addGestureRecognizer:tapgr];
         [galleryPresenter prepareToAddToSuperviewInRect:button.frame];
         [self.scrollView addSubview:galleryPresenter.view];
         CGRect screenRect = self.scrollView.frame;
@@ -214,6 +244,10 @@
 }
 */
 
+- (void)doneButtonPressed
+{
+    [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+}
 
 - (void)viewDidLoad
 {
@@ -224,6 +258,7 @@
     self.view = self.containerView;
     [self.view setBackgroundColor:[UIColor blackColor]];
     [self.navigationController.view setBackgroundColor:[UIColor blackColor]];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneButtonPressed)];
 }
 
 

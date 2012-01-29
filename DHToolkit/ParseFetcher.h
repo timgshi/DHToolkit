@@ -9,9 +9,14 @@
 #import <Foundation/Foundation.h>
 
 @class PFQuery;
+@class PFObject;
 
 @interface ParseFetcher
 
 + (PFQuery *)newDHPhotosQuery;
+
++ (NSData *)loadPhotoDataForPhotoObject:(PFObject *)photoObject;
+
++ (NSData *)photoDataForPhotoObject:(PFObject *)photoObject;
 
 @end

@@ -8,6 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
+#define kDH_Upload_Notification_View_Height 40
+#define kDH_Upload_Notification_Default_Rect(windowWidth, windowHeight) CGRectMake(0, windowHeight - 40, windowWidth, 40)
+#define kDH_Uploading_Text @"Uploading..."
+#define kDH_Success_Text @"Success!"
+#define kDH_Failure_Text @"Upload Failed"
+
 @interface DHUploadNotificationView : UIView
+
+@property (nonatomic, strong) NSString *messageText;
+@property (nonatomic) BOOL isLoading;
 
 @end

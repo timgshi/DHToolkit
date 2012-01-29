@@ -6,13 +6,12 @@
 //  Copyright 2011 www.timshi.com. All rights reserved.
 //
 
-#import "CreateAccountTVC.h"
+#import "DHCreateAccountTVC.h"
 #import "EditingTableViewCell.h"
 #import "Parse/PFUser.h"
 
-#define kFBID @"171752956231417"
 
-@interface CreateAccountTVC()
+@interface DHCreateAccountTVC()
 @property (weak, readonly) NSArray *permissions;
 @property (nonatomic, copy) NSString *dhUsername, *dhEmail, *fbID, *dhPassword;
 @property (nonatomic, strong) UITextField *dhUsernameField, *dhPasswordField, *dhEmailField;
@@ -20,7 +19,7 @@
 //@property (nonatomic, retain) NSMutableArray *dataArray;
 @end
 
-@implementation CreateAccountTVC
+@implementation DHCreateAccountTVC
 
 @synthesize facebook;
 @synthesize editingTableViewCell;
@@ -88,39 +87,7 @@
     // e.g. self.myOutlet = nil;
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
-    /*
-    if (![self.facebook isSessionValid]) {
-        [self.facebook authorize:self.permissions delegate:self];
-    } else {
-        
-    }
-     */
-    [super viewWillAppear:animated];
-}
 
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
-    
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-    [super viewDidDisappear:animated];
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    // Return YES for supported orientations
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
 
 #pragma mark - Table view data source
 
@@ -137,7 +104,6 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"EditingCell";
-    
     EditingTableViewCell *cell = (EditingTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
         [[NSBundle mainBundle] loadNibNamed:@"EditingTableViewCell" owner:self options:nil];
@@ -174,8 +140,8 @@
             cell.textField.placeholder = @"for DH updates";
         }
     }
-    
     return cell;
+    
 }
 
 
@@ -251,7 +217,7 @@
             if (succeeded) {
                 [self.delegate createAccountDidSave];
             } else {
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Create Account Failed" message:@"There was an error in creating your account. Please try again" delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Create Account Failed" message:@"There was an error in creating your account. Please try again." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil];
                 [alert show];
             }
             

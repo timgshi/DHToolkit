@@ -14,4 +14,14 @@
     #import <CoreData/CoreData.h>
     #define kDHIncrementNetworkActivityNotification @"dhIncrementNetworkActivity"
     #define kDHDecrementNetworkActivityNotification @"dhDecrementNetworkActivity"
+    #define kDH_FACEBOOK_ID @"171752956231417"
+    #define kPRIVACY_PREF_KEY @"privacy"
+    #define PHOTO_CACHE_NAME @"dhphotocache"
+
+#define DH_PHOTO_UPLOAD_BEGIN_NOTIFICATION @"photo upload begin"
+#define DH_PHOTO_UPLOAD_SUCCESS_NOTIFICATION @"photo upload success"
+#define DH_PHOTO_UPLOAD_FAILURE_NOTIFICATION @"photo upload fail"
+
+#define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
+#define DH_YELLOW_HEX_COLOR 0xFECB3E
 #endif

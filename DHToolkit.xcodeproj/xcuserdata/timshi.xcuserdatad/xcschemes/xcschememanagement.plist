@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>DHToolkit copy.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
 		<key>DHToolkit.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -18,6 +23,11 @@
 			<true/>
 		</dict>
 		<key>4B34354C14A26EB9002831BD</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>4B9BB0B214A6696A0062C1EE</key>
 		<dict>
 			<key>primary</key>
 			<true/>
