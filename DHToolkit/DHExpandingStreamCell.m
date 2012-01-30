@@ -8,10 +8,12 @@
 
 #import "DHExpandingStreamCell.h"
 #import "DHPhoto+Photo_PF.h"
+#import "Parse/PFFile.h"
+#import "ParseFetcher.h"
 
-#define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
-
-#define DH_YELLOW_HEX_COLOR 0xFFE98D
+//#define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
+//
+//#define DH_YELLOW_HEX_COLOR 0xFECB3E
 
 @interface DHExpandingStreamCell()
 
@@ -31,7 +33,8 @@
 @synthesize infoBarContainerView, infoBarColoredContainer, levelBarView;
 @synthesize spinner;
 @synthesize PFObjectID;
-
+@synthesize photoObject;
+@synthesize cellDelegate;
 
 - (UIImageView *)cellImageView
 {
@@ -48,7 +51,7 @@
         photographerNameLabel.frame = CGRectMake(5, 5, 320, 20);
         [photographerNameLabel setBackgroundColor:[UIColor clearColor]];
         [photographerNameLabel setTextColor:UIColorFromRGB(DH_YELLOW_HEX_COLOR)];
-        [photographerNameLabel setFont:[UIFont boldSystemFontOfSize:20]];
+        [photographerNameLabel setFont:[UIFont boldSystemFontOfSize:14]];
         [photographerNameLabel setShadowOffset:CGSizeMake(-1, 1)];
         [photographerNameLabel setShadowColor:[UIColor blackColor]];
     }
@@ -61,7 +64,7 @@
         photoDescriptionLabel = [[UILabel alloc] init];
         [photoDescriptionLabel setBackgroundColor:[UIColor clearColor]];
         [photoDescriptionLabel setTextColor:[UIColor whiteColor]];
-        [photoDescriptionLabel setFont:[UIFont boldSystemFontOfSize:20]];
+        [photoDescriptionLabel setFont:[UIFont boldSystemFontOfSize:14]];
         [photoDescriptionLabel setShadowOffset:CGSizeMake(-1, 1)];
         [photoDescriptionLabel setShadowColor:[UIColor blackColor]];
         [photoDescriptionLabel setLineBreakMode:UILineBreakModeWordWrap];
@@ -161,6 +164,7 @@
     if (!contentContainerView) {
         contentContainerView = [[UIView alloc] init];
         [contentContainerView setClipsToBounds:YES];
+        [contentContainerView setBackgroundColor:[UIColor blackColor]];
         contentContainerView.frame = CGRectMake(0, 0, 320, DH_EXPANDING_CELL_BIG_HEIGHT);
         [contentContainerView addSubview:self.cellImageView];
         [contentContainerView addSubview:self.photographerNameLabel];
@@ -172,7 +176,77 @@
     return contentContainerView;
 }
 
-- (void)setCellPhoto:(Photo *)aPhoto
+- (void)setPhotoObject:(PFObject *)aPhotoObject
+{
+    photoObject = aPhotoObject;
+    self.cellImageView.image = nil;
+    self.photographerNameLabel.text = [photoObject objectForKey:@"DHDataWhoTook"];
+    self.photoDescriptionLabel.text = [photoObject objectForKey:@"DHDataSixWord"];
+    CGSize nameSize = [self.photographerNameLabel.text sizeWithFont:[self.photographerNameLabel font]];
+    self.photographerNameLabel.frame = CGRectMake(5, 5, nameSize.width, nameSize.height);
+    if ([self.photographerNameLabel.text sizeWithFont:[self.photoDescriptionLabel font]].width > 320 - nameSize.width) {
+        self.photoDescriptionLabel.frame = CGRectMake(self.photographerNameLabel.frame.origin.x + nameSize.width + 5, self.photographerNameLabel.frame.origin.y, 320 - nameSize.width, nameSize.height * 2);
+        [self.photoDescriptionLabel setNumberOfLines:2];
+    } else {
+        self.photoDescriptionLabel.frame = CGRectMake(self.photographerNameLabel.frame.origin.x + nameSize.width + 5, self.photographerNameLabel.frame.origin.y, 320 - nameSize.width, nameSize.height);
+    }
+    self.levelLabel.text = [[photoObject objectForKey:@"DHDataHappinessLevel"] stringValue];
+    CGRect levelBarRect = self.levelBarView.frame;
+    levelBarRect.size.width = (CGFloat) 250 * ([[photoObject objectForKey:@"DHDataHappinessLevel"] floatValue] / 10);
+    self.levelBarView.frame = levelBarRect;
+    id locationStringObj = [photoObject objectForKey:@"DHDataLocationString"];
+    NSString *locationString = nil;
+    if ([locationStringObj isKindOfClass:[NSString class]]) locationString = (NSString *)locationStringObj;
+    if (locationString) {
+        CGSize locationSize = [locationString sizeWithFont:[self.locationLabel font]];
+        self.locationLabel.frame = CGRectMake(320 - (locationSize.width + 5), 10 + self.weatherLabel.frame.origin.y + self.weatherLabel.frame.size.height, locationSize.width, locationSize.height);
+        self.locationLabel.text = locationString;
+    }
+//    PFFile *photoFile = [photoObject objectForKey:@"photoData"];
+//    [photoObject objectForKey:@"photoData" inBackgroundWithBlock:^(id object, NSError *error) {
+//        PFFile *photoFile = (PFFile *)object;
+//        [photoFile getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
+//            self.cellImageView.image = [UIImage imageWithData:data];
+//            [self setNeedsDisplay];
+//        }];
+//    }];
+//    UIImage *potentialImage = [self.cellDelegate cell:self wantsImageForObjectID:photoObject.objectId];
+//    if (potentialImage) {
+//        self.cellImageView.image = potentialImage;
+//    } else {
+//        __block PFObject *blockPhotoObject = photoObject;
+//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+//            NSData *photoData = [ParseFetcher loadPhotoDataForPhotoObject:blockPhotoObject];
+//            if ([blockPhotoObject.objectId isEqualToString:self.PFObjectID]) {
+//                self.cellImageView.image = [UIImage imageWithData:photoData];
+//                [self setNeedsDisplay];
+//                [self.cellDelegate cell:self loadedImage:self.cellImageView.image forObjectID:blockPhotoObject.objectId];
+//            }
+//        });
+//    }
+//    UIImage *potentialImage = [UIImage imageWithData:[self.cellPhoto photoData]];
+//    if (potentialImage) {
+//        self.cellImageView.image = potentialImage;
+//    } else {
+//        __block PFObject *blockPhotoObject = photoObject;
+//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+////            __block NSData *photoData = [ParseFetcher loadPhotoDataForPhotoObject:blockPhotoObject];
+//            PFFile *file = [blockPhotoObject objectForKey:@"photoData"];
+//            __block NSData *photoData = [file getData];
+//            if ([blockPhotoObject.objectId isEqualToString:self.PFObjectID]) {
+//                self.cellImageView.image = [UIImage imageWithData:photoData];
+//                [self setNeedsDisplay];
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    self.cellPhoto.photoData = photoData; 
+//                    [self.cellPhoto.managedObjectContext save:nil];
+//                });
+//            }
+//        });
+//    }
+
+}
+
+- (void)setCellPhoto:(DHPhoto *)aPhoto
 {
     cellPhoto = aPhoto;
 //    self.photographerNameLabel.text = [NSString stringWithFormat:@"%@: ", aPhoto.photographerUsername];

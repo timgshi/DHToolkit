@@ -8,16 +8,17 @@
 
 #import <UIKit/UIKit.h>
 #import "EditingTableViewCell.h"
+#import "DHTableViewController.h"
 
-@protocol SignInAccountTVCDelegate
+@protocol DHSignInAccountTVCDelegate
 - (void)signinAccountDidCancel;
 - (void)signinAccountDidSucceed;
 @end
 
-@interface SignInAccountTVC : UITableViewController <UITextFieldDelegate>
+@interface DHSignInAccountTVC : UITableViewController <UITextFieldDelegate>
 
 @property (strong, nonatomic) IBOutlet EditingTableViewCell *editingTableViewCell;
 
-@property (nonatomic, unsafe_unretained) id <SignInAccountTVCDelegate> delegate;
+@property (nonatomic, unsafe_unretained) id <DHSignInAccountTVCDelegate> delegate;
 
 @end

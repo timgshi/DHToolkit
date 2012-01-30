@@ -9,6 +9,8 @@
 #import "AppDelegate.h"
 #import "TestFlight.h"
 #import "DHStreamTVC.h"
+#import "Parse/Parse.h"
+#import "DH_PFStreamTVC.h"
 
 @interface AppDelegate()
 {
@@ -25,15 +27,28 @@
 
 #define kTestFlightTeamID @"bd3d87cddcb2bc398c93be36bbbf4307_MjQ3MzAyMDExLTA4LTIyIDEzOjMzOjA5LjQ4MDY3OA"
 
+- (void)autosave:(id)context
+{
+    NSError *error = nil;
+    if ([context hasChanges] && ![context save:&error]) {
+        NSLog(@"Error in autosave from Photo_PF: %@ %@", [error localizedDescription], [error userInfo]);
+    }
+}
+
+- (void)callAutoSave
+{
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(autosave:) object:self.managedObjectContext];
+    // request a new autosave in a few tenths of a second
+    [self performSelector:@selector(autosave:) withObject:self.managedObjectContext afterDelay:0.2];
+}
+
 - (void)configureAppearance
 {
-    [[UINavigationBar appearance] setBarStyle:UIBarStyleBlackOpaque];
-    [[UINavigationBar appearance] setTintColor:[UIColor blackColor]];
+    [[UINavigationBar appearance] setBackgroundImage:[[UIImage imageNamed:@"black.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)] forBarMetrics:UIBarMetricsDefault];
     [[UINavigationBar appearance] setTitleTextAttributes:
      [NSDictionary dictionaryWithObjectsAndKeys:
       [UIColor whiteColor], UITextAttributeTextColor, 
-      [UIFont fontWithName:@"ITCLubalinGraph LT" size:0.0], UITextAttributeFont, nil]];
-    
+      [UIFont fontWithName:@"LubalinGraphLT-Demi" size:0.0], UITextAttributeFont, nil]];
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -50,8 +65,33 @@
             streamTVC.managedObjectContext = self.managedObjectContext;
         }
     }
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(callAutoSave) name:@"AutoSaveRequested" object:nil];
+    BOOL isDir;
+    NSFileManager *manager = [[NSFileManager alloc] init];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    NSString *cachePath = [paths lastObject];
+    cachePath = [cachePath stringByAppendingPathComponent:PHOTO_CACHE_NAME];
+    if (!([manager fileExistsAtPath:cachePath isDirectory:&isDir] && isDir)) {
+        [manager createDirectoryAtPath:cachePath withIntermediateDirectories:NO attributes:nil error:nil];
+    }
+    DH_PFStreamTVC *stream = [[DH_PFStreamTVC alloc] initInManagedObjectContext:self.managedObjectContext];
+    stream.context = self.managedObjectContext;
+    UINavigationController *streamNav = [[UINavigationController alloc] initWithRootViewController:stream];
+    self.window.rootViewController = streamNav;
 //    [TestFlight takeOff:kTestFlightTeamID];
+    [Parse setFacebookApplicationId:kDH_FACEBOOK_ID];
     return YES;
+}
+
+#pragma mark - URL Open Handling
+
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
+    return [[PFUser facebook] handleOpenURL:url];
+}
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+    return [[PFUser facebook] handleOpenURL:url]; 
 }
 
 #pragma mark - NetworkActivityIndicator
@@ -179,7 +219,8 @@
     
     NSError *error = nil;
     __persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-    if (![__persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error])
+    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption, [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
+    if (![__persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error])
     {
         /*
          Replace this implementation with code to handle the error appropriately.

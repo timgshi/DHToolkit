@@ -8,7 +8,7 @@
 
 #import "GoogleWeatherFetcher.h"
 
-@interface GoogleWeatherFetcher() <NSURLConnectionDelegate, MKReverseGeocoderDelegate, NSXMLParserDelegate>
+@interface GoogleWeatherFetcher() <NSURLConnectionDelegate, NSXMLParserDelegate>
 @property (nonatomic, strong) CLLocation *location;
 @property (nonatomic, strong) NSMutableDictionary *weatherDictionary;
 @property (nonatomic, strong) CLGeocoder *geocoder;
@@ -52,7 +52,7 @@
 - (void)finished
 {
     [self.timeoutTimer invalidate];
-    self.timeoutTimer;
+    self.timeoutTimer = nil;
     NSString *locationString = [NSString stringWithFormat:@"%@, %@", currentPlacemark.locality, currentPlacemark.administrativeArea];
     [self.weatherDictionary setObject:locationString forKey:kLocationKey];
     for (NSString *key in [self.weatherDictionary allKeys]) {
@@ -74,17 +74,13 @@
 
 - (void)start
 {
-//    self.reverseGeocoder = [[[MKReverseGeocoder alloc] initWithCoordinate:coordinate] autorelease];
-//    reverseGeocoder.delegate = self;
-//    [reverseGeocoder start];
     self.geocoder = [[CLGeocoder alloc] init];
     self.timeoutTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(timerFired) userInfo:nil repeats:NO];
- 
     [self.geocoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *error) {
         if (!error) {
             currentPlacemark = [placemarks lastObject];
             NSString *postalCode = currentPlacemark.postalCode;
-            dispatch_queue_t weatherQueue = dispatch_queue_create("Weather Fetcher", NULL);
+            dispatch_queue_t weatherQueue = dispatch_queue_create("com.timshi.WeatherFetcher", NULL);
             dispatch_async(weatherQueue, ^{
                 if (!canceled) [self getGoogleWeatherDataForPostalCode:postalCode];
             });
@@ -102,30 +98,12 @@
 
 - (void)timerFired
 {
-    [self.delegate googleWeatherFetcher:self didFailWithError:nil];
+    [self.delegate googleWeatherFetcher:self didFailWithError:[NSError errorWithDomain:@"WeatherFetcher" code:0 userInfo:[NSDictionary dictionaryWithObject:@"Timeout" forKey:NSLocalizedDescriptionKey]]];
     self.canceled = YES;
 }
 
 #pragma mark - MKReverseGeocoderDelegate Methods
 
-- (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFailWithError:(NSError *)error
-{
-    if (!canceled) [self.delegate googleWeatherFetcher:self didFailWithError:error];
-}
-
-- (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFindPlacemark:(MKPlacemark *)placemark
-{
-    //if ([placemark.country isEqualToString:@"United States"]) {
-        currentPlacemark = placemark;
-        NSString *postalCode = placemark.postalCode;
-        dispatch_queue_t weatherQueue = dispatch_queue_create("Weather Fetcher", NULL);
-        dispatch_async(weatherQueue, ^{
-            if (!canceled) [self getGoogleWeatherDataForPostalCode:postalCode];
-        });
-        dispatch_release(weatherQueue);
-    //}
-    
-}
 
 #pragma mark - NSXMLParserDelegate Methods
 

@@ -12,16 +12,16 @@
 - (void)galleryXButtonPressed;
 @end
 
-@class Photo;
+@class DHPhoto;
 
 @interface DHGalleryPresenterVC : UIViewController
 
--initWithPhoto:(Photo *)photo;
+-initWithPhoto:(DHPhoto *)photo;
 - (void)prepareToAddToSuperviewInRect:(CGRect)initialRect;
 - (void)expandAndConfigureForRect:(CGRect)newRect;
 - (void)minimizeToInitialRect;
 
-@property (nonatomic, weak) Photo *selectedPhoto;
+@property (nonatomic, weak) DHPhoto *selectedPhoto;
 @property (nonatomic, weak) id <DHGalleryPresenterDelegate> delegate;
 
 @end

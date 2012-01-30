@@ -12,8 +12,9 @@
 #import "EGORefreshTableHeaderView.h"
 #import "ParseFetcher.h"
 #import "DHPhoto+Photo_PF.h"
+#import "DHImageRatingTVC.h"
 
-@interface DHStreamTVC() <EGORefreshTableHeaderDelegate>
+@interface DHStreamTVC() <EGORefreshTableHeaderDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, DHImageRatingDelegate>
 @property (nonatomic, strong) EGORefreshTableHeaderView *refreshHeaderView;
 @property BOOL isRefreshing;
 @property (nonatomic, strong) NSDate *lastUpdateDate;
@@ -96,6 +97,20 @@
 {
     [super viewDidLoad];
     [self.tableView addSubview:self.refreshHeaderView];
+    UIImageView *cameraImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"86-camera.png"]];
+    cameraImageView.userInteractionEnabled = YES;
+//    UIBarButtonItem *cameraButton = [[UIBarButtonItem alloc] initWithCustomView:cameraImageView];
+    UIBarButtonItem *cameraButton = [[UIBarButtonItem alloc] init];
+    cameraButton.image = [UIImage imageNamed:@"happyface.png"];
+    cameraButton.target = self;
+    cameraButton.action = @selector(cameraButtonPressed:);
+//    cameraButton.style = UIBarButtonItemStyleBordered;
+    self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:self.navigationItem.rightBarButtonItem, cameraButton, nil];
+//    self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:cameraButton, nil];
+//    self.navigationItem.rightBarButtonItem = cameraButton;
+    UIImageView *titleImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"dhfeed@2x.png"]];
+    titleImageView.frame = CGRectMake(0, 0, 86, 23.25);
+    self.navigationItem.titleView = titleImageView;
 }
 
 - (void)viewDidUnload
@@ -182,6 +197,84 @@
      [self.navigationController pushViewController:detailViewController animated:YES];
      */
 }
+
+#pragma mark - Photo Selection Methods
+
+- (void)displayImagePickerWithSource:(UIImagePickerControllerSourceType)src;
+{
+    if([UIImagePickerController isSourceTypeAvailable:src]) {
+        UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+        [picker setSourceType:src];
+        [picker setDelegate:self];
+        [self presentViewController:picker animated:YES completion:^{
+            [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
+        }];
+    }
+}
+
+- (void)cameraButtonPressed:(id)sender
+{
+    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+        UIActionSheet *actionSheet = [[UIActionSheet alloc]
+                                      initWithTitle:@"Select Image Source"
+                                      delegate:self 
+                                      cancelButtonTitle:@"Cancel" 
+                                      destructiveButtonTitle:nil
+                                      otherButtonTitles:@"Camera",@"Photo Library", nil];
+        [actionSheet setActionSheetStyle:UIActionSheetStyleBlackOpaque];
+        [actionSheet showInView:self.view]; 
+    } else {
+        [self displayImagePickerWithSource:UIImagePickerControllerSourceTypeSavedPhotosAlbum];
+    }
+}
+
+#pragma mark UIImagePickerControllerDelegate Methods
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
+{
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
+    [self dismissViewControllerAnimated:YES completion:^{
+        DHImageRatingTVC *imageRatingTVC = [[DHImageRatingTVC alloc] init];
+        UINavigationController *ratingNav = [[UINavigationController alloc] initWithRootViewController:imageRatingTVC];
+        imageRatingTVC.delegate = self;
+        [self presentViewController:ratingNav animated:YES completion:nil];
+    }];
+    
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
+}
+
+- (void)imageRatingTVCDidFinish:(DHImageRatingTVC *)rater
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+
+#pragma mark - UIActionSheetDelegate Methods
+
+
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex;
+{
+    if ([actionSheet.title isEqualToString:@"Select Image Source"]) {
+        switch (buttonIndex) {
+            case 0:
+                [self displayImagePickerWithSource:UIImagePickerControllerSourceTypeCamera];
+                break;
+            case 1:
+                [self displayImagePickerWithSource:UIImagePickerControllerSourceTypePhotoLibrary];
+                break;
+            case 2:
+                break;
+            default:
+                break;
+        }
+    }
+}
+
 
 #pragma mark - Refresh View
 #pragma mark Data Source Loading / Reloading Methods

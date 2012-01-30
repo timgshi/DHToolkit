@@ -9,15 +9,15 @@
 #import <UIKit/UIKit.h>
 #import "Parse/PF_Facebook.h"
 #import "EditingTableViewCell.h"
+#import "DHTableViewController.h"
 
 
-
-@protocol CreateAccountTVCDelegate
+@protocol DHCreateAccountTVCDelegate
 - (void)createAccountDidCancel;
 - (void)createAccountDidSave;
 @end
 
-@interface CreateAccountTVC : UITableViewController <PF_FBRequestDelegate, PF_FBSessionDelegate, UITextFieldDelegate> {
+@interface DHCreateAccountTVC : UITableViewController <PF_FBRequestDelegate, PF_FBSessionDelegate, UITextFieldDelegate> {
     EditingTableViewCell *editingTableViewCell;
     PF_Facebook *facebook;
 }
@@ -27,7 +27,7 @@
 
 @property (strong, nonatomic) IBOutlet EditingTableViewCell *editingTableViewCell;
 
-@property (nonatomic, unsafe_unretained) id <CreateAccountTVCDelegate> delegate;
+@property (nonatomic, unsafe_unretained) id <DHCreateAccountTVCDelegate> delegate;
 
 
 @end

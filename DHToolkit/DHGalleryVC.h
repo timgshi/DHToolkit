@@ -8,10 +8,19 @@
 
 #import <UIKit/UIKit.h>
 
+@class PFObject;
+
+@protocol DHGalleryVCDelegate
+- (NSArray *)objectsArray;
+- (UIImage *)imageForPhoto:(PFObject *)photoObject;
+@end
+
 @interface DHGalleryVC : UIViewController <NSFetchedResultsControllerDelegate>
 
 @property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
 
 - initInManagedObjectContext:(NSManagedObjectContext *)context;
+
+@property (nonatomic, weak) id <DHGalleryVCDelegate> galleryDelegate;
 
 @end

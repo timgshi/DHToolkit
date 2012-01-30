@@ -6,17 +6,18 @@
 //  Copyright (c) 2011 www.timshi.com. All rights reserved.
 //
 
-#import "SignInAccountTVC.h"
+#import "DHSignInAccountTVC.h"
 #import "EditingTableViewCell.h"
 #import "Parse/PFUser.h"
 
-@interface SignInAccountTVC()
+@interface DHSignInAccountTVC()
 @property (nonatomic, strong) NSString *dhUsername, *dhPassword;
 @property (nonatomic, strong) UITextField *dhUsernameField, *dhPasswordField; 
 @property (nonatomic, strong) NSArray *textFieldsArray;
+- (void)signinButtonPressed;
 @end
 
-@implementation SignInAccountTVC
+@implementation DHSignInAccountTVC
 
 @synthesize editingTableViewCell;
 @synthesize dhUsername, dhPassword;
@@ -73,92 +74,80 @@
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelButtonPressed)];
 }
 
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-    [super viewDidDisappear:animated];
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    // Return YES for supported orientations
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
 
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 1;
+    return 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 2;
+    if (section == 0) {
+        return 2;
+    }
+    return 1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"EditingCell";
-    
+    static NSString *nonEditingIdentifier = @"normalCell";
     EditingTableViewCell *cell = (EditingTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
         [[NSBundle mainBundle] loadNibNamed:@"EditingTableViewCell" owner:self options:nil];
         cell = editingTableViewCell;
         editingTableViewCell = nil;
-    }
+    }   
     cell.textField.delegate = self;
     cell.textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
     cell.textField.clearsOnBeginEditing = YES;
-    if (indexPath.row == 0) {
-        cell.label.text = @"Username";
-        dhUsernameField = cell.textField;
-        cell.textField.returnKeyType = UIReturnKeyNext;
-        cell.textField.keyboardType = UIKeyboardTypeDefault;
-        if (self.dhUsername) {
-            cell.textField.text = self.dhUsername;
-        } else {
-            cell.textField.placeholder = @"use your DH username";
-        }
-    } else if (indexPath.row == 1) {
-        cell.label.text = @"Password";
-        dhPasswordField = cell.textField;
-        cell.textField.returnKeyType = UIReturnKeyDone;
-        cell.textField.keyboardType = UIKeyboardTypeDefault;
-        cell.textField.secureTextEntry = YES;
-        cell.textField.placeholder = @"your DH password";
-    } 
-    
+    if (indexPath.section == 0) {
+        if (indexPath.row == 0) {
+            cell.label.text = @"Username";
+            dhUsernameField = cell.textField;
+            cell.textField.returnKeyType = UIReturnKeyNext;
+            cell.textField.keyboardType = UIKeyboardTypeDefault;
+            if (self.dhUsername) {
+                cell.textField.text = self.dhUsername;
+            } else {
+                cell.textField.placeholder = @"use your DH username";
+            }
+        } else if (indexPath.row == 1) {
+            cell.label.text = @"Password";
+            dhPasswordField = cell.textField;
+            cell.textField.returnKeyType = UIReturnKeyDone;
+            cell.textField.keyboardType = UIKeyboardTypeDefault;
+            cell.textField.secureTextEntry = YES;
+            cell.textField.placeholder = @"your DH password";
+        } 
+    } else {
+        UITableViewCell *nonEditingCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nonEditingIdentifier];
+        nonEditingCell.textLabel.text = @"Forgot Password?";
+        nonEditingCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        return nonEditingCell;
+    }
     return cell;
 }
 
 
 #pragma mark - Table view delegate
 
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
+    if (indexPath.section == 1 && indexPath.row == 0) {
+        if (dhUsernameField.text.length > 0) {
+            [PFUser requestPasswordResetForEmailInBackground:dhUsernameField.text];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Password Reset" message:@"Password request sent to your email" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+            [alert show];
+        } else {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Password Reset" message:@"Please enter your email above and then click reset" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+            [alert show];
+        }
+    }
 }
 
 #pragma mark - UITextFieldDelegate Methods
@@ -172,7 +161,9 @@
 {
     if ([textField isEqual:dhUsernameField]) {
         [dhPasswordField becomeFirstResponder];
-    } 
+    } else {
+        [self signinButtonPressed];
+    }
     [textField resignFirstResponder];
     return YES;
 }
@@ -221,22 +212,16 @@
     self.dhPassword = self.dhPasswordField.text;
     [PFUser logInWithUsernameInBackground:self.dhUsername password:self.dhPassword block:^(PFUser *user, NSError *error) {
         if (user != nil) {
-            NSString *username = user.username;
-            NSString *email = user.email;
-            dispatch_async(dispatch_get_main_queue(), ^() {
-                NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-                [defaults setObject:username forKey:kUsernameDefaultKey];
-                [defaults setObject:email forKey:kEmailDefaultKey];
-                [defaults synchronize];
-                [self.delegate signinAccountDidSucceed];
-            });
+            [self.delegate signinAccountDidSucceed];
         } else {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Create Account Failed" message:@"There was an error in signing in. Please try again" delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Create Account Failed" 
+                                                            message:@"There was an error in signing in. Please try again" 
+                                                           delegate:nil 
+                                                  cancelButtonTitle:@"Okay" 
+                                                  otherButtonTitles: nil];
             [alert show];
-            dispatch_async(dispatch_get_main_queue(), ^() {
-                self.navigationItem.rightBarButtonItem = [self signinButton];
-                NSLog(@"Signin error %@", error);
-            });
+            self.navigationItem.rightBarButtonItem = [self signinButton];
+            NSLog(@"Signin error %@", error);
         }
     }];
 }

@@ -10,4 +10,10 @@
 
 @interface DHTableViewController : UITableViewController
 
+- (void)viewDidLoad;
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section;
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
+
 @end

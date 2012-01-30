@@ -6,8 +6,21 @@
 //  Copyright (c) 2012 www.timshi.com. All rights reserved.
 //
 
+#import <UIKit/UIKit.h>
+#import "Parse/PFObject.h"
 
+#define DH_CELL_HEIGHT 320
+#define DH_CELL_INFO_BAR_HEIGHT 80
 
-@interface DHStreamCell : KIFTestController
+@class DHPhoto;
+
+@interface DHStreamCell : UITableViewCell
+
+@property (nonatomic, weak) DHPhoto *cellPhoto;
+@property (nonatomic, strong) PFObject *photoObject;
+@property (nonatomic, strong) UIActivityIndicatorView *spinner;
+@property (nonatomic, strong) NSString *PFObjectID;
+
+- (void)setImageForCellImageView:(UIImage *)anImage;
 
 @end

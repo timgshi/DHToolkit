@@ -7,7 +7,7 @@
 //
 
 #import "DHGalleryPresenterVC.h"
-#import "Photo+Photo_PF.h"
+#import "DHPhoto+Photo_PF.h"
 
 #define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
@@ -37,7 +37,7 @@
         descriptionLabel.textColor = [UIColor whiteColor];
         descriptionLabel.frame = CGRectMake(20, 20, 160, 100);
         if (selectedPhoto) {
-            descriptionLabel.text = selectedPhoto.name;
+            descriptionLabel.text = selectedPhoto.photoDescription;
         }
     }
     return descriptionLabel;
@@ -48,7 +48,7 @@
     if (!pictureView) {
         pictureView = [[UIImageView alloc] init];
         if (selectedPhoto) {
-            pictureView.image = [UIImage imageWithData:selectedPhoto.thumbnailData];
+            pictureView.image = [UIImage imageWithData:selectedPhoto.photoData];
         }
     }
     return pictureView;
@@ -75,7 +75,7 @@
     return opaqueBar;
 }
 
-- initWithPhoto:(Photo *)photo
+- initWithPhoto:(DHPhoto *)photo
 {
     if (photo) {
         selectedPhoto = photo;
