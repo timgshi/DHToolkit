@@ -127,7 +127,7 @@
 - (void)sortButtonPressed
 {
     if (sortBox) {
-        [UIView animateWithDuration:0.3 animations:^{
+        [UIView animateWithDuration:0.2 animations:^{
             sortBox.alpha = 0;
             opaqueView.alpha = 0;
         } completion:^(BOOL finished) {
@@ -144,9 +144,9 @@
         opaqueView.alpha = 0;
         UITapGestureRecognizer *tapgr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(sortButtonPressed)];
         [opaqueView addGestureRecognizer:tapgr];
-        [self.tableView.superview addSubview:opaqueView];
+//        [self.tableView.superview addSubview:opaqueView];
         [self.tableView.superview addSubview:sortBox];
-        [UIView animateWithDuration:0.3 animations:^{
+        [UIView animateWithDuration:0.2 animations:^{
             sortBox.alpha = 1;
             opaqueView.alpha = 0.3;
         }];

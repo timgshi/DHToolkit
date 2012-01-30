@@ -51,9 +51,20 @@
       [UIFont fontWithName:@"LubalinGraphLT-Demi" size:0.0], UITextAttributeFont, nil]];
 }
 
+- (void)setupDefaults
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    id obj = [defaults objectForKey:DH_SORT_BY_TIME_DEFAULT_KEY];
+    if (!obj) {
+        [defaults registerDefaults:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], DH_SORT_BY_TIME_DEFAULT_KEY, [NSNumber numberWithBool:YES], DH_PUBLIC_VIEW_KEY, nil]];
+        [defaults synchronize];
+    }
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     [self configureAppearance];
+    [self setupDefaults];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(incrementNetworkActivity:) name:kDHIncrementNetworkActivityNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(decrementNetworkActivity:) name:kDHDecrementNetworkActivityNotification object:nil];
     id rootVC = self.window.rootViewController;
