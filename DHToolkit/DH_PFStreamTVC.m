@@ -316,8 +316,14 @@
     }
     cell.PFObjectID = [object objectId];
     cell.photoObject = object;
-    if ([self.fetchedResultsController.fetchedObjects count]) {
-        cell.cellPhoto = [self.fetchedResultsController objectAtIndexPath:indexPath];
+//    if ([self.fetchedResultsController.fetchedObjects count]) {
+//        cell.cellPhoto = [self.fetchedResultsController objectAtIndexPath:indexPath];
+//    }
+    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"DHPhoto"];
+    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"pfObjectID == %@", [object objectId]];
+    NSArray *results = [self.context executeFetchRequest:fetchRequest error:nil];
+    if ([results lastObject]) {
+        cell.cellPhoto = [results lastObject];
     }
     [cell.spinner stopAnimating];
     [self DHSetImageFromPhoto:cell.cellPhoto withPhotoObject:object forStreamCell:cell];
@@ -515,7 +521,7 @@
     if ([self.objects count] == 0) {
         query.cachePolicy = kPFCachePolicyCacheThenNetwork;
     }
-    NSString *orderKey = ([[NSUserDefaults standardUserDefaults] boolForKey:DH_SORT_BY_TIME_DEFAULT_KEY]) ? @"DHDataTimeStamp" : @"DHDataHappinessLevel";
+    NSString *orderKey = ([[NSUserDefaults standardUserDefaults] boolForKey:DH_SORT_BY_TIME_DEFAULT_KEY]) ? @"createdAt" : @"DHDataHappinessLevel";
     [query orderByDescending:orderKey];
     if (![[NSUserDefaults standardUserDefaults] boolForKey:DH_PUBLIC_VIEW_KEY] && [PFUser currentUser]) {
 //        [query whereKey:@"PFUser" equalTo:[PFUser currentUser]];
@@ -553,6 +559,14 @@
     if (![[NSUserDefaults standardUserDefaults] boolForKey:DH_PUBLIC_VIEW_KEY] && [PFUser currentUser]) {
         PFUser *currentUser = [PFUser currentUser];
         fetchRequest.predicate = [NSPredicate predicateWithFormat:@"photographerUsername == %@", currentUser.username];
+    }
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:DH_PUBLIC_VIEW_KEY] && ![[NSUserDefaults standardUserDefaults] boolForKey:DH_SORT_BY_TIME_DEFAULT_KEY]) {
+        fetchRequest.sortDescriptors = [NSArray arrayWithObjects:[NSSortDescriptor sortDescriptorWithKey:@"happinessLevel"
+                                                                                               ascending:NO
+                                                                                                selector:@selector(compare:)], 
+                                        [NSSortDescriptor sortDescriptorWithKey:@"timestamp"
+                                                                      ascending:NO
+                                                                       selector:@selector(compare:)], nil];
     }
     NSFetchedResultsController *frc = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
                                                                           managedObjectContext:context

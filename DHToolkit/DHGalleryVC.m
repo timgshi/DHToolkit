@@ -12,6 +12,7 @@
 #import "Parse/PFObject.h"
 #import "DHPhoto+Photo_PF.h"
 #import "Parse/PFUser.h"
+#import "UIBarButtonItem+CustomImage.h"
 
 @interface DHGalleryVC() <DHGalleryPresenterDelegate>
 @property (nonatomic, strong) UIScrollView *scrollView;
@@ -86,10 +87,6 @@
                                                               selector:@selector(compare:)], nil];
         }
         fetchRequest.sortDescriptors = sortDescriptors;
-        //    fetchRequest.sortDescriptors = [NSArray arrayWithObject:
-        //                                    [NSSortDescriptor sortDescriptorWithKey:sortKey
-        //                                                                  ascending:NO
-        //                                                                   selector:@selector(compare:)]];
         if (![[NSUserDefaults standardUserDefaults] boolForKey:DH_PUBLIC_VIEW_KEY] && [PFUser currentUser]) {
             PFUser *currentUser = [PFUser currentUser];
             fetchRequest.predicate = [NSPredicate predicateWithFormat:@"photographerUsername == %@", currentUser.username];
@@ -279,7 +276,8 @@
     self.view = self.containerView;
     [self.view setBackgroundColor:[UIColor blackColor]];
     [self.navigationController.view setBackgroundColor:[UIColor blackColor]];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneButtonPressed)];
+//    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneButtonPressed)];
+    self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"cancel.png"] target:self action:@selector(doneButtonPressed)];
 }
 
 
