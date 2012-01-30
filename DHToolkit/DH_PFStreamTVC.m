@@ -515,7 +515,7 @@
     if ([self.objects count] == 0) {
         query.cachePolicy = kPFCachePolicyCacheThenNetwork;
     }
-    NSString *orderKey = ([[NSUserDefaults standardUserDefaults] boolForKey:DH_SORT_BY_TIME_DEFAULT_KEY]) ? @"DHDataTimeStamp" : @"DHDataHappinessLevel";
+    NSString *orderKey = ([[NSUserDefaults standardUserDefaults] boolForKey:DH_SORT_BY_TIME_DEFAULT_KEY]) ? @"createdAt" : @"DHDataHappinessLevel";
     [query orderByDescending:orderKey];
     if (![[NSUserDefaults standardUserDefaults] boolForKey:DH_PUBLIC_VIEW_KEY] && [PFUser currentUser]) {
 //        [query whereKey:@"PFUser" equalTo:[PFUser currentUser]];
@@ -542,7 +542,7 @@
                                                                                   ascending:NO
                                                                                    selector:@selector(compare:)], 
                                                     [NSSortDescriptor sortDescriptorWithKey:@"timestamp"
-                                                                                   ascending:NO
+                                                                                   ascending:YES
                                                                                    selector:@selector(compare:)], nil];
     }
     fetchRequest.sortDescriptors = sortDescriptors;
