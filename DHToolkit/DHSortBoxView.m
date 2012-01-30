@@ -1,0 +1,42 @@
+//
+//  DHSortBoxView.m
+//  DHToolkit
+//
+//  Created by Tim Shi on 1/29/12.
+//  Copyright (c) 2012 www.timshi.com. All rights reserved.
+//
+
+#import "DHSortBoxView.h"
+
+@implementation DHSortBoxView
+
+
+- (id)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        // Initialization code
+    }
+    return self;
+}
+
+- (id)initWithOrigin:(CGPoint)origin
+{
+    self = [super initWithImage:[UIImage imageNamed:@"sortbox.png"]];
+    if (self) {
+        self.frame = CGRectMake(origin.x, origin.y, self.frame.size.width, self.frame.size.height);
+        
+    }
+    return self;
+}
+
+/*
+// Only override drawRect: if you perform custom drawing.
+// An empty implementation adversely affects performance during animation.
+- (void)drawRect:(CGRect)rect
+{
+    // Drawing code
+}
+*/
+
+@end
