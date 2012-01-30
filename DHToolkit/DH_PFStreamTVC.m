@@ -197,7 +197,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self.navigationController.navigationBar setBackgroundImage:[[UIImage imageNamed:@"navbar.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 10)] forBarMetrics:UIBarMetricsDefault];
+    [self.navigationController.navigationBar setBackgroundImage:[[UIImage imageNamed:@"navbar.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 11)] forBarMetrics:UIBarMetricsDefault];
 //    [self performSelector:@selector(uploadBegin:) withObject:nil afterDelay:2];
 //    self.uploadNotificationView = [[DHUploadNotificationView alloc] initWithFrame:kDH_Upload_Notification_Default_Rect(self.tableView.frame.size.width, self.tableView.frame.size.height)];
 //    self.uploadNotificationView.messageText = @"test";
@@ -529,11 +529,26 @@
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     fetchRequest.entity = [NSEntityDescription entityForName:@"DHPhoto"
                                       inManagedObjectContext:context];
-    NSString *sortKey = ([[NSUserDefaults standardUserDefaults] boolForKey:DH_SORT_BY_TIME_DEFAULT_KEY]) ? @"timestamp" : @"happinessLevel";
-    fetchRequest.sortDescriptors = [NSArray arrayWithObject:
-                                    [NSSortDescriptor sortDescriptorWithKey:sortKey
-                                                                  ascending:NO
-                                                                   selector:@selector(compare:)]];
+//    NSString *sortKey = ([[NSUserDefaults standardUserDefaults] boolForKey:DH_SORT_BY_TIME_DEFAULT_KEY]) ? @"timestamp" : @"happinessLevel";
+    NSArray *sortDescriptors = nil;
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:DH_SORT_BY_TIME_DEFAULT_KEY]) {
+        sortDescriptors = [NSArray arrayWithObject:
+                           [NSSortDescriptor sortDescriptorWithKey:@"timestamp"
+                                                         ascending:NO
+                                                          selector:@selector(compare:)]];
+    } else {
+        sortDescriptors = [NSArray arrayWithObjects:[NSSortDescriptor sortDescriptorWithKey:@"happinessLevel"
+                                                                                  ascending:NO
+                                                                                   selector:@selector(compare:)], 
+                                                    [NSSortDescriptor sortDescriptorWithKey:@"timestamp"
+                                                                                   ascending:NO
+                                                                                   selector:@selector(compare:)], nil];
+    }
+    fetchRequest.sortDescriptors = sortDescriptors;
+//    fetchRequest.sortDescriptors = [NSArray arrayWithObject:
+//                                    [NSSortDescriptor sortDescriptorWithKey:sortKey
+//                                                                  ascending:NO
+//                                                                   selector:@selector(compare:)]];
     if (![[NSUserDefaults standardUserDefaults] boolForKey:DH_PUBLIC_VIEW_KEY] && [PFUser currentUser]) {
         PFUser *currentUser = [PFUser currentUser];
         fetchRequest.predicate = [NSPredicate predicateWithFormat:@"photographerUsername == %@", currentUser.username];

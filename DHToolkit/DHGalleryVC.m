@@ -11,6 +11,7 @@
 #import "DHGalleryPresenterVC.h"
 #import "Parse/PFObject.h"
 #import "DHPhoto+Photo_PF.h"
+#import "Parse/PFUser.h"
 
 @interface DHGalleryVC() <DHGalleryPresenterDelegate>
 @property (nonatomic, strong) UIScrollView *scrollView;
@@ -66,18 +67,38 @@
 {
     if (context) {
         self = [super init];
-        NSFetchRequest *fetchRequest = nil;
-        fetchRequest = [[NSFetchRequest alloc] init];
+        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
         fetchRequest.entity = [NSEntityDescription entityForName:@"DHPhoto"
                                           inManagedObjectContext:context];
-        fetchRequest.sortDescriptors = [NSArray arrayWithObject:
-                                        [NSSortDescriptor sortDescriptorWithKey:@"timestamp"
-                                                                      ascending:NO
-                                                                       selector:@selector(compare:)]];
+        //    NSString *sortKey = ([[NSUserDefaults standardUserDefaults] boolForKey:DH_SORT_BY_TIME_DEFAULT_KEY]) ? @"timestamp" : @"happinessLevel";
+        NSArray *sortDescriptors = nil;
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:DH_SORT_BY_TIME_DEFAULT_KEY]) {
+            sortDescriptors = [NSArray arrayWithObject:
+                               [NSSortDescriptor sortDescriptorWithKey:@"timestamp"
+                                                             ascending:NO
+                                                              selector:@selector(compare:)]];
+        } else {
+            sortDescriptors = [NSArray arrayWithObjects:[NSSortDescriptor sortDescriptorWithKey:@"happinessLevel"
+                                                                                      ascending:NO
+                                                                                       selector:@selector(compare:)], 
+                               [NSSortDescriptor sortDescriptorWithKey:@"timestamp"
+                                                             ascending:NO
+                                                              selector:@selector(compare:)], nil];
+        }
+        fetchRequest.sortDescriptors = sortDescriptors;
+        //    fetchRequest.sortDescriptors = [NSArray arrayWithObject:
+        //                                    [NSSortDescriptor sortDescriptorWithKey:sortKey
+        //                                                                  ascending:NO
+        //                                                                   selector:@selector(compare:)]];
+        if (![[NSUserDefaults standardUserDefaults] boolForKey:DH_PUBLIC_VIEW_KEY] && [PFUser currentUser]) {
+            PFUser *currentUser = [PFUser currentUser];
+            fetchRequest.predicate = [NSPredicate predicateWithFormat:@"photographerUsername == %@", currentUser.username];
+        }
         NSFetchedResultsController *frc = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
                                                                               managedObjectContext:context
                                                                                 sectionNameKeyPath:nil
                                                                                          cacheName:nil];
+
         self.fetchedResultsController = frc;
         self.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Gallery" image:[UIImage imageNamed:@"42-photos.png"] tag:0];
         self.title = @"Gallery";
