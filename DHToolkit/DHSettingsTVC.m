@@ -132,6 +132,13 @@
     [super viewDidLoad];
     self.title = @"Settings";
     self.tableView.allowsSelection = NO;
+    self.navigationItem.hidesBackButton = YES;
+    self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"backarrow.png"] target:self action:@selector(backArrowPressed)];
+}
+
+- (void)backArrowPressed
+{
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)viewWillAppear:(BOOL)animated
