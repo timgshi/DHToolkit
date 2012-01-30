@@ -102,6 +102,7 @@
             photo.photographerUsername = [photoObject objectForKey:kDHDataWhoTookKey];
             //photo.dateupload = [photoObject objectForKey:kDHDataTimestampKey];
             photo.timestamp = [photoObject objectForKey:kDHDataTimestampKey];
+//            photo.timestamp = [photoObject objectForKey:@"createdAt"];
             //photo.latitude = [NSNumber numberWithDouble:[[photoObject objectForKey:kDHDataGeoLatKey] doubleValue]];
             if ([photoObject objectForKey:kDHDataGeoLatKey] != [NSNull null]) {
                 photo.latitude = [photoObject objectForKey:kDHDataGeoLatKey];
