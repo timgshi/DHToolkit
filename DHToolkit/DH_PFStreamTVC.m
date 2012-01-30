@@ -20,7 +20,7 @@
 #import "DHUploadNotificationView.h"
 #import "DHSortBoxView.h"
 
-@interface DH_PFStreamTVC() <DHImageRatingDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, DHExpandingStreamCellDelegate>
+@interface DH_PFStreamTVC() <DHImageRatingDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, DHExpandingStreamCellDelegate, DHSortBoxViewDelegate>
 @property (nonatomic, strong) NSMutableSet *expandedIndexPaths;
 @property (nonatomic, strong) NSCache *photosCache;
 @property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
@@ -28,6 +28,9 @@
 @property (nonatomic, strong) DHUploadNotificationView *uploadNotificationView;
 @property (nonatomic, strong) DHSortBoxView *sortBox;
 @property (nonatomic, strong) UIView *opaqueView;
+
+- (PFQuery *)queryBasedOnSortDefaults;
+- (NSFetchedResultsController *)fetchedResultsControllerBasedOnSortDefaults;
 @end
 
 @implementation DH_PFStreamTVC
@@ -68,19 +71,19 @@
         self.paginationEnabled = YES;
         self.objectsPerPage = 25;
         self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-        NSFetchRequest *fetchRequest = nil;
-        fetchRequest = [[NSFetchRequest alloc] init];
-        fetchRequest.entity = [NSEntityDescription entityForName:@"DHPhoto"
-                                          inManagedObjectContext:context];
-        fetchRequest.sortDescriptors = [NSArray arrayWithObject:
-                                        [NSSortDescriptor sortDescriptorWithKey:@"timestamp"
-                                                                      ascending:NO
-                                                                       selector:@selector(compare:)]];
-        NSFetchedResultsController *frc = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
-                                                                              managedObjectContext:context
-                                                                                sectionNameKeyPath:nil
-                                                                                         cacheName:nil];
-        self.fetchedResultsController = frc;
+//        NSFetchRequest *fetchRequest = nil;
+//        fetchRequest = [[NSFetchRequest alloc] init];
+//        fetchRequest.entity = [NSEntityDescription entityForName:@"DHPhoto"
+//                                          inManagedObjectContext:context];
+//        fetchRequest.sortDescriptors = [NSArray arrayWithObject:
+//                                        [NSSortDescriptor sortDescriptorWithKey:@"timestamp"
+//                                                                      ascending:NO
+//                                                                       selector:@selector(compare:)]];
+//        NSFetchedResultsController *frc = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
+//                                                                              managedObjectContext:context
+//                                                                                sectionNameKeyPath:nil
+//                                                                                         cacheName:nil];
+        self.fetchedResultsController = [self fetchedResultsControllerBasedOnSortDefaults];
     } else {
         self = nil;
     }
@@ -114,20 +117,12 @@
 
 #pragma mark - View lifecycle
 
-- (void)galleryButtonPressed
-{
-    galleryVC = [[DHGalleryVC alloc] initInManagedObjectContext:self.context];
-    galleryVC.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-    UINavigationController *galleryNav = [[UINavigationController alloc] initWithRootViewController:galleryVC];
-    [self presentViewController:galleryNav animated:YES completion:^{
-        
-    }];
-}
+
 
 - (void)sortButtonPressed
 {
     if (sortBox) {
-        [UIView animateWithDuration:0.3 animations:^{
+        [UIView animateWithDuration:0.2 animations:^{
             sortBox.alpha = 0;
             opaqueView.alpha = 0;
         } completion:^(BOOL finished) {
@@ -138,19 +133,33 @@
         }];
     } else {
         sortBox = [[DHSortBoxView alloc] initWithOrigin:CGPointMake(30, 0)];
+        sortBox.sortBoxDelegate = self;
         sortBox.alpha = 0;
         opaqueView = [[UIView alloc] initWithFrame:self.tableView.frame];
         opaqueView.backgroundColor = [UIColor blackColor];
         opaqueView.alpha = 0;
         UITapGestureRecognizer *tapgr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(sortButtonPressed)];
         [opaqueView addGestureRecognizer:tapgr];
-        [self.tableView.superview addSubview:opaqueView];
+//        [self.tableView.superview addSubview:opaqueView];
         [self.tableView.superview addSubview:sortBox];
-        [UIView animateWithDuration:0.3 animations:^{
+        [UIView animateWithDuration:0.2 animations:^{
             sortBox.alpha = 1;
             opaqueView.alpha = 0.3;
         }];
     }
+}
+
+- (void)galleryButtonPressed
+{
+    if (sortBox) {
+        [self sortButtonPressed];
+    }
+    galleryVC = [[DHGalleryVC alloc] initInManagedObjectContext:self.context];
+    galleryVC.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    UINavigationController *galleryNav = [[UINavigationController alloc] initWithRootViewController:galleryVC];
+    [self presentViewController:galleryNav animated:YES completion:^{
+        
+    }];
 }
 
 /*
@@ -164,6 +173,7 @@
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
 {
+    [self.navigationController.navigationBar setBackgroundImage:[[UIImage imageNamed:@"navbar.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 10)] forBarMetrics:UIBarMetricsDefault];
     self.className = @"DHPhoto";
     self.keyToDisplay = @"DHDataSixWord";
     self.pullToRefreshEnabled = YES;
@@ -181,11 +191,14 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadSuccess:) name:DH_PHOTO_UPLOAD_SUCCESS_NOTIFICATION object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadFailure:) name:DH_PHOTO_UPLOAD_FAILURE_NOTIFICATION object:nil];
     [super viewDidLoad];
+    [self.navigationItem setBackBarButtonItem:[UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"backarrow.png"] target:nil action:nil]];
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    [self.navigationController.navigationBar setBackgroundImage:[[UIImage imageNamed:@"navbar.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 11)] forBarMetrics:UIBarMetricsDefault];
 //    [self performSelector:@selector(uploadBegin:) withObject:nil afterDelay:2];
 //    self.uploadNotificationView = [[DHUploadNotificationView alloc] initWithFrame:kDH_Upload_Notification_Default_Rect(self.tableView.frame.size.width, self.tableView.frame.size.height)];
 //    self.uploadNotificationView.messageText = @"test";
@@ -197,7 +210,12 @@
 //    [self performSelector:@selector(uploadSuccess:) withObject:nil afterDelay:5];
 }
 
-
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [self.navigationController.navigationBar setBackgroundImage:[[UIImage imageNamed:@"navbarblack.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)] forBarMetrics:UIBarMetricsDefault];
+    [super viewDidDisappear:animated];
+    
+}
 
 - (void)viewDidUnload
 {
@@ -219,12 +237,13 @@
 
 - (PFQuery *)queryForTable
 {
-    PFQuery *query = [PFQuery queryWithClassName:self.className];
-    if ([self.objects count] == 0) {
-        query.cachePolicy = kPFCachePolicyCacheThenNetwork;
-    }
-    [query orderByDescending:@"DHDataTimestamp"];
-    return query;
+//    PFQuery *query = [PFQuery queryWithClassName:self.className];
+//    if ([self.objects count] == 0) {
+//        query.cachePolicy = kPFCachePolicyCacheThenNetwork;
+//    }
+//    [query orderByDescending:@"DHDataTimestamp"];
+//    return query;
+    return [self queryBasedOnSortDefaults];
 }
 
 - (void)DHSetImageFromPhoto:(DHPhoto *)cellPhoto withPhotoObject:(PFObject *)photoObject forStreamCell:(DHStreamCell *)cell
@@ -234,7 +253,7 @@
         if (cellPhoto.photoData == NULL) {
             [cell setImageForCellImageView:nil];
             [cell.spinner startAnimating];
-            dispatch_queue_t downloadQueue = dispatch_queue_create("Flickr thumb downloader", NULL);
+            dispatch_queue_t downloadQueue = dispatch_queue_create("com.dh.photodownloader", NULL);
             dispatch_async(downloadQueue, ^{ 
 //                [self incrementNetworkActivity:nil];
                 NSData *imageData = [ParseFetcher photoDataForPhotoObject:photoObject];
@@ -262,6 +281,24 @@
             dispatch_release(downloadQueue);
         } else {
             [cell setImageForCellImageView:[UIImage imageWithData:cellPhoto.photoData]];
+        }
+    } else {
+        if (cellPhoto.photoData == NULL) {
+            dispatch_queue_t downloadQueue = dispatch_queue_create("com.dh.photodownloader", NULL);
+            dispatch_async(downloadQueue, ^{ 
+                NSData *imageData = [ParseFetcher photoDataForPhotoObject:photoObject];
+                UIImage *image = [UIImage imageWithData:imageData];
+                UIImage *thumbImage = nil;
+                if (image) {
+                    thumbImage = [image thumbnailImage:320 transparentBorder:0 cornerRadius:0 interpolationQuality:kCGInterpolationHigh];
+                    NSData *thumbImageData = UIImageJPEGRepresentation(thumbImage, 1.0);
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        cellPhoto.photoData = thumbImageData;
+                        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:@"AutoSaveRequested" object:nil]];
+                    }); 
+                } 
+            });
+            dispatch_release(downloadQueue);
         }
     }
 }
@@ -298,7 +335,8 @@
 {
     [super objectsDidLoad:error];
     for (PFObject *obj in self.objects) {
-        [DHPhoto photoWithPFObject:obj inManagedObjectContext:self.context];
+//        [DHPhoto photoWithPFObject:obj inManagedObjectContext:self.context];
+        [self DHSetImageFromPhoto:[DHPhoto photoWithPFObject:obj inManagedObjectContext:self.context] withPhotoObject:obj forStreamCell:nil];
     }
     [self.fetchedResultsController performFetch:nil];
     [self.tableView reloadData];
@@ -306,6 +344,9 @@
 
 - (void)settingsButtonPressed
 {
+    if (sortBox) {
+        [self sortButtonPressed];
+    }
     DHSettingsTVC *settings = [[DHSettingsTVC alloc] initWithStyle:UITableViewStylePlain];
     [self.navigationController pushViewController:settings animated:YES];
 }
@@ -327,6 +368,9 @@
 
 - (void)cameraButtonPressed
 {
+    if (sortBox) {
+        [self sortButtonPressed];
+    }
     if ([PFUser currentUser]) {
         if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
             UIActionSheet *actionSheet = [[UIActionSheet alloc]
@@ -459,6 +503,77 @@
     } completion:^(BOOL finished) {
         [self.uploadNotificationView removeFromSuperview];
     }];
+}
+
+
+
+#pragma mark - Sorting Methods
+
+- (PFQuery *)queryBasedOnSortDefaults
+{
+    PFQuery *query = [PFQuery queryWithClassName:self.className];
+    if ([self.objects count] == 0) {
+        query.cachePolicy = kPFCachePolicyCacheThenNetwork;
+    }
+    NSString *orderKey = ([[NSUserDefaults standardUserDefaults] boolForKey:DH_SORT_BY_TIME_DEFAULT_KEY]) ? @"DHDataTimeStamp" : @"DHDataHappinessLevel";
+    [query orderByDescending:orderKey];
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:DH_PUBLIC_VIEW_KEY] && [PFUser currentUser]) {
+//        [query whereKey:@"PFUser" equalTo:[PFUser currentUser]];
+        PFUser *curUser = [PFUser currentUser];
+        [query whereKey:@"DHDataWhoTook" equalTo:curUser.username];
+    }
+    return query;
+}
+
+- (NSFetchedResultsController *)fetchedResultsControllerBasedOnSortDefaults
+{
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    fetchRequest.entity = [NSEntityDescription entityForName:@"DHPhoto"
+                                      inManagedObjectContext:context];
+//    NSString *sortKey = ([[NSUserDefaults standardUserDefaults] boolForKey:DH_SORT_BY_TIME_DEFAULT_KEY]) ? @"timestamp" : @"happinessLevel";
+    NSArray *sortDescriptors = nil;
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:DH_SORT_BY_TIME_DEFAULT_KEY]) {
+        sortDescriptors = [NSArray arrayWithObject:
+                           [NSSortDescriptor sortDescriptorWithKey:@"timestamp"
+                                                         ascending:NO
+                                                          selector:@selector(compare:)]];
+    } else {
+        sortDescriptors = [NSArray arrayWithObjects:[NSSortDescriptor sortDescriptorWithKey:@"happinessLevel"
+                                                                                  ascending:NO
+                                                                                   selector:@selector(compare:)], 
+                                                    [NSSortDescriptor sortDescriptorWithKey:@"timestamp"
+                                                                                   ascending:NO
+                                                                                   selector:@selector(compare:)], nil];
+    }
+    fetchRequest.sortDescriptors = sortDescriptors;
+//    fetchRequest.sortDescriptors = [NSArray arrayWithObject:
+//                                    [NSSortDescriptor sortDescriptorWithKey:sortKey
+//                                                                  ascending:NO
+//                                                                   selector:@selector(compare:)]];
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:DH_PUBLIC_VIEW_KEY] && [PFUser currentUser]) {
+        PFUser *currentUser = [PFUser currentUser];
+        fetchRequest.predicate = [NSPredicate predicateWithFormat:@"photographerUsername == %@", currentUser.username];
+    }
+    NSFetchedResultsController *frc = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
+                                                                          managedObjectContext:context
+                                                                            sectionNameKeyPath:nil
+                                                                                     cacheName:nil];
+    return frc;
+}
+
+#pragma mark - DHSortBoxViewDelegate Methods
+
+- (void)sortBoxChangedSortType
+{
+    [sortBox removeFromSuperview];
+    sortBox = nil;
+    sortBox = [[DHSortBoxView alloc] initWithOrigin:CGPointMake(30, 0)];
+    sortBox.sortBoxDelegate = self;
+    [self.tableView.superview addSubview:sortBox];
+    self.fetchedResultsController = [self fetchedResultsControllerBasedOnSortDefaults];
+    [self.fetchedResultsController performFetch:nil];
+    [self loadObjects];
+//    [self sortButtonPressed];
 }
 
 

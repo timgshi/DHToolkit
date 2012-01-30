@@ -11,6 +11,7 @@
 #import "DHStreamTVC.h"
 #import "Parse/Parse.h"
 #import "DH_PFStreamTVC.h"
+#import "UIBarButtonItem+CustomImage.h"
 
 @interface AppDelegate()
 {
@@ -44,16 +45,33 @@
 
 - (void)configureAppearance
 {
-    [[UINavigationBar appearance] setBackgroundImage:[[UIImage imageNamed:@"black.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)] forBarMetrics:UIBarMetricsDefault];
+//    UIImage *backButton = [UIImage imageNamed:@"backArrow.png"];
+//    [[UIBarButtonItem appearance] setBackButtonBackgroundImage:backButton forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+//    [[UINavigationBar appearance] setBackgroundImage:[[UIImage imageNamed:@"black.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)] forBarMetrics:UIBarMetricsDefault];
+//    [[UINavigationBar appearance] setBackgroundImage:[[UIImage imageNamed:@"navbar.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 10)] forBarMetrics:UIBarMetricsDefault];
+    [[UINavigationBar appearance] setBackgroundImage:[[UIImage imageNamed:@"navbarblack.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)] forBarMetrics:UIBarMetricsDefault];
+    
+//    [[UINavigationBar appearance] setBackBarButtonItem:[UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"backarrow.png"] target:nil action:nil]];
     [[UINavigationBar appearance] setTitleTextAttributes:
      [NSDictionary dictionaryWithObjectsAndKeys:
       [UIColor whiteColor], UITextAttributeTextColor, 
       [UIFont fontWithName:@"LubalinGraphLT-Demi" size:0.0], UITextAttributeFont, nil]];
 }
 
+- (void)setupDefaults
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    id obj = [defaults objectForKey:DH_SORT_BY_TIME_DEFAULT_KEY];
+    if (!obj) {
+        [defaults registerDefaults:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], DH_SORT_BY_TIME_DEFAULT_KEY, [NSNumber numberWithBool:YES], DH_PUBLIC_VIEW_KEY, nil]];
+        [defaults synchronize];
+    }
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     [self configureAppearance];
+    [self setupDefaults];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(incrementNetworkActivity:) name:kDHIncrementNetworkActivityNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(decrementNetworkActivity:) name:kDHDecrementNetworkActivityNotification object:nil];
     id rootVC = self.window.rootViewController;

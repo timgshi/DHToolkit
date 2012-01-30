@@ -7,6 +7,7 @@
 //
 
 #import "DHTableViewController.h"
+#import "UIBarButtonItem+CustomImage.h"
 
 
 @implementation DHTableViewController
@@ -33,6 +34,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [self.navigationItem setBackBarButtonItem:[UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"backarrow.png"] target:nil action:nil]];
     self.tableView.scrollEnabled = NO;
     UIImage *backgroundImage = [[UIImage imageNamed:@"BackgroundGradient.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
     self.tableView.backgroundColor = [UIColor colorWithPatternImage:backgroundImage];

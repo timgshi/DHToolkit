@@ -62,7 +62,8 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = UIColorFromRGB(DH_YELLOW_HEX_COLOR);
+//        self.backgroundColor = UIColorFromRGB(DH_YELLOW_HEX_COLOR);
+        self.backgroundColor = [UIColor blackColor];
         self.alpha = 0.8;
         [self addSubview:self.messageLabel];
         [self addSubview:self.spinner];

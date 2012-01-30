@@ -9,6 +9,7 @@
 #import "DHCreateAccountTVC.h"
 #import "EditingTableViewCell.h"
 #import "Parse/PFUser.h"
+#import "UIBarButtonItem+CustomImage.h"
 
 
 @interface DHCreateAccountTVC()
@@ -74,9 +75,11 @@
 {
     [super viewDidLoad];
 
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(saveButtonPressed)];
+//    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(saveButtonPressed)];
+    self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"plus.png"] target:self action:@selector(saveButtonPressed)];
     self.navigationItem.rightBarButtonItem.enabled = NO;
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelButtonPressed)];
+//    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelButtonPressed)];
+    self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"cancel.png"] target:self action:@selector(cancelButtonPressed)];  
 }
 
 - (void)viewDidUnload

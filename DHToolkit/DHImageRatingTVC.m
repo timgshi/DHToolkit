@@ -14,6 +14,7 @@
 #import "Parse/PFACL.h"
 #import "ParsePoster.h"
 #import "GoogleWeatherFetcher.h"
+#import "UIBarButtonItem+CustomImage.h"
 
 @interface DHImageRatingTVC() <CLLocationManagerDelegate, GoogleWeatherFetcherDelegate, UITextFieldDelegate>
 @property int imageRating;
@@ -101,6 +102,7 @@
         self.weatherFetcher = nil;
     }
     NSMutableDictionary *metaDict = [NSMutableDictionary dictionary];
+    [metaDict setObject:[PFUser currentUser] forKey:@"PFUser"];
     if (self.descriptionField.text.length) {
         [metaDict setObject:self.descriptionField.text forKey:kDHDataSixWordKey];
     } else {
@@ -152,8 +154,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(saveButtonPressed)];
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelButtonPressed)];
+//    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(saveButtonPressed)];
+    self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"plus.png"] target:self action:@selector(saveButtonPressed)];
+//    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelButtonPressed)];
+    self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"cancel.png"] target:self action:@selector(cancelButtonPressed)];
     self.title = @"Capture";
     self.imageRating = 5;
 }

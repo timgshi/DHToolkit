@@ -9,6 +9,7 @@
 #import "DHSignInAccountTVC.h"
 #import "EditingTableViewCell.h"
 #import "Parse/PFUser.h"
+#import "UIBarButtonItem+CustomImage.h"
 
 @interface DHSignInAccountTVC()
 @property (nonatomic, strong) NSString *dhUsername, *dhPassword;
@@ -59,7 +60,9 @@
 
 - (UIBarButtonItem *)signinButton
 {
-    return [[UIBarButtonItem alloc] initWithTitle:@"Sign In" style:UIBarButtonItemStyleDone target:self action:@selector(signinButtonPressed)];
+//    return [[UIBarButtonItem alloc] initWithTitle:@"Sign In" style:UIBarButtonItemStyleDone target:self action:@selector(signinButtonPressed)];
+    return [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"signin.png"] target:self action:@selector(signinButtonPressed)];
+
 }
 
 #pragma mark - View lifecycle
@@ -71,7 +74,8 @@
     self.navigationController.navigationBar.barStyle = UIBarStyleBlackOpaque;
     self.navigationItem.rightBarButtonItem = [self signinButton];
     self.navigationItem.rightBarButtonItem.enabled = NO;
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelButtonPressed)];
+//    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelButtonPressed)];
+    self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"cancel.png"] target:self action:@selector(cancelButtonPressed)];
 }
 
 

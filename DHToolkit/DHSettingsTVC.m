@@ -11,6 +11,7 @@
 #import "Parse/PFPush.h"
 #import "DHSignInAccountTVC.h"
 #import "DHCreateAccountTVC.h"
+#import "UIBarButtonItem+CustomImage.h"
 
 @interface DHSettingsTVC() <DHSignInAccountTVCDelegate, DHCreateAccountTVCDelegate, UIAlertViewDelegate, PF_FBRequestDelegate>
 - (void)useFacebookSignin;
@@ -39,12 +40,14 @@
 
 - (UIBarButtonItem *)signoutButton
 {
-    return [[UIBarButtonItem alloc] initWithTitle:@"Sign Out" style:UIBarButtonItemStyleDone target:self action:@selector(signoutButtonPressed)];
+//    return [[UIBarButtonItem alloc] initWithTitle:@"Sign Out" style:UIBarButtonItemStyleDone target:self action:@selector(signoutButtonPressed)];
+    return [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"signout.png"] target:self action:@selector(signoutButtonPressed)];
 }
 
 - (UIBarButtonItem *)signinButton
 {
-    return [[UIBarButtonItem alloc] initWithTitle:@"Sign In" style:UIBarButtonItemStyleDone target:self action:@selector(signinButtonPressed)];
+//    return [[UIBarButtonItem alloc] initWithTitle:@"Sign In" style:UIBarButtonItemStyleDone target:self action:@selector(signinButtonPressed)];
+    return [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"signin.png"] target:self action:@selector(signinButtonPressed)];
 }
 
 - (void)signinButtonPressed
@@ -129,6 +132,13 @@
     [super viewDidLoad];
     self.title = @"Settings";
     self.tableView.allowsSelection = NO;
+    self.navigationItem.hidesBackButton = YES;
+    self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"backarrow.png"] target:self action:@selector(backArrowPressed)];
+}
+
+- (void)backArrowPressed
+{
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -188,10 +198,10 @@
     NSString *text;
     switch (section) {
         case 0:
-            text = @"  Account Details";
+            text = @"  ACCOUNT DETAILS";
             break;
         case 1:
-            text = @"  Sharing Settings";
+            text = @"  SHARING SETTINGS";
         default:
             break;
     }
