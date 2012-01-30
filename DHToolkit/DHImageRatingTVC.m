@@ -101,6 +101,7 @@
         self.weatherFetcher = nil;
     }
     NSMutableDictionary *metaDict = [NSMutableDictionary dictionary];
+    [metaDict setObject:[PFUser currentUser] forKey:@"PFUser"];
     if (self.descriptionField.text.length) {
         [metaDict setObject:self.descriptionField.text forKey:kDHDataSixWordKey];
     } else {

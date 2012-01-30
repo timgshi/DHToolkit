@@ -8,8 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol DHSortBoxViewDelegate
+- (void)sortBoxChangedSortType;
+@end
+
 @interface DHSortBoxView : UIImageView
 
 - (id)initWithOrigin:(CGPoint)origin;
+
+@property (nonatomic, weak) id <DHSortBoxViewDelegate> sortBoxDelegate;
 
 @end

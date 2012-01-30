@@ -7,6 +7,7 @@
 //
 
 #import "DHSortBoxView.h"
+#import "Parse/PFUser.h"
 
 @interface DHSortBoxView()
 @property (nonatomic, strong) UIButton *timeButton, *levelButton, *personalButton, *publicButton;
@@ -15,15 +16,18 @@
 @implementation DHSortBoxView
 
 @synthesize timeButton, levelButton, personalButton, publicButton;
+@synthesize sortBoxDelegate;
 
 - (UIButton *)timeButton
 {
     if (!timeButton) {
         timeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [timeButton addTarget:self action:@selector(timeButtonPressed) forControlEvents:UIControlEventAllEvents];
+        [timeButton addTarget:self action:@selector(timeButtonPressed) forControlEvents:UIControlEventTouchUpInside];
         [timeButton setImage:[UIImage imageNamed:@"time.png"] forState:UIControlStateNormal];
-        timeButton.frame = CGRectMake(15, 35, 25, 25);
+        [timeButton setImage:[UIImage imageNamed:@"time-highlighted.png"] forState:UIControlStateHighlighted];
+        timeButton.frame = CGRectMake(15, 35, 23, 23);
         timeButton.highlighted = ([[NSUserDefaults standardUserDefaults] boolForKey:DH_SORT_BY_TIME_DEFAULT_KEY]) ? YES : NO;
+        timeButton.enabled = !timeButton.highlighted;
     }
     return timeButton;
 }
@@ -32,8 +36,12 @@
 {
     if (!levelButton) {
         levelButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [levelButton setImage:[UIImage imageNamed:@"rating.png"] forState:UIControlStateNormal];
+        [levelButton setImage:[UIImage imageNamed:@"rating-highlighted.png"] forState:UIControlStateHighlighted];
         [levelButton addTarget:self action:@selector(levelButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+        levelButton.frame = CGRectMake(55, 35, 23, 24);
         levelButton.highlighted = ([[NSUserDefaults standardUserDefaults] boolForKey:DH_SORT_BY_TIME_DEFAULT_KEY]) ? NO : YES;
+        levelButton.enabled = !levelButton.highlighted;
     }
     return levelButton;
 }
@@ -44,8 +52,11 @@
         personalButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [personalButton addTarget:self action:@selector(personalButtonPressed) forControlEvents:UIControlEventTouchUpInside];
         [personalButton setImage:[UIImage imageNamed:@"user.png"] forState:UIControlStateNormal];
-        personalButton.frame = CGRectMake(15, 90, 24, 21);
+        [personalButton setImage:[UIImage imageNamed:@"user-highlighted.png"] forState:UIControlStateHighlighted];
+        personalButton.frame = CGRectMake(15, 90, 27, 23);
         personalButton.highlighted = ([[NSUserDefaults standardUserDefaults] boolForKey:DH_PUBLIC_VIEW_KEY]) ? NO : YES;
+        personalButton.enabled = !personalButton.highlighted;
+        if (![PFUser currentUser]) personalButton.enabled = NO;
     }
     return personalButton;
 }
@@ -56,8 +67,10 @@
         publicButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [publicButton addTarget:self action:@selector(publicButtonPressed) forControlEvents:UIControlEventTouchUpInside];
         [publicButton setImage:[UIImage imageNamed:@"group.png"] forState:UIControlStateNormal];
-        publicButton.frame = CGRectMake(55, 90, 32, 21);
+        [publicButton setImage:[UIImage imageNamed:@"group-highlighted.png"] forState:UIControlStateHighlighted];
+        publicButton.frame = CGRectMake(55, 90, 36, 23);
         publicButton.highlighted = ([[NSUserDefaults standardUserDefaults] boolForKey:DH_PUBLIC_VIEW_KEY]) ? YES : NO;
+        publicButton.enabled = !publicButton.highlighted;
     }
     return publicButton;
 }
@@ -93,6 +106,10 @@
     self.levelButton.highlighted = ([[NSUserDefaults standardUserDefaults] boolForKey:DH_SORT_BY_TIME_DEFAULT_KEY]) ? NO : YES;
     self.personalButton.highlighted = ([[NSUserDefaults standardUserDefaults] boolForKey:DH_PUBLIC_VIEW_KEY]) ? NO : YES;
     self.publicButton.highlighted = ([[NSUserDefaults standardUserDefaults] boolForKey:DH_PUBLIC_VIEW_KEY]) ? YES : NO;
+    self.levelButton.enabled = !levelButton.highlighted;
+    self.timeButton.enabled = !timeButton.highlighted;
+    self.personalButton.enabled = !personalButton.highlighted;
+    self.publicButton.enabled = !publicButton.highlighted;
 }
 
 - (id)initWithOrigin:(CGPoint)origin
@@ -103,7 +120,7 @@
         self.frame = CGRectMake(origin.x, origin.y, self.frame.size.width, self.frame.size.height);
         [self setupLabels];
         [self addSubview:self.timeButton];
-        [self bringSubviewToFront:self.timeButton];
+        [self addSubview:self.levelButton];
         [self addSubview:self.personalButton];
         [self addSubview:self.publicButton];
     }
@@ -117,6 +134,7 @@
     [defaults setBool:!flag forKey:DH_SORT_BY_TIME_DEFAULT_KEY];
     [defaults synchronize];
     [self refreshButtonHighlights];
+    if (self.sortBoxDelegate) [self.sortBoxDelegate sortBoxChangedSortType];
 }
 
 - (void)levelButtonPressed
@@ -126,6 +144,7 @@
     [defaults setBool:!flag forKey:DH_SORT_BY_TIME_DEFAULT_KEY];
     [defaults synchronize];
     [self refreshButtonHighlights];
+    if (self.sortBoxDelegate) [self.sortBoxDelegate sortBoxChangedSortType];
 }
 
 - (void)personalButtonPressed
@@ -135,6 +154,7 @@
     [defaults setBool:!flag forKey:DH_PUBLIC_VIEW_KEY];
     [defaults synchronize];
     [self refreshButtonHighlights];
+    if (self.sortBoxDelegate) [self.sortBoxDelegate sortBoxChangedSortType];
 }
 
 - (void)publicButtonPressed
@@ -144,6 +164,7 @@
     [defaults setBool:!flag forKey:DH_PUBLIC_VIEW_KEY];
     [defaults synchronize];
     [self refreshButtonHighlights];
+    if (self.sortBoxDelegate) [self.sortBoxDelegate sortBoxChangedSortType];
 }
 
 
