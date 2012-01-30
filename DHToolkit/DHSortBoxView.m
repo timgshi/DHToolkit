@@ -10,11 +10,22 @@
 
 @implementation DHSortBoxView
 
+
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
+    }
+    return self;
+}
+
+- (id)initWithOrigin:(CGPoint)origin
+{
+    self = [super initWithImage:[UIImage imageNamed:@"sortbox.png"]];
+    if (self) {
+        self.frame = CGRectMake(origin.x, origin.y, self.frame.size.width, self.frame.size.height);
+        
     }
     return self;
 }

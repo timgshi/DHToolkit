@@ -64,6 +64,9 @@
 		4B7A688E14BB6A160074B1CC /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B7A688D14BB6A160074B1CC /* CoreLocation.framework */; };
 		4B7A689F14BCE6B30074B1CC /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B7A689E14BCE6B30074B1CC /* Parse.framework */; };
 		4B7A68A214BCE7F00074B1CC /* DH_PFStreamTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B7A68A114BCE7F00074B1CC /* DH_PFStreamTVC.m */; };
+		4B9671C614D609FD00F2F9A9 /* sortbox.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B9671C414D609FD00F2F9A9 /* sortbox.png */; };
+		4B9671C714D609FD00F2F9A9 /* sortbox@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B9671C514D609FD00F2F9A9 /* sortbox@2x.png */; };
+		4B9671CB14D60A3100F2F9A9 /* DHSortBoxView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B9671CA14D60A3000F2F9A9 /* DHSortBoxView.m */; };
 		4B98514314B24C370081CFB6 /* BackgroundGradient.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B98514214B24C370081CFB6 /* BackgroundGradient.png */; };
 		4B98514514B27F340081CFB6 /* HelveticaNeue.dfont in Resources */ = {isa = PBXBuildFile; fileRef = 4B98514414B27F340081CFB6 /* HelveticaNeue.dfont */; };
 		4B98514814B28E410081CFB6 /* DHTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B98514714B28E410081CFB6 /* DHTableViewController.m */; };
@@ -246,6 +249,10 @@
 		4B7A689E14BCE6B30074B1CC /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
 		4B7A68A014BCE7F00074B1CC /* DH_PFStreamTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DH_PFStreamTVC.h; sourceTree = "<group>"; };
 		4B7A68A114BCE7F00074B1CC /* DH_PFStreamTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DH_PFStreamTVC.m; sourceTree = "<group>"; };
+		4B9671C414D609FD00F2F9A9 /* sortbox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = sortbox.png; path = ../../../Dropbox/DHTApp/icons/sortbox.png; sourceTree = "<group>"; };
+		4B9671C514D609FD00F2F9A9 /* sortbox@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "sortbox@2x.png"; path = "../../../Dropbox/DHTApp/icons/sortbox@2x.png"; sourceTree = "<group>"; };
+		4B9671C914D60A3000F2F9A9 /* DHSortBoxView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHSortBoxView.h; sourceTree = "<group>"; };
+		4B9671CA14D60A3000F2F9A9 /* DHSortBoxView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DHSortBoxView.m; sourceTree = "<group>"; };
 		4B98514214B24C370081CFB6 /* BackgroundGradient.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BackgroundGradient.png; sourceTree = "<group>"; };
 		4B98514414B27F340081CFB6 /* HelveticaNeue.dfont */ = {isa = PBXFileReference; lastKnownFileType = file; path = HelveticaNeue.dfont; sourceTree = "<group>"; };
 		4B98514614B28E410081CFB6 /* DHTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHTableViewController.h; sourceTree = "<group>"; };
@@ -415,6 +422,8 @@
 		4B34353914A26EB8002831BD /* DHToolkit */ = {
 			isa = PBXGroup;
 			children = (
+				4B9671C914D60A3000F2F9A9 /* DHSortBoxView.h */,
+				4B9671CA14D60A3000F2F9A9 /* DHSortBoxView.m */,
 				4B515CDC14CDD5A400CD6C7E /* GoogleWeatherFetcher.h */,
 				4B515CDD14CDD5A400CD6C7E /* GoogleWeatherFetcher.m */,
 				4B34356614A26F61002831BD /* DHMainStoryboard.storyboard */,
@@ -569,6 +578,8 @@
 		4B9BB12414A72CF00062C1EE /* Icons */ = {
 			isa = PBXGroup;
 			children = (
+				4B9671C414D609FD00F2F9A9 /* sortbox.png */,
+				4B9671C514D609FD00F2F9A9 /* sortbox@2x.png */,
 				4B515CD014CD80AC00CD6C7E /* sort.png */,
 				4B515CD114CD80AC00CD6C7E /* sort@2x.png */,
 				4B515CCC14CD80A400CD6C7E /* gallery.png */,
@@ -749,6 +760,8 @@
 				4B515CEA14CE177B00CD6C7E /* DHT-Logo@2x.png in Resources */,
 				4B515CEC14CE178D00CD6C7E /* DHT-Logo.png in Resources */,
 				4B515CEE14CE179100CD6C7E /* DHT-Logo@2x.png in Resources */,
+				4B9671C614D609FD00F2F9A9 /* sortbox.png in Resources */,
+				4B9671C714D609FD00F2F9A9 /* sortbox@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -840,6 +853,7 @@
 				4B515CC314CD75D400CD6C7E /* DHStreamCell.m in Sources */,
 				4B515CDE14CDD5A400CD6C7E /* GoogleWeatherFetcher.m in Sources */,
 				4B608ECE14D5404400020E69 /* DHUploadNotificationView.m in Sources */,
+				4B9671CB14D60A3100F2F9A9 /* DHSortBoxView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

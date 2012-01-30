@@ -18,6 +18,7 @@
 #import "UIBarButtonItem+CustomImage.h"
 #import "DHStreamCell.h"
 #import "DHUploadNotificationView.h"
+#import "DHSortBoxView.h"
 
 @interface DH_PFStreamTVC() <DHImageRatingDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, DHExpandingStreamCellDelegate>
 @property (nonatomic, strong) NSMutableSet *expandedIndexPaths;
@@ -25,6 +26,8 @@
 @property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
 @property (nonatomic, strong) DHGalleryVC *galleryVC;
 @property (nonatomic, strong) DHUploadNotificationView *uploadNotificationView;
+@property (nonatomic, strong) DHSortBoxView *sortBox;
+@property (nonatomic, strong) UIView *opaqueView;
 @end
 
 @implementation DH_PFStreamTVC
@@ -35,6 +38,8 @@
 @synthesize fetchedResultsController;
 @synthesize galleryVC;
 @synthesize uploadNotificationView;
+@synthesize sortBox;
+@synthesize opaqueView;
 
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -55,6 +60,7 @@
 {
     if (aContext) {
         self = [super initWithStyle:UITableViewStylePlain];
+        self.tableView.allowsSelection = NO;    
         self.context = aContext;
         self.className = @"DHPhoto";
         self.keyToDisplay = @"DHDataSixWord";
@@ -118,6 +124,35 @@
     }];
 }
 
+- (void)sortButtonPressed
+{
+    if (sortBox) {
+        [UIView animateWithDuration:0.3 animations:^{
+            sortBox.alpha = 0;
+            opaqueView.alpha = 0;
+        } completion:^(BOOL finished) {
+            [sortBox removeFromSuperview];
+            [opaqueView removeFromSuperview];
+            sortBox = nil;
+            opaqueView = nil;
+        }];
+    } else {
+        sortBox = [[DHSortBoxView alloc] initWithOrigin:CGPointMake(30, 0)];
+        sortBox.alpha = 0;
+        opaqueView = [[UIView alloc] initWithFrame:self.tableView.frame];
+        opaqueView.backgroundColor = [UIColor blackColor];
+        opaqueView.alpha = 0;
+        UITapGestureRecognizer *tapgr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(sortButtonPressed)];
+        [opaqueView addGestureRecognizer:tapgr];
+        [self.tableView.superview addSubview:opaqueView];
+        [self.tableView.superview addSubview:sortBox];
+        [UIView animateWithDuration:0.3 animations:^{
+            sortBox.alpha = 1;
+            opaqueView.alpha = 0.3;
+        }];
+    }
+}
+
 /*
 // Implement loadView to create a view hierarchy programmatically, without using a nib.
 - (void)loadView
@@ -136,33 +171,33 @@
     self.objectsPerPage = 25;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.title = @"DHStream";
-//    UIBarButtonItem *settingsButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"settings.png"] style:UIBarButtonItemStylePlain target:self action:@selector(settingsButtonPressed)];
-//    UIBarButtonItem *cameraButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"86-camera.png"] style:UIBarButtonItemStylePlain target:self action:@selector(cameraButtonPressed)];
     UIBarButtonItem *settingsButton = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"settings.png"] target:self action:@selector(settingsButtonPressed)];
     UIBarButtonItem *cameraButton = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"camera.png"] target:self action:@selector(cameraButtonPressed)];
     UIBarButtonItem *galleryButton = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"gallery.png"] target:self action:@selector(galleryButtonPressed)];
-    UIBarButtonItem *sortButton = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"sort.png"] target:self action:nil];
+    UIBarButtonItem *sortButton = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"sort.png"] target:self action:@selector(sortButtonPressed)];
     self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:cameraButton, settingsButton, nil];
-//    UIBarButtonItem *galleryButton = [[UIBarButtonItem alloc] initWithTitle:@"Gallery" style:UIBarButtonItemStylePlain target:self action:@selector(galleryButtonPressed)];
     self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:galleryButton, sortButton, nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadBegin:) name:DH_PHOTO_UPLOAD_BEGIN_NOTIFICATION object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadSuccess:) name:DH_PHOTO_UPLOAD_SUCCESS_NOTIFICATION object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadFailure:) name:DH_PHOTO_UPLOAD_FAILURE_NOTIFICATION object:nil];
     [super viewDidLoad];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
+//    [self performSelector:@selector(uploadBegin:) withObject:nil afterDelay:2];
 //    self.uploadNotificationView = [[DHUploadNotificationView alloc] initWithFrame:kDH_Upload_Notification_Default_Rect(self.tableView.frame.size.width, self.tableView.frame.size.height)];
 //    self.uploadNotificationView.messageText = @"test";
 //    self.uploadNotificationView.isLoading = YES;
 //    [self.tableView addSubview:self.uploadNotificationView];
     [self.fetchedResultsController performFetch:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadBegin:) name:DH_PHOTO_UPLOAD_BEGIN_NOTIFICATION object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadSuccess:) name:DH_PHOTO_UPLOAD_SUCCESS_NOTIFICATION object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadFailure:) name:DH_PHOTO_UPLOAD_FAILURE_NOTIFICATION object:nil];
+    
 //    [self performSelector:@selector(uploadBegin:) withObject:nil afterDelay:1];
 //    [self performSelector:@selector(uploadSuccess:) withObject:nil afterDelay:5];
 }
+
+
 
 - (void)viewDidUnload
 {
@@ -247,6 +282,7 @@
     if ([self.fetchedResultsController.fetchedObjects count]) {
         cell.cellPhoto = [self.fetchedResultsController objectAtIndexPath:indexPath];
     }
+    [cell.spinner stopAnimating];
     [self DHSetImageFromPhoto:cell.cellPhoto withPhotoObject:object forStreamCell:cell];
     return cell;
 }
@@ -337,9 +373,15 @@
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
 }
 
-- (void)imageRatingTVCDidFinish:(DHImageRatingTVC *)rater
+- (void)imageRatingTVCDidFinish:(DHImageRatingTVC *)rater withSave:(BOOL)save
 {
-    [self dismissViewControllerAnimated:YES completion:nil];
+    if (save) {
+        [self dismissViewControllerAnimated:YES completion:^{
+            [self performSelector:@selector(uploadBegin:) withObject:nil];
+        }];
+    } else {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
 }
 
 #pragma mark - UIActionSheetDelegate Methods
@@ -384,7 +426,7 @@
     self.uploadNotificationView = [[DHUploadNotificationView alloc] initWithFrame:CGRectMake(0, self.tableView.frame.size.height, self.tableView.frame.size.width, kDH_Upload_Notification_View_Height)];
     self.uploadNotificationView.messageText = kDH_Uploading_Text;
     self.uploadNotificationView.isLoading = YES;
-    [self.view addSubview:self.uploadNotificationView];
+    [self.tableView.superview addSubview:self.uploadNotificationView];
     [UIView animateWithDuration:0.3 animations:^{
         CGRect frame = self.uploadNotificationView.frame;
         frame.origin.y = self.tableView.frame.size.height - frame.size.height;

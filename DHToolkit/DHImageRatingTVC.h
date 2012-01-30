@@ -10,7 +10,7 @@
 
 @class DHImageRatingTVC;
 @protocol DHImageRatingDelegate
-- (void)imageRatingTVCDidFinish:(DHImageRatingTVC *)rater;
+- (void)imageRatingTVCDidFinish:(DHImageRatingTVC *)rater withSave:(BOOL)save;
 @end
 
 @interface DHImageRatingTVC : DHTableViewController

@@ -96,8 +96,16 @@
 
 - (void)savePhotoObject
 {
+    if (self.weatherFetcher) {
+        [self.weatherFetcher cancel];
+        self.weatherFetcher = nil;
+    }
     NSMutableDictionary *metaDict = [NSMutableDictionary dictionary];
-    [metaDict setObject:self.descriptionField.text forKey:kDHDataSixWordKey];
+    if (self.descriptionField.text.length) {
+        [metaDict setObject:self.descriptionField.text forKey:kDHDataSixWordKey];
+    } else {
+        [metaDict setObject:@"" forKey:kDHDataSixWordKey];
+    }
     [metaDict setObject:[NSNumber numberWithInt:self.imageRating] forKey:kDHDataHappinessLevelKey];
     PFUser *curUser = [PFUser currentUser];
     [metaDict setObject:curUser.username forKey:kDHDataWhoTookKey];
@@ -124,12 +132,12 @@
 - (void)saveButtonPressed
 {
     [self savePhotoObject];
-    [self.delegate imageRatingTVCDidFinish:self];
+    [self.delegate imageRatingTVCDidFinish:self withSave:YES];
 }
 
 - (void)cancelButtonPressed
 {
-    [self.delegate imageRatingTVCDidFinish:self];
+    [self.delegate imageRatingTVCDidFinish:self withSave:NO];
 }
 
 #pragma mark - View lifecycle
@@ -223,7 +231,7 @@
     if (!locationLabel) {
         locationLabel = [[UILabel alloc] initWithFrame:CGRectMake(34, 5, 250, 28)];
         [locationLabel setFont:[UIFont fontWithName:@"Helvetica" size:16]];
-        [locationLabel setTextColor:[UIColor colorWithRed:146/255.0 green:146/255.0 blue:146/255.0 alpha:1.0]];
+        [locationLabel setTextColor:[UIColor colorWithRed:200/255.0 green:200/255.0 blue:200/255.0 alpha:1.0]];
         [locationLabel setBackgroundColor:[UIColor clearColor]];
         [locationLabel setText:@"Searching for location..."];
         [locationLabel setUserInteractionEnabled:YES];
@@ -294,7 +302,7 @@
             [label setText:@"  RATE THIS MOMENT"];
             break;
         case 1:
-            [label setText:@"  SHARE THIS MOMENT"];
+            [label setText:@"  SHARING SETTINGS"];
             break;
         default:
             break;

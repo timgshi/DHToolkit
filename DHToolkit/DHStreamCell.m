@@ -68,7 +68,7 @@
         [levelLabel setBackgroundColor:[UIColor clearColor]];
         [levelLabel setTextColor:[UIColor whiteColor]];
         [levelLabel setFont:[UIFont boldSystemFontOfSize:24]];
-        CGSize labelSize = [@"1" sizeWithFont:levelLabel.font];
+        CGSize labelSize = [@"10" sizeWithFont:levelLabel.font];
         levelLabel.frame = CGRectMake(10, DH_CELL_INFO_BAR_HEIGHT - 22 - labelSize.height, labelSize.width, labelSize.height);
         [levelLabel setShadowOffset:CGSizeMake(-1, 1)];
         [levelLabel setShadowColor:[UIColor blackColor]];

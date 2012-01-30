@@ -23,10 +23,12 @@
     PFACL *acl = [PFACL ACLWithUser:[PFUser currentUser]];
     if ([[metaDict objectForKey:@"isPrivate"] boolValue]) {
         [acl setPublicReadAccess:NO];
+    } else {
+        [acl setPublicReadAccess:YES];
     }
     newPhoto.ACL = acl;
     PFFile *photoFile = [PFFile fileWithData:photoData];
-    [[NSNotificationCenter defaultCenter] postNotificationName:DH_PHOTO_UPLOAD_BEGIN_NOTIFICATION object:nil];
+//    [[NSNotificationCenter defaultCenter] postNotificationName:DH_PHOTO_UPLOAD_BEGIN_NOTIFICATION object:nil];
     [photoFile saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error1) {
         if (error1 != nil) {
             NSLog(@"%@", [error1 description]);

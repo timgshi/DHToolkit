@@ -45,9 +45,6 @@
 - (void)configureAppearance
 {
     [[UINavigationBar appearance] setBackgroundImage:[[UIImage imageNamed:@"black.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)] forBarMetrics:UIBarMetricsDefault];
-//    [[UINavigationBar appearance] setTintColor:[UIColor blackColor]];
-//    NSLog(@"%@", [UIFont fontNamesForFamilyName:@"LubalinGraph LT"]);
-//    NSLog(@"%@", [UIFont familyNames]);
     [[UINavigationBar appearance] setTitleTextAttributes:
      [NSDictionary dictionaryWithObjectsAndKeys:
       [UIColor whiteColor], UITextAttributeTextColor, 

@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface DHSortBoxView : UIView
+@interface DHSortBoxView : UIImageView
+
+- (id)initWithOrigin:(CGPoint)origin;
 
 @end

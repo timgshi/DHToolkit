@@ -85,7 +85,12 @@
         if (!photo) {
             photo = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([self class]) inManagedObjectContext:context];
             photo.pfObjectID = uniqueString;
-            photo.photoDescription = [photoObject objectForKey:kDHDataSixWordKey];
+            if ([photoObject objectForKey:kDHDataSixWordKey] == [NSNull null]) {
+                photo.photoDescription = @"";
+            } else {
+                photo.photoDescription = [photoObject objectForKey:kDHDataSixWordKey];
+            }
+            
             NSNumber *privacy = [photoObject objectForKey:kDHDataPrivacyKey];
             if (privacy) {
                 photo.isPrivate = privacy;
