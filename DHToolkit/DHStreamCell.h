@@ -10,7 +10,7 @@
 #import "Parse/PFObject.h"
 
 #define DH_CELL_HEIGHT 320
-#define DH_CELL_INFO_BAR_HEIGHT 80
+#define DH_CELL_INFO_BAR_HEIGHT 65
 
 @class DHPhoto;
 

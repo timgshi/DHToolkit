@@ -67,7 +67,7 @@
         levelLabel = [[UILabel alloc] init];
         [levelLabel setBackgroundColor:[UIColor clearColor]];
         [levelLabel setTextColor:[UIColor whiteColor]];
-        [levelLabel setFont:[UIFont boldSystemFontOfSize:24]];
+        [levelLabel setFont:[UIFont boldSystemFontOfSize:34]];
         CGSize labelSize = [@"10" sizeWithFont:levelLabel.font];
         levelLabel.frame = CGRectMake(10, DH_CELL_INFO_BAR_HEIGHT - 22 - labelSize.height, labelSize.width, labelSize.height);
         [levelLabel setShadowOffset:CGSizeMake(-1, 1)];
@@ -108,7 +108,7 @@
 {
     if (!levelBarView) {
         levelBarView = [[UIView alloc] init];
-        levelBarView.frame = CGRectMake(0, DH_CELL_INFO_BAR_HEIGHT - 20, 250, 10);
+        levelBarView.frame = CGRectMake(0, DH_CELL_INFO_BAR_HEIGHT - 19, 250, 10);
         [levelBarView setBackgroundColor:UIColorFromRGB(DH_YELLOW_HEX_COLOR)];
     }
     return levelBarView;
@@ -206,7 +206,7 @@
     if (weatherCondition && weatherTemperature) {
         NSString *weatherText = [NSString stringWithFormat:@"%@ %@°F", weatherCondition, weatherTemperature];
         CGSize weatherSize = [weatherText sizeWithFont:[self.weatherLabel font]];
-        self.weatherLabel.frame = CGRectMake(320 - (weatherSize.width + 10), 7, weatherSize.width, weatherSize.height);
+        self.weatherLabel.frame = CGRectMake(320 - (weatherSize.width + 10), 3, weatherSize.width, weatherSize.height);
         self.weatherLabel.text = weatherText;
     }
     id locationStringObj = [photoObject objectForKey:@"DHDataLocationString"];
@@ -214,7 +214,7 @@
     if ([locationStringObj isKindOfClass:[NSString class]]) locationString = (NSString *)locationStringObj;
     if (locationString) {
         CGSize locationSize = [locationString sizeWithFont:[self.locationLabel font]];
-        self.locationLabel.frame = CGRectMake(320 - (locationSize.width + 10), 3 + self.weatherLabel.frame.origin.y + self.weatherLabel.frame.size.height, locationSize.width, locationSize.height);
+        self.locationLabel.frame = CGRectMake(320 - (locationSize.width + 10), -3 + self.weatherLabel.frame.origin.y + self.weatherLabel.frame.size.height, locationSize.width, locationSize.height);
         self.locationLabel.text = locationString;
     }
 }
