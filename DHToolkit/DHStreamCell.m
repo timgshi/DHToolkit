@@ -170,9 +170,12 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        [self setClipsToBounds:YES];
+        [self setClipsToBounds:NO];
         [self.contentView addSubview:self.contentContainerView];
-        [self.contentView setClipsToBounds:YES];
+        [self.contentView setClipsToBounds:NO];
+        UIView *separatorView = [[UIView alloc] initWithFrame:CGRectMake(0, DH_CELL_HEIGHT - 2, self.frame.size.width, 2)];
+        [separatorView setBackgroundColor:[UIColor whiteColor]];
+        [self.contentView addSubview:separatorView];
     }
     return self;
 }

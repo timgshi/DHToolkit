@@ -50,7 +50,9 @@
 //    [[UINavigationBar appearance] setBackgroundImage:[[UIImage imageNamed:@"black.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)] forBarMetrics:UIBarMetricsDefault];
 //    [[UINavigationBar appearance] setBackgroundImage:[[UIImage imageNamed:@"navbar.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 10)] forBarMetrics:UIBarMetricsDefault];
     [[UINavigationBar appearance] setBackgroundImage:[[UIImage imageNamed:@"navbarblack.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)] forBarMetrics:UIBarMetricsDefault];
-    
+    [[[UINavigationBar appearance] layer] setShadowColor:[UIColor blackColor].CGColor];
+    [[[UINavigationBar appearance] layer] setShadowOffset:CGSizeMake(0, 3)];
+    [[[UINavigationBar appearance] layer] setMasksToBounds:NO];
 //    [[UINavigationBar appearance] setBackBarButtonItem:[UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"backarrow.png"] target:nil action:nil]];
     [[UINavigationBar appearance] setTitleTextAttributes:
      [NSDictionary dictionaryWithObjectsAndKeys:
