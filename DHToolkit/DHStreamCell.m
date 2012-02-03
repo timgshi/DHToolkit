@@ -191,6 +191,12 @@
     photoObject = aPhotoObject;
     self.cellImageView.image = nil;
     self.photographerNameLabel.text = [photoObject objectForKey:@"DHDataWhoTook"];
+    if ([photoObject objectForKey:@"isAnonymous"]) {
+        BOOL anonymous = [[photoObject objectForKey:@"isAnonymous"] boolValue];
+        if (anonymous) {
+            self.photographerNameLabel.text = @"anonymous";
+        }
+    }
     self.photoDescriptionLabel.text = [photoObject objectForKey:@"DHDataSixWord"];
     CGSize nameSize = [self.photographerNameLabel.text sizeWithFont:[self.photographerNameLabel font]];
     self.photographerNameLabel.frame = CGRectMake(5, 5, nameSize.width, nameSize.height);

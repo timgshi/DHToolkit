@@ -486,6 +486,7 @@
 
 - (void)uploadSuccess:(NSNotification *)notification
 {
+    [self loadObjects];
     self.uploadNotificationView.messageText = kDH_Success_Text;
     self.uploadNotificationView.isLoading = NO;
     [UIView animateWithDuration:0.3 delay:2.0 options:0 animations:^{
@@ -494,7 +495,6 @@
         self.uploadNotificationView.frame = frame;
     } completion:^(BOOL finished) {
         [self.uploadNotificationView removeFromSuperview];
-        [self loadObjects];
     }];
 }
 

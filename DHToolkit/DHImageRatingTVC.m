@@ -22,7 +22,7 @@
 @property (nonatomic, strong) UISlider *ratingSlider;
 @property (nonatomic, strong) UILabel *ratingLabel, *locationLabel;
 @property (nonatomic, strong) UITextField *descriptionField;
-@property (nonatomic, strong) UISwitch *privacySwitch;
+@property (nonatomic, strong) UISwitch *privacySwitch, *anonymousSwitch;
 @property (nonatomic, strong) CLLocationManager *locationManager;
 @property (nonatomic, strong) CLLocation *currentLocation;
 @property (nonatomic, strong) CLGeocoder *geocoder;
@@ -38,7 +38,7 @@
 @synthesize ratingSlider;
 @synthesize ratingLabel, locationLabel;
 @synthesize descriptionField;
-@synthesize privacySwitch;
+@synthesize privacySwitch, anonymousSwitch;
 @synthesize locationManager, currentLocation;
 @synthesize geocoder;
 @synthesize locationString;
@@ -126,6 +126,7 @@
     } else {
         [metaDict setObject:[NSNumber numberWithBool:NO] forKey:kDHDataPrivacyKey];
     }
+    [metaDict setObject:[NSNumber numberWithBool:self.anonymousSwitch.on] forKey:@"isAnonymous"];
     [ParsePoster postPhotoWithMetaInfo:metaDict andPhotoData:UIImageJPEGRepresentation(selectedPhoto, 0.8)];
 }
 
@@ -278,6 +279,17 @@
     return privacySwitch;
 }
 
+- (UISwitch *)anonymousSwitch
+{
+    if (!anonymousSwitch) {
+        anonymousSwitch = [[UISwitch alloc] init];
+        anonymousSwitch.frame = CGRectMake(231, 6, 10, 10);
+        anonymousSwitch.transform = CGAffineTransformMakeScale(0.70, 0.70);
+        anonymousSwitch.onTintColor = [UIColor colorWithRed:253/255.0 green:193/255.0 blue:49/255.0 alpha:1];
+    }
+    return anonymousSwitch;
+}
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     return 2;
@@ -290,7 +302,7 @@
             return 3;
             break;
         case 1:
-            return 1;
+            return 2;
             break;
         default:
             return 1;
@@ -337,8 +349,13 @@
             }
             break;
         case 1:
-            cell.textLabel.text = @"Make this photo private:";
-            [cell.contentView addSubview:self.privacySwitch];
+            if ([indexPath row] == 0) {
+                cell.textLabel.text = @"Make this photo private:";
+                [cell.contentView addSubview:self.privacySwitch];
+            } else {
+                cell.textLabel.text = @"Make this photo anonymous:";
+                [cell.contentView addSubview:self.anonymousSwitch];
+            }
             break;
         default:
             break;
