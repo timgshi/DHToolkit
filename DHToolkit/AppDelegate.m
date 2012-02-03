@@ -12,6 +12,7 @@
 #import "Parse/Parse.h"
 #import "DH_PFStreamTVC.h"
 #import "UIBarButtonItem+CustomImage.h"
+#import "Parse/PFPush.h"
 
 @interface AppDelegate()
 {
@@ -100,7 +101,24 @@
     self.window.rootViewController = streamNav;
 //    [TestFlight takeOff:kTestFlightTeamID];
     [Parse setFacebookApplicationId:kDH_FACEBOOK_ID];
+    [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge|
+     UIRemoteNotificationTypeAlert|
+     UIRemoteNotificationTypeSound];
     return YES;
+}
+
+- (void)application:(UIApplication *)application
+didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)newDeviceToken
+{
+    // Tell Parse about the device token.
+    [PFPush storeDeviceToken:newDeviceToken];
+    // Subscribe to the global broadcast channel.
+    [PFPush subscribeToChannelInBackground:@""];
+}
+
+- (void)application:(UIApplication *)application 
+didReceiveRemoteNotification:(NSDictionary *)userInfo {
+    [PFPush handlePush:userInfo];
 }
 
 #pragma mark - URL Open Handling
