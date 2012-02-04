@@ -27,7 +27,7 @@
         [acl setPublicReadAccess:YES];
     }
     newPhoto.ACL = acl;
-    PFFile *photoFile = [PFFile fileWithData:photoData];
+    PFFile *photoFile = [PFFile fileWithName:@"photo.jpg" data:photoData];
 //    [[NSNotificationCenter defaultCenter] postNotificationName:DH_PHOTO_UPLOAD_BEGIN_NOTIFICATION object:nil];
     [photoFile saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error1) {
         if (error1 != nil) {
@@ -40,7 +40,8 @@
                     NSLog(@"%@", [error2 description]);
                 }
                 if (succeeded) {
-                    [[NSNotificationCenter defaultCenter] postNotificationName:DH_PHOTO_UPLOAD_SUCCESS_NOTIFICATION object:nil];
+                    BOOL isAnonymous = [[metaDict objectForKey:@"isAnonymous"] boolValue];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:DH_PHOTO_UPLOAD_SUCCESS_NOTIFICATION object:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:isAnonymous] forKey:@"isAnonymous"]];
                 } else {
                     [[NSNotificationCenter defaultCenter] postNotificationName:DH_PHOTO_UPLOAD_FAILURE_NOTIFICATION object:nil];
                 }

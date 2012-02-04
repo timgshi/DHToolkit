@@ -1,5 +1,5 @@
 //
-//  DHImageDetailContainerViewController.h
+//  DHImageDetailImageVC.h
 //  DHToolkit
 //
 //  Created by Tim Shi on 2/3/12.
@@ -10,7 +10,7 @@
 #import "Parse/PFObject.h"
 #import "DHPhoto+Photo_PF.h"
 
-@interface DHImageDetailContainerViewController : UIViewController
+@interface DHImageDetailImageVC : UIViewController
 
 @property (nonatomic, strong) PFObject *photoObject;
 @property (nonatomic, assign) DHPhoto *managedPhoto;

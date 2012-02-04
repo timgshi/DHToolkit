@@ -122,9 +122,6 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)newDeviceToken
             
         }
     }];
-    [PFPush subscribeToChannelInBackground:@"test" block:^(BOOL succeeded, NSError *error) {
-        
-    }];
 }
 
 - (void)application:(UIApplication *)application 
@@ -135,8 +132,8 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 - (void)application:(UIApplication *)application 
 didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
 {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"push" message:[[error userInfo] description] delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil];
-    [alert show];
+//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"push" message:[[error userInfo] description] delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil];
+//    [alert show];
     if ([error code] == 3010) {
         NSLog(@"Push notifications don't work in the simulator!");
     } else {

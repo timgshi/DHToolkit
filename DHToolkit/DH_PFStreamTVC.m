@@ -20,6 +20,7 @@
 #import "DHUploadNotificationView.h"
 #import "DHSortBoxView.h"
 #import "Parse/PFPush.h"
+#import "DHImageDetailContainerViewController.h"
 
 @interface DH_PFStreamTVC() <DHImageRatingDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, DHExpandingStreamCellDelegate, DHSortBoxViewDelegate>
 @property (nonatomic, strong) NSMutableSet *expandedIndexPaths;
@@ -64,7 +65,7 @@
 {
     if (aContext) {
         self = [super initWithStyle:UITableViewStylePlain];
-        self.tableView.allowsSelection = NO;    
+        self.tableView.allowsSelection = YES;    
         self.context = aContext;
         self.className = @"DHPhoto";
         self.keyToDisplay = @"DHDataSixWord";
@@ -191,6 +192,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadBegin:) name:DH_PHOTO_UPLOAD_BEGIN_NOTIFICATION object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadSuccess:) name:DH_PHOTO_UPLOAD_SUCCESS_NOTIFICATION object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadFailure:) name:DH_PHOTO_UPLOAD_FAILURE_NOTIFICATION object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(imageDeleted:) name:DH_PHOTO_DELETE_NOTIFICATION object:nil];
     [super viewDidLoad];
     [self.navigationItem setBackBarButtonItem:[UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"backarrow.png"] target:nil action:nil]];
     
@@ -336,6 +338,22 @@
 {
 //    return ([self.expandedIndexPaths containsObject:indexPath]) ? DH_EXPANDING_CELL_BIG_HEIGHT : DH_EXPANDING_CELL_SMALL_HEIGHT;
     return DH_CELL_HEIGHT;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    PFObject *object = [self objectAtIndex:indexPath];
+    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"DHPhoto"];
+    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"pfObjectID == %@", [object objectId]];
+    NSArray *results = [self.context executeFetchRequest:fetchRequest error:nil];
+    if ([results lastObject]) {
+        DHImageDetailContainerViewController *detailVC = [[DHImageDetailContainerViewController alloc] init];
+        detailVC.photoObject = object;
+        detailVC.managedPhoto = [results lastObject];
+        [self.navigationController pushViewController:detailVC animated:YES];
+    }
+    
+    
 }
 
 - (void)objectsDidLoad:(NSError *)error
@@ -488,8 +506,11 @@
 - (void)uploadSuccess:(NSNotification *)notification
 {
     [self loadObjects];
+    NSDictionary *dict = [notification object];
+    BOOL isAnonymous = [[dict objectForKey:@"isAnonymous"] boolValue];
     PFUser *curUser = [PFUser currentUser];
-    NSString *pushMessage = [NSString stringWithFormat:@"%@ just shared a moment", curUser.username];
+    NSString *username = (isAnonymous) ? curUser.username : @"Someone";
+    NSString *pushMessage = [NSString stringWithFormat:@"%@ just shared a moment", username];
     [PFPush sendPushMessageToChannelInBackground:@"" withMessage:pushMessage block:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
             NSLog(@"Success push sent");
@@ -519,7 +540,10 @@
     }];
 }
 
-
+- (void)imageDeleted:(NSNotification *)notification
+{
+    [self loadObjects];
+}
 
 #pragma mark - Sorting Methods
 

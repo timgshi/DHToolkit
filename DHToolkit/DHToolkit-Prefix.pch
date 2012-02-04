@@ -21,6 +21,7 @@
 #define DH_PHOTO_UPLOAD_BEGIN_NOTIFICATION @"photo upload begin"
 #define DH_PHOTO_UPLOAD_SUCCESS_NOTIFICATION @"photo upload success"
 #define DH_PHOTO_UPLOAD_FAILURE_NOTIFICATION @"photo upload fail"
+#define DH_PHOTO_DELETE_NOTIFICATION @"photo delete"
 
 #define DH_SORT_BY_TIME_DEFAULT_KEY @"time sort"
 #define DH_PUBLIC_VIEW_KEY @"public view"
