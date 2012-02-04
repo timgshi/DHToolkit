@@ -131,7 +131,7 @@
 {
     [super viewDidLoad];
     self.title = @"Settings";
-    self.tableView.allowsSelection = NO;
+//    self.tableView.allowsSelection = NO;
     self.navigationItem.hidesBackButton = YES;
     self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"backarrow.png"] target:self action:@selector(backArrowPressed)];
 }
@@ -187,7 +187,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (section == 1) {
-        return 1;
+        return 2;
     }
     return 2;
 }
@@ -226,12 +226,13 @@
             }
             break;
         case 1:
-            cell.textLabel.text = @"Make everything private:";
+            if (indexPath.row == 0) cell.textLabel.text = @"Make everything private:";
+            if (indexPath.row == 1) cell.textLabel.text = @"Facebook:";
             break;
         default:
             break;
     }
-    if (indexPath.section == 1) {
+    if (indexPath.section == 1 && indexPath.row == 0) {
         UISwitch *onOff = [[UISwitch alloc] init];
         CGRect frame = CGRectMake(231, 6, 10, 10);
         onOff.frame = frame;
@@ -240,10 +241,29 @@
         [onOff addTarget:self action:@selector(privateSwitchAction:) forControlEvents:UIControlEventValueChanged];
         onOff.on = [[NSUserDefaults standardUserDefaults] boolForKey:kPRIVACY_PREF_KEY];
         [cell.contentView addSubview:onOff];
+    } else if (indexPath.section == 1 && indexPath.row == 1) {
+        if ([currentUser hasFacebook]) {
+            cell.detailTextLabel.text = @"Unlink from Facebook";
+        } else {
+            cell.detailTextLabel.text = @"Link to Facebook";
+//            UIButton *fbButton = [UIButton buttonWithType:UIButtonTypeCustom];
+//            [fbButton setBackgroundImage:[UIImage imageNamed:@"fbicon.png"] forState:UIControlStateNormal];
+//            [fbButton addTarget:self action:@selector(fbIconPressed) forControlEvents:UIControlEventTouchUpInside];
+//            fbButton.frame = CGRectMake(255, 5, 28, 28);
+//            [cell.contentView addSubview:fbButton];
+        }
     }
     return cell;
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([indexPath section] == 0) {
+        [self signinButtonPressed];
+    } else if (indexPath.section == 1 && indexPath.row == 1) {
+        [self performSelector:@selector(fbIconPressed)];
+    }
+}
 
 
 #pragma mark - Table view delegate
@@ -285,9 +305,23 @@
 
 #pragma mark - Facebook Methods
 
+- (void)fbIconPressed
+{
+    PFUser *currentUser = [PFUser currentUser];
+    if ([currentUser hasFacebook]) {
+        [currentUser unlinkFromFacebookWithBlock:^(BOOL succeeded, NSError *error) {
+            [self.tableView reloadData]; 
+        }];
+    } else {
+        [currentUser linkToFacebook:[NSArray arrayWithObjects:@"email", @"publish_stream", @"offline_access", nil] block:^(BOOL succeeded, NSError *error) {
+            [self.tableView reloadData]; 
+        }];
+    }
+}
+
 - (void)useFacebookSignin
 {
-    [PFUser logInWithFacebook:[NSArray arrayWithObjects:@"email", nil] block:^(PFUser *user, NSError *error) {
+    [PFUser logInWithFacebook:[NSArray arrayWithObjects:@"email", @"publish_stream", @"offline_access", nil] block:^(PFUser *user, NSError *error) {
         [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:kDHDecrementNetworkActivityNotification object:nil]];
         if (error) {
             NSLog(@"%@", [error description]);
