@@ -89,7 +89,8 @@
     [cell.textLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:16]];
     [cell.detailTextLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:16]];
     [cell.textLabel setTextColor:[UIColor whiteColor]];
-    [cell.detailTextLabel setTextColor:[UIColor whiteColor]];    
+    [cell.detailTextLabel setTextColor:[UIColor whiteColor]];   
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     return cell;
 }
 

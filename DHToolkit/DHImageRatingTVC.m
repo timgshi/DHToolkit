@@ -15,14 +15,16 @@
 #import "ParsePoster.h"
 #import "GoogleWeatherFetcher.h"
 #import "UIBarButtonItem+CustomImage.h"
+#import <Twitter/Twitter.h>
+#import <Accounts/Accounts.h>
 
-@interface DHImageRatingTVC() <CLLocationManagerDelegate, GoogleWeatherFetcherDelegate, UITextFieldDelegate>
+@interface DHImageRatingTVC() <CLLocationManagerDelegate, GoogleWeatherFetcherDelegate, UITextFieldDelegate, UIAlertViewDelegate, PF_FBRequestDelegate>
 @property int imageRating;
 @property BOOL isPrivate;
 @property (nonatomic, strong) UISlider *ratingSlider;
 @property (nonatomic, strong) UILabel *ratingLabel, *locationLabel;
 @property (nonatomic, strong) UITextField *descriptionField;
-@property (nonatomic, strong) UISwitch *privacySwitch, *anonymousSwitch;
+@property (nonatomic, strong) UISwitch *privacySwitch, *anonymousSwitch, *twitterSwitch, *facebookSwitch;
 @property (nonatomic, strong) CLLocationManager *locationManager;
 @property (nonatomic, strong) CLLocation *currentLocation;
 @property (nonatomic, strong) CLGeocoder *geocoder;
@@ -38,7 +40,7 @@
 @synthesize ratingSlider;
 @synthesize ratingLabel, locationLabel;
 @synthesize descriptionField;
-@synthesize privacySwitch, anonymousSwitch;
+@synthesize privacySwitch, anonymousSwitch, twitterSwitch, facebookSwitch;
 @synthesize locationManager, currentLocation;
 @synthesize geocoder;
 @synthesize locationString;
@@ -95,6 +97,59 @@
     return locationManager;
 }
 
+- (void)tweetMomentWithPhotoData:(NSData *)photoData
+{
+    ACAccountStore *accountStore = [[ACAccountStore alloc] init];
+	
+	// Create an account type that ensures Twitter accounts are retrieved.
+    ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
+	
+	// Request access from the user to use their Twitter accounts.
+    [accountStore requestAccessToAccountsWithType:accountType withCompletionHandler:^(BOOL granted, NSError *error) {
+        if(granted) {
+			// Get the list of Twitter accounts.
+            NSArray *accountsArray = [accountStore accountsWithAccountType:accountType];
+			
+			// For the sake of brevity, we'll assume there is only one Twitter account present.
+			// You would ideally ask the user which account they want to tweet from, if there is more than one Twitter account present.
+			if ([accountsArray count] > 0) {
+				// Grab the initial Twitter account to tweet from.
+				ACAccount *twitterAccount = [accountsArray objectAtIndex:0];
+				
+				// Create a request, which in this example, posts a tweet to the user's timeline.
+				// This example uses version 1 of the Twitter API.
+				// This may need to be changed to whichever version is currently appropriate.
+//				TWRequest *postRequest = [[TWRequest alloc] initWithURL:[NSURL URLWithString:@"http://api.twitter.com/1/statuses/update.json"] parameters:[NSDictionary dictionaryWithObject:@"Hello. This is a tweet." forKey:@"status"] requestMethod:TWRequestMethodPOST];
+				TWRequest *postRequest = [[TWRequest alloc] initWithURL:[NSURL URLWithString:@"https://upload.twitter.com/1/statuses/update_with_media.json"] parameters:nil requestMethod:TWRequestMethodPOST];
+                [postRequest addMultiPartData:photoData withName:@"media" type:@"image/jpg"];
+                NSData *messageData = [[NSString stringWithFormat:@"I just shared a moment of happiness #DHToolkit"] dataUsingEncoding:NSUTF8StringEncoding];
+                [postRequest addMultiPartData:messageData withName:@"status" type:@"text/plain"];
+                NSData *latData = [[NSString stringWithFormat:@"%f", self.currentLocation.coordinate.latitude] dataUsingEncoding:NSUTF8StringEncoding];
+                NSData *lonData = [[NSString stringWithFormat:@"%f", self.currentLocation.coordinate.longitude] dataUsingEncoding:NSUTF8StringEncoding];
+                NSData *trueData = [[NSString stringWithFormat:@"true"] dataUsingEncoding:NSUTF8StringEncoding];
+                [postRequest addMultiPartData:latData withName:@"lat" type:@"text/plain"];
+                [postRequest addMultiPartData:lonData withName:@"long" type:@"text/plain"];
+                [postRequest addMultiPartData:trueData withName:@"display_coordinates" type:@"text/plain"];
+				// Set the account used to post the tweet.
+				[postRequest setAccount:twitterAccount];
+				
+				// Perform the request created above and create a handler block to handle the response.
+				[postRequest performRequestWithHandler:^(NSData *responseData, NSHTTPURLResponse *urlResponse, NSError *error) {
+					NSString *output = [NSString stringWithFormat:@"HTTP response status: %i", [urlResponse statusCode]];
+                    NSLog(@"%@", output);
+				}];
+			}
+        }
+	}];
+
+}
+
+- (void)postMomentToFacebookWithImage:(UIImage *)image
+{
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:image, @"source", @"I just shared a happiness moment", @"message", self.descriptionField.text, @"name", nil];
+    [[PFUser facebook] requestWithGraphPath:@"me/photos" andParams:params andHttpMethod:@"POST" andDelegate:self];
+}
+
 - (void)savePhotoObject
 {
     if (self.weatherFetcher) {
@@ -127,7 +182,14 @@
         [metaDict setObject:[NSNumber numberWithBool:NO] forKey:kDHDataPrivacyKey];
     }
     [metaDict setObject:[NSNumber numberWithBool:self.anonymousSwitch.on] forKey:@"isAnonymous"];
+    if (twitterSwitch.on) {
+        [self tweetMomentWithPhotoData:UIImageJPEGRepresentation(selectedPhoto, 0.8)];
+    }
+    if (facebookSwitch.on) {
+        [self postMomentToFacebookWithImage:self.selectedPhoto];
+    }
     [ParsePoster postPhotoWithMetaInfo:metaDict andPhotoData:UIImageJPEGRepresentation(selectedPhoto, 0.8)];
+    
 }
 
 #pragma mark - Nav Bar Buttons
@@ -155,6 +217,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
 //    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(saveButtonPressed)];
     self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"plus.png"] target:self action:@selector(saveButtonPressed)];
 //    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelButtonPressed)];
@@ -289,6 +352,77 @@
     }
     return anonymousSwitch;
 }
+ 
+- (UISwitch *)twitterSwitch
+{
+    if (!twitterSwitch) {
+        twitterSwitch = [[UISwitch alloc] init];
+        twitterSwitch.frame = CGRectMake(231, 6, 10, 10);
+        twitterSwitch.transform = CGAffineTransformMakeScale(0.70, 0.70);
+        twitterSwitch.onTintColor = [UIColor colorWithRed:253/255.0 green:193/255.0 blue:49/255.0 alpha:1];
+        [twitterSwitch addTarget:self action:@selector(twitterSwitchMoved) forControlEvents:UIControlEventValueChanged];
+    }
+    return twitterSwitch;
+}
+
+- (void)twitterSwitchMoved
+{
+    if (self.twitterSwitch.on) {
+        ACAccountStore *accountStore = [[ACAccountStore alloc] init];
+        
+        // Create an account type that ensures Twitter accounts are retrieved.
+        ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
+        
+        // Request access from the user to use their Twitter accounts.
+        [accountStore requestAccessToAccountsWithType:accountType withCompletionHandler:^(BOOL granted, NSError *error) {
+            if (granted) {
+                NSArray *accounts = [accountStore accountsWithAccountType:accountType];
+                if ([accounts count] == 0) {
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Twitter" message:@"Please sign into twitter in the settings app to tweet your messages" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Settings", nil];
+                    [alert show];
+                    [self.twitterSwitch setOn:NO animated:YES];
+                }
+            }
+        }];
+
+    }
+}
+
+- (UISwitch *)facebookSwitch
+{
+    if (!facebookSwitch) {
+        facebookSwitch = [[UISwitch alloc] init];
+        facebookSwitch.frame = CGRectMake(231, 6, 10, 10);
+        facebookSwitch.transform = CGAffineTransformMakeScale(0.70, 0.70);
+        facebookSwitch.onTintColor = [UIColor colorWithRed:253/255.0 green:193/255.0 blue:49/255.0 alpha:1];
+        [facebookSwitch addTarget:self action:@selector(facebookSwitchMoved) forControlEvents:UIControlEventValueChanged];
+    }
+    return facebookSwitch;
+}
+
+- (void)facebookSwitchMoved
+{
+    if (self.facebookSwitch.on) {
+        PFUser *curUser = [PFUser currentUser];
+        if (![curUser hasFacebook]) {
+            [curUser linkToFacebook:[NSArray arrayWithObjects:@"email", @"publish_stream", @"offline_access", nil] block:^(BOOL succeeded, NSError *error) {
+                
+            }];
+        } else if (![[PFUser facebook] accessToken]) {
+            [[PFUser facebook] authorize:[NSArray arrayWithObjects:@"email", @"publish_stream", @"offline_access", nil]];
+        }
+    }
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if ([alertView.title isEqualToString:@"Twitter"]) {
+        if (buttonIndex == 1) {
+            NSURL *locationServicesURL = [NSURL URLWithString:@"prefs:root=TWITTER"];
+            [[UIApplication sharedApplication] openURL:locationServicesURL];
+        }
+    }
+}
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -302,7 +436,7 @@
             return 3;
             break;
         case 1:
-            return 2;
+            return 4;
             break;
         default:
             return 1;
@@ -352,9 +486,15 @@
             if ([indexPath row] == 0) {
                 cell.textLabel.text = @"Make this photo private:";
                 [cell.contentView addSubview:self.privacySwitch];
-            } else {
+            } else if ([indexPath row] == 1) {
                 cell.textLabel.text = @"Make this photo anonymous:";
                 [cell.contentView addSubview:self.anonymousSwitch];
+            } else if ([indexPath row] == 2) {
+                cell.textLabel.text = @"Twitter sharing";
+                [cell.contentView addSubview:self.twitterSwitch];
+            } else if ([indexPath row] == 3) {
+                cell.textLabel.text = @"Facebook sharing";
+                [cell.contentView addSubview:self.facebookSwitch];
             }
             break;
         default:
@@ -424,6 +564,16 @@
 {
     [textField resignFirstResponder];
     return YES;
+}
+
+#pragma mark - Facebook Delegate Methods
+
+- (void)request:(PF_FBRequest *)request didLoad:(id)result
+{
+    if ([result isKindOfClass:[NSDictionary class]]) {
+        NSDictionary *resultDict = (NSDictionary *)result;
+        
+    }
 }
 
 @end
