@@ -490,7 +490,11 @@
     [self loadObjects];
     PFUser *curUser = [PFUser currentUser];
     NSString *pushMessage = [NSString stringWithFormat:@"%@ just shared a moment", curUser.username];
-    [PFPush sendPushMessageToChannelInBackground:@"" withMessage:pushMessage];
+    [PFPush sendPushMessageToChannelInBackground:@"" withMessage:pushMessage block:^(BOOL succeeded, NSError *error) {
+        if (succeeded) {
+            NSLog(@"Success push sent");
+        }
+    }];
     self.uploadNotificationView.messageText = kDH_Success_Text;
     self.uploadNotificationView.isLoading = NO;
     [UIView animateWithDuration:0.3 delay:2.0 options:0 animations:^{

@@ -104,6 +104,9 @@
     [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge|
      UIRemoteNotificationTypeAlert|
      UIRemoteNotificationTypeSound];
+    [PFPush sendPushMessageToChannelInBackground:@"" withMessage:@"in app test" block:^(BOOL succeeded, NSError *error) {
+        if (succeeded) NSLog(@"Succeeded");
+    }];
     return YES;
 }
 
@@ -113,13 +116,34 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)newDeviceToken
     // Tell Parse about the device token.
     [PFPush storeDeviceToken:newDeviceToken];
     // Subscribe to the global broadcast channel.
-    [PFPush subscribeToChannelInBackground:@""];
+//    [PFPush subscribeToChannelInBackground:@""];
+    [PFPush subscribeToChannelInBackground:@"" block:^(BOOL succeeded, NSError *error) {
+        if (succeeded) {
+            
+        }
+    }];
+    [PFPush subscribeToChannelInBackground:@"test" block:^(BOOL succeeded, NSError *error) {
+        
+    }];
 }
 
 - (void)application:(UIApplication *)application 
 didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [PFPush handlePush:userInfo];
 }
+
+- (void)application:(UIApplication *)application 
+didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"push" message:[[error userInfo] description] delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil];
+    [alert show];
+    if ([error code] == 3010) {
+        NSLog(@"Push notifications don't work in the simulator!");
+    } else {
+        NSLog(@"didFailToRegisterForRemoteNotificationsWithError: %@", error);
+    }
+}
+
 
 #pragma mark - URL Open Handling
 
