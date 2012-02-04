@@ -11,6 +11,7 @@
 #import "Parse/PFFile.h"
 #import "Parse/PFUser.h"
 #import "Parse/PFACL.h"
+#import "Parse/PFGeopoint.h"
 
 @implementation ParsePoster
 
@@ -27,7 +28,13 @@
         [acl setPublicReadAccess:YES];
     }
     newPhoto.ACL = acl;
-    PFFile *photoFile = [PFFile fileWithName:@"photo.jpg" data:photoData];
+    if ([metaDict objectForKey:@"DHDataGeoLat"]) {
+        double lat = [[metaDict objectForKey:@"DHDataGeoLat"] doubleValue];
+        double lon = [[metaDict objectForKey:@"DHDataGeoLong"] doubleValue];
+        PFGeoPoint *geopoint = [PFGeoPoint geoPointWithLatitude:lat longitude:lon];
+        [newPhoto setObject:geopoint forKey:@"geopoint"];
+    }
+        PFFile *photoFile = [PFFile fileWithName:@"photo.jpg" data:photoData];
 //    [[NSNotificationCenter defaultCenter] postNotificationName:DH_PHOTO_UPLOAD_BEGIN_NOTIFICATION object:nil];
     [photoFile saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error1) {
         if (error1 != nil) {
