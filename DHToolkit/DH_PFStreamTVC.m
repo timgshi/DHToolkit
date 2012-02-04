@@ -19,6 +19,7 @@
 #import "DHStreamCell.h"
 #import "DHUploadNotificationView.h"
 #import "DHSortBoxView.h"
+#import "Parse/PFPush.h"
 
 @interface DH_PFStreamTVC() <DHImageRatingDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, DHExpandingStreamCellDelegate, DHSortBoxViewDelegate>
 @property (nonatomic, strong) NSMutableSet *expandedIndexPaths;
@@ -486,6 +487,14 @@
 
 - (void)uploadSuccess:(NSNotification *)notification
 {
+    [self loadObjects];
+    PFUser *curUser = [PFUser currentUser];
+    NSString *pushMessage = [NSString stringWithFormat:@"%@ just shared a moment", curUser.username];
+    [PFPush sendPushMessageToChannelInBackground:@"" withMessage:pushMessage block:^(BOOL succeeded, NSError *error) {
+        if (succeeded) {
+            NSLog(@"Success push sent");
+        }
+    }];
     self.uploadNotificationView.messageText = kDH_Success_Text;
     self.uploadNotificationView.isLoading = NO;
     [UIView animateWithDuration:0.3 delay:2.0 options:0 animations:^{
@@ -494,7 +503,6 @@
         self.uploadNotificationView.frame = frame;
     } completion:^(BOOL finished) {
         [self.uploadNotificationView removeFromSuperview];
-        [self loadObjects];
     }];
 }
 

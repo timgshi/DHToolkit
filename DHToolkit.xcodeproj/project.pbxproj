@@ -1025,7 +1025,7 @@
 		4B34356114A26EB9002831BD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer: Tim Shi (J75H52U2R7)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
@@ -1038,7 +1038,7 @@
 					"\"$(SRCROOT)\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "42359501-71C4-4DE2-858D-F971E546EA93";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1046,7 +1046,7 @@
 		4B34356214A26EB9002831BD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Timothy Shi";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: The Leland Stanford Junior University";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
@@ -1060,7 +1060,7 @@
 					"\"$(SRCROOT)\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "3B1692F4-AF21-44DF-A808-6FA574DC2AB0";
+				PROVISIONING_PROFILE = "B2F0FF23-0621-4D95-9F56-CBD8B25DCF0C";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

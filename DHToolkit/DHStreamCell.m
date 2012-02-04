@@ -170,9 +170,12 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        [self setClipsToBounds:YES];
+        [self setClipsToBounds:NO];
         [self.contentView addSubview:self.contentContainerView];
-        [self.contentView setClipsToBounds:YES];
+        [self.contentView setClipsToBounds:NO];
+        UIView *separatorView = [[UIView alloc] initWithFrame:CGRectMake(0, DH_CELL_HEIGHT - 2, self.frame.size.width, 2)];
+        [separatorView setBackgroundColor:[UIColor whiteColor]];
+        [self.contentView addSubview:separatorView];
     }
     return self;
 }
@@ -188,6 +191,12 @@
     photoObject = aPhotoObject;
     self.cellImageView.image = nil;
     self.photographerNameLabel.text = [photoObject objectForKey:@"DHDataWhoTook"];
+    if ([photoObject objectForKey:@"isAnonymous"]) {
+        BOOL anonymous = [[photoObject objectForKey:@"isAnonymous"] boolValue];
+        if (anonymous) {
+            self.photographerNameLabel.text = @"anonymous";
+        }
+    }
     self.photoDescriptionLabel.text = [photoObject objectForKey:@"DHDataSixWord"];
     CGSize nameSize = [self.photographerNameLabel.text sizeWithFont:[self.photographerNameLabel font]];
     self.photographerNameLabel.frame = CGRectMake(5, 5, nameSize.width, nameSize.height);

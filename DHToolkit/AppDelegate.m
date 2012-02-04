@@ -12,6 +12,7 @@
 #import "Parse/Parse.h"
 #import "DH_PFStreamTVC.h"
 #import "UIBarButtonItem+CustomImage.h"
+#import "Parse/PFPush.h"
 
 @interface AppDelegate()
 {
@@ -50,7 +51,9 @@
 //    [[UINavigationBar appearance] setBackgroundImage:[[UIImage imageNamed:@"black.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)] forBarMetrics:UIBarMetricsDefault];
 //    [[UINavigationBar appearance] setBackgroundImage:[[UIImage imageNamed:@"navbar.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 10)] forBarMetrics:UIBarMetricsDefault];
     [[UINavigationBar appearance] setBackgroundImage:[[UIImage imageNamed:@"navbarblack.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)] forBarMetrics:UIBarMetricsDefault];
-    
+    [[[UINavigationBar appearance] layer] setShadowColor:[UIColor blackColor].CGColor];
+    [[[UINavigationBar appearance] layer] setShadowOffset:CGSizeMake(0, 3)];
+    [[[UINavigationBar appearance] layer] setMasksToBounds:NO];
 //    [[UINavigationBar appearance] setBackBarButtonItem:[UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"backarrow.png"] target:nil action:nil]];
     [[UINavigationBar appearance] setTitleTextAttributes:
      [NSDictionary dictionaryWithObjectsAndKeys:
@@ -98,8 +101,49 @@
     self.window.rootViewController = streamNav;
 //    [TestFlight takeOff:kTestFlightTeamID];
     [Parse setFacebookApplicationId:kDH_FACEBOOK_ID];
+    [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge|
+     UIRemoteNotificationTypeAlert|
+     UIRemoteNotificationTypeSound];
+    [PFPush sendPushMessageToChannelInBackground:@"" withMessage:@"in app test" block:^(BOOL succeeded, NSError *error) {
+        if (succeeded) NSLog(@"Succeeded");
+    }];
     return YES;
 }
+
+- (void)application:(UIApplication *)application
+didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)newDeviceToken
+{
+    // Tell Parse about the device token.
+    [PFPush storeDeviceToken:newDeviceToken];
+    // Subscribe to the global broadcast channel.
+//    [PFPush subscribeToChannelInBackground:@""];
+    [PFPush subscribeToChannelInBackground:@"" block:^(BOOL succeeded, NSError *error) {
+        if (succeeded) {
+            
+        }
+    }];
+    [PFPush subscribeToChannelInBackground:@"test" block:^(BOOL succeeded, NSError *error) {
+        
+    }];
+}
+
+- (void)application:(UIApplication *)application 
+didReceiveRemoteNotification:(NSDictionary *)userInfo {
+    [PFPush handlePush:userInfo];
+}
+
+- (void)application:(UIApplication *)application 
+didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"push" message:[[error userInfo] description] delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil];
+    [alert show];
+    if ([error code] == 3010) {
+        NSLog(@"Push notifications don't work in the simulator!");
+    } else {
+        NSLog(@"didFailToRegisterForRemoteNotificationsWithError: %@", error);
+    }
+}
+
 
 #pragma mark - URL Open Handling
 

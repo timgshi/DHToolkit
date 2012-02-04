@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "Parse/PFObject.h"
 
-#define DH_CELL_HEIGHT 320
+#define DH_CELL_HEIGHT 320 + 2
 #define DH_CELL_INFO_BAR_HEIGHT 65
 
 @class DHPhoto;
