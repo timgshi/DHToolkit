@@ -18,13 +18,13 @@
 #import <Twitter/Twitter.h>
 #import <Accounts/Accounts.h>
 
-@interface DHImageRatingTVC() <CLLocationManagerDelegate, GoogleWeatherFetcherDelegate, UITextFieldDelegate, UIAlertViewDelegate>
+@interface DHImageRatingTVC() <CLLocationManagerDelegate, GoogleWeatherFetcherDelegate, UITextFieldDelegate, UIAlertViewDelegate, PF_FBRequestDelegate>
 @property int imageRating;
 @property BOOL isPrivate;
 @property (nonatomic, strong) UISlider *ratingSlider;
 @property (nonatomic, strong) UILabel *ratingLabel, *locationLabel;
 @property (nonatomic, strong) UITextField *descriptionField;
-@property (nonatomic, strong) UISwitch *privacySwitch, *anonymousSwitch, *twitterSwitch;
+@property (nonatomic, strong) UISwitch *privacySwitch, *anonymousSwitch, *twitterSwitch, *facebookSwitch;
 @property (nonatomic, strong) CLLocationManager *locationManager;
 @property (nonatomic, strong) CLLocation *currentLocation;
 @property (nonatomic, strong) CLGeocoder *geocoder;
@@ -40,7 +40,7 @@
 @synthesize ratingSlider;
 @synthesize ratingLabel, locationLabel;
 @synthesize descriptionField;
-@synthesize privacySwitch, anonymousSwitch, twitterSwitch;
+@synthesize privacySwitch, anonymousSwitch, twitterSwitch, facebookSwitch;
 @synthesize locationManager, currentLocation;
 @synthesize geocoder;
 @synthesize locationString;
@@ -144,6 +144,12 @@
 
 }
 
+- (void)postMomentToFacebookWithImage:(UIImage *)image
+{
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:image, @"source", @"I just shared a happiness moment", @"message", self.descriptionField.text, @"name", nil];
+    [[PFUser facebook] requestWithGraphPath:@"me/photos" andParams:params andHttpMethod:@"POST" andDelegate:self];
+}
+
 - (void)savePhotoObject
 {
     if (self.weatherFetcher) {
@@ -176,10 +182,14 @@
         [metaDict setObject:[NSNumber numberWithBool:NO] forKey:kDHDataPrivacyKey];
     }
     [metaDict setObject:[NSNumber numberWithBool:self.anonymousSwitch.on] forKey:@"isAnonymous"];
-    [ParsePoster postPhotoWithMetaInfo:metaDict andPhotoData:UIImageJPEGRepresentation(selectedPhoto, 0.8)];
     if (twitterSwitch.on) {
         [self tweetMomentWithPhotoData:UIImageJPEGRepresentation(selectedPhoto, 0.8)];
     }
+    if (facebookSwitch.on) {
+        [self postMomentToFacebookWithImage:self.selectedPhoto];
+    }
+    [ParsePoster postPhotoWithMetaInfo:metaDict andPhotoData:UIImageJPEGRepresentation(selectedPhoto, 0.8)];
+    
 }
 
 #pragma mark - Nav Bar Buttons
@@ -207,6 +217,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
 //    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(saveButtonPressed)];
     self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"plus.png"] target:self action:@selector(saveButtonPressed)];
 //    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelButtonPressed)];
@@ -377,6 +388,32 @@
     }
 }
 
+- (UISwitch *)facebookSwitch
+{
+    if (!facebookSwitch) {
+        facebookSwitch = [[UISwitch alloc] init];
+        facebookSwitch.frame = CGRectMake(231, 6, 10, 10);
+        facebookSwitch.transform = CGAffineTransformMakeScale(0.70, 0.70);
+        facebookSwitch.onTintColor = [UIColor colorWithRed:253/255.0 green:193/255.0 blue:49/255.0 alpha:1];
+        [facebookSwitch addTarget:self action:@selector(facebookSwitchMoved) forControlEvents:UIControlEventValueChanged];
+    }
+    return facebookSwitch;
+}
+
+- (void)facebookSwitchMoved
+{
+    if (self.facebookSwitch.on) {
+        PFUser *curUser = [PFUser currentUser];
+        if (![curUser hasFacebook]) {
+            [curUser linkToFacebook:[NSArray arrayWithObjects:@"email", @"publish_stream", @"offline_access", nil] block:^(BOOL succeeded, NSError *error) {
+                
+            }];
+        } else if (![[PFUser facebook] accessToken]) {
+            [[PFUser facebook] authorize:[NSArray arrayWithObjects:@"email", @"publish_stream", @"offline_access", nil]];
+        }
+    }
+}
+
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if ([alertView.title isEqualToString:@"Twitter"]) {
@@ -399,7 +436,7 @@
             return 3;
             break;
         case 1:
-            return 3;
+            return 4;
             break;
         default:
             return 1;
@@ -453,8 +490,11 @@
                 cell.textLabel.text = @"Make this photo anonymous:";
                 [cell.contentView addSubview:self.anonymousSwitch];
             } else if ([indexPath row] == 2) {
-                cell.textLabel.text = @"Share this moment to twitter";
+                cell.textLabel.text = @"Twitter sharing";
                 [cell.contentView addSubview:self.twitterSwitch];
+            } else if ([indexPath row] == 3) {
+                cell.textLabel.text = @"Facebook sharing";
+                [cell.contentView addSubview:self.facebookSwitch];
             }
             break;
         default:
@@ -524,6 +564,16 @@
 {
     [textField resignFirstResponder];
     return YES;
+}
+
+#pragma mark - Facebook Delegate Methods
+
+- (void)request:(PF_FBRequest *)request didLoad:(id)result
+{
+    if ([result isKindOfClass:[NSDictionary class]]) {
+        NSDictionary *resultDict = (NSDictionary *)result;
+        
+    }
 }
 
 @end

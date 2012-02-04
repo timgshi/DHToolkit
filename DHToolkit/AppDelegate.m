@@ -104,9 +104,6 @@
     [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge|
      UIRemoteNotificationTypeAlert|
      UIRemoteNotificationTypeSound];
-    [PFPush sendPushMessageToChannelInBackground:@"" withMessage:@"in app test" block:^(BOOL succeeded, NSError *error) {
-        if (succeeded) NSLog(@"Succeeded");
-    }];
     return YES;
 }
 

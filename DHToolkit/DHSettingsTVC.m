@@ -186,8 +186,11 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (section == 1) {
+    if ([PFUser currentUser] && section == 1) {
         return 2;
+    }
+    if (section == 1) {
+        return 1;
     }
     return 2;
 }
