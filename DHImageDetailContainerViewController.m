@@ -8,11 +8,14 @@
 
 #import "DHImageDetailContainerViewController.h"
 #import "DHImageDetailImageVC.h"
+#import "DHImageDetailMetaVC.h"
 #import "UIBarButtonItem+CustomImage.h"
 #import "Parse/PFUser.h"
 
 @interface DHImageDetailContainerViewController() <UIActionSheetDelegate>
 @property (nonatomic, strong) DHImageDetailImageVC *imageVC;
+@property (nonatomic, strong) DHImageDetailMetaVC *metaVC;
+@property BOOL photoVisible;
 @end
 
 
@@ -21,6 +24,8 @@
 @synthesize photoObject;
 @synthesize managedPhoto;
 @synthesize imageVC;
+@synthesize metaVC;
+@synthesize photoVisible;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -57,7 +62,12 @@
     self.imageVC.photoObject = self.photoObject;
     self.imageVC.managedPhoto = self.managedPhoto;
     [self addChildViewController:self.imageVC];
+    self.metaVC = [[DHImageDetailMetaVC alloc] init];
+    self.metaVC.photoObject = self.photoObject;
+    self.metaVC.managedPhoto = self.managedPhoto;
+    [self addChildViewController:self.metaVC];
     [self.view addSubview:self.imageVC.view];
+    photoVisible = YES;
     self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"backarrow.png"] target:self action:@selector(backArrowPressed)];
     self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"trash.png"] target:self action:@selector(deleteButtonPressed)];
     PFUser *curUser = [PFUser currentUser];
@@ -101,6 +111,24 @@
         [photoObject deleteInBackground];
         [[NSNotificationCenter defaultCenter] postNotificationName:DH_PHOTO_DELETE_NOTIFICATION object:nil];
         [self.navigationController popViewControllerAnimated:YES];
+    }
+}
+
+- (void)flipButtonPressed
+{
+    if (photoVisible) {
+        
+        [self transitionFromViewController:self.imageVC toViewController:self.metaVC duration:0.5 options:UIViewAnimationOptionTransitionFlipFromRight animations:^{
+            
+        } completion:^(BOOL finished) {
+            photoVisible = NO;
+        }];
+    } else {
+        [self transitionFromViewController:self.metaVC toViewController:self.imageVC duration:0.5 options:UIViewAnimationOptionTransitionFlipFromLeft animations:^{
+            
+        } completion:^(BOOL finished) {
+            photoVisible = YES;
+        }];
     }
 }
 

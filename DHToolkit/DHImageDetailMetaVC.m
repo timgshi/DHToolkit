@@ -10,6 +10,9 @@
 
 @implementation DHImageDetailMetaVC
 
+@synthesize photoObject;
+@synthesize managedPhoto;
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];

@@ -7,7 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Parse/PFObject.h"
+#import "DHPhoto+Photo_PF.h"
 
 @interface DHImageDetailMetaVC : UIViewController
+
+@property (nonatomic, strong) PFObject *photoObject;
+@property (nonatomic, assign) DHPhoto *managedPhoto;
 
 @end
