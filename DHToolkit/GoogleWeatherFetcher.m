@@ -98,7 +98,7 @@
 
 - (void)timerFired
 {
-    [self.delegate googleWeatherFetcher:self didFailWithError:[NSError errorWithDomain:@"WeatherFetcher" code:0 userInfo:[NSDictionary dictionaryWithObject:@"Timeout" forKey:NSLocalizedDescriptionKey]]];
+    if (self.delegate) [self.delegate googleWeatherFetcher:self didFailWithError:[NSError errorWithDomain:@"WeatherFetcher" code:0 userInfo:[NSDictionary dictionaryWithObject:@"Timeout" forKey:NSLocalizedDescriptionKey]]];
     self.canceled = YES;
 }
 

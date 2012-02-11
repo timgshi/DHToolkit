@@ -51,6 +51,7 @@
 		4B6C365814BEE8B800367C90 /* UIImage+Resize.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B6C365414BEE8B800367C90 /* UIImage+Resize.m */; };
 		4B6C365914BEE8B800367C90 /* UIImage+RoundedCorner.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B6C365614BEE8B800367C90 /* UIImage+RoundedCorner.m */; };
 		4B6C365C14BF758700367C90 /* DHPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B6C365B14BF758700367C90 /* DHPhoto.m */; };
+		4B6E6DD414E6FE0B00DCCD48 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B6E6DD314E6FE0B00DCCD48 /* Parse.framework */; };
 		4B7A686814BA673B0074B1CC /* 86-camera.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B7A686614BA673B0074B1CC /* 86-camera.png */; };
 		4B7A686914BA673B0074B1CC /* 86-camera@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B7A686714BA673B0074B1CC /* 86-camera@2x.png */; };
 		4B7A687114BA77C00074B1CC /* DHImageRatingTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B7A687014BA77C00074B1CC /* DHImageRatingTVC.m */; };
@@ -63,7 +64,6 @@
 		4B7A688A14BABB9B0074B1CC /* sadface@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B7A688614BABB9B0074B1CC /* sadface@2x.png */; };
 		4B7A688C14BB62F50074B1CC /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B7A688B14BB62F50074B1CC /* MapKit.framework */; };
 		4B7A688E14BB6A160074B1CC /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B7A688D14BB6A160074B1CC /* CoreLocation.framework */; };
-		4B7A689F14BCE6B30074B1CC /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B7A689E14BCE6B30074B1CC /* Parse.framework */; };
 		4B7A68A214BCE7F00074B1CC /* DH_PFStreamTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B7A68A114BCE7F00074B1CC /* DH_PFStreamTVC.m */; };
 		4B93338814D696C000D7481E /* rating-highlighted.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B93338414D696C000D7481E /* rating-highlighted.png */; };
 		4B93338914D696C000D7481E /* rating-highlighted@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B93338514D696C000D7481E /* rating-highlighted@2x.png */; };
@@ -255,6 +255,7 @@
 		4B6C365614BEE8B800367C90 /* UIImage+RoundedCorner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+RoundedCorner.m"; sourceTree = "<group>"; };
 		4B6C365A14BF758700367C90 /* DHPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHPhoto.h; sourceTree = "<group>"; };
 		4B6C365B14BF758700367C90 /* DHPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DHPhoto.m; sourceTree = "<group>"; };
+		4B6E6DD314E6FE0B00DCCD48 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
 		4B7A686614BA673B0074B1CC /* 86-camera.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "86-camera.png"; sourceTree = "<group>"; };
 		4B7A686714BA673B0074B1CC /* 86-camera@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "86-camera@2x.png"; sourceTree = "<group>"; };
 		4B7A686F14BA77C00074B1CC /* DHImageRatingTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHImageRatingTVC.h; sourceTree = "<group>"; };
@@ -268,7 +269,6 @@
 		4B7A688614BABB9B0074B1CC /* sadface@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sadface@2x.png"; sourceTree = "<group>"; };
 		4B7A688B14BB62F50074B1CC /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		4B7A688D14BB6A160074B1CC /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
-		4B7A689E14BCE6B30074B1CC /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
 		4B7A68A014BCE7F00074B1CC /* DH_PFStreamTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DH_PFStreamTVC.h; sourceTree = "<group>"; };
 		4B7A68A114BCE7F00074B1CC /* DH_PFStreamTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DH_PFStreamTVC.m; sourceTree = "<group>"; };
 		4B93338414D696C000D7481E /* rating-highlighted.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "rating-highlighted.png"; sourceTree = "<group>"; };
@@ -384,7 +384,7 @@
 				4B34353414A26EB8002831BD /* Foundation.framework in Frameworks */,
 				4B34353814A26EB8002831BD /* CoreData.framework in Frameworks */,
 				4B9BB09014A31CB50062C1EE /* libTestFlight.a in Frameworks */,
-				4B7A689F14BCE6B30074B1CC /* Parse.framework in Frameworks */,
+				4B6E6DD414E6FE0B00DCCD48 /* Parse.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -453,7 +453,7 @@
 		4B34353014A26EB8002831BD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				4B7A689E14BCE6B30074B1CC /* Parse.framework */,
+				4B6E6DD314E6FE0B00DCCD48 /* Parse.framework */,
 				4B9BB0A414A32C140062C1EE /* QuartzCore.framework */,
 				4B9BB08E14A31CB50062C1EE /* libTestFlight.a */,
 				4B9BB08F14A31CB50062C1EE /* TestFlight.h */,
@@ -1084,7 +1084,8 @@
 		4B34356214A26EB9002831BD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Distribution: The Leland Stanford Junior University";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: The Leland Stanford Junior University";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
@@ -1098,7 +1099,8 @@
 					"\"$(SRCROOT)\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "B2F0FF23-0621-4D95-9F56-CBD8B25DCF0C";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=*]" = "8CCE07DF-0656-4C7B-96BC-D97CFDA39F82";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

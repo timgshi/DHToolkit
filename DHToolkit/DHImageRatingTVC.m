@@ -324,7 +324,7 @@
         [descriptionField setTextColor:[UIColor whiteColor]];
         [descriptionField setPlaceholder:@"Describe this moment..."];
         [descriptionField setAutocapitalizationType:UITextAutocapitalizationTypeNone];
-        [descriptionField setAutocorrectionType:UITextAutocorrectionTypeNo];
+        [descriptionField setAutocorrectionType:UITextAutocorrectionTypeYes];
         [descriptionField setReturnKeyType:UIReturnKeyDone];
         [descriptionField setDelegate:self];
     }

@@ -509,7 +509,7 @@
     NSDictionary *dict = [notification object];
     BOOL isAnonymous = [[dict objectForKey:@"isAnonymous"] boolValue];
     PFUser *curUser = [PFUser currentUser];
-    NSString *username = (isAnonymous) ? curUser.username : @"Someone";
+    NSString *username = (!isAnonymous) ? curUser.username : @"Someone";
     NSString *pushMessage = [NSString stringWithFormat:@"%@ just shared a moment", username];
     [PFPush sendPushMessageToChannelInBackground:@"" withMessage:pushMessage block:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
