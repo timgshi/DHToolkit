@@ -22,7 +22,7 @@
 #import "Parse/PFPush.h"
 #import "DHImageDetailContainerViewController.h"
 
-@interface DH_PFStreamTVC() <DHImageRatingDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, DHExpandingStreamCellDelegate, DHSortBoxViewDelegate>
+@interface DH_PFStreamTVC() <DHImageRatingDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, DHSortBoxViewDelegate, DHGalleryVCDelegate>
 @property (nonatomic, strong) NSMutableSet *expandedIndexPaths;
 @property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
 @property (nonatomic, strong) DHGalleryVC *galleryVC;
@@ -149,6 +149,7 @@
     if (!galleryVC) {
         galleryVC = [[DHGalleryVC alloc] initInManagedObjectContext:self.context];
         galleryVC.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+        galleryVC.galleryDelegate = self;
     }
     UINavigationController *galleryNav = [[UINavigationController alloc] initWithRootViewController:galleryVC];
     [self presentViewController:galleryNav animated:YES completion:^{
@@ -188,6 +189,7 @@
     [self.navigationItem setBackBarButtonItem:[UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"backarrow.png"] target:nil action:nil]];
     galleryVC = [[DHGalleryVC alloc] initInManagedObjectContext:self.context];
     galleryVC.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    galleryVC.galleryDelegate = self;
     [super viewDidLoad];
     
 }
@@ -224,24 +226,15 @@
     self.uploadNotificationView = nil;
     self.sortBox = nil;
     self.opaqueView = nil;
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
 - (PFQuery *)queryForTable
 {
-//    PFQuery *query = [PFQuery queryWithClassName:self.className];
-//    if ([self.objects count] == 0) {
-//        query.cachePolicy = kPFCachePolicyCacheThenNetwork;
-//    }
-//    [query orderByDescending:@"DHDataTimestamp"];
-//    return query;
     return [self queryBasedOnSortDefaults];
 }
 
@@ -254,7 +247,6 @@
             [cell.spinner startAnimating];
             dispatch_queue_t downloadQueue = dispatch_queue_create("com.dh.photodownloader", NULL);
             dispatch_async(downloadQueue, ^{ 
-//                [self incrementNetworkActivity:nil];
                 NSData *imageData = [ParseFetcher photoDataForPhotoObject:photoObject];
                 UIImage *image = [UIImage imageWithData:imageData];
                 UIImage *thumbImage = nil;
@@ -263,8 +255,6 @@
                     NSData *thumbImageData = UIImageJPEGRepresentation(thumbImage, 1.0);
                     dispatch_async(dispatch_get_main_queue(), ^{
                         cellPhoto.photoData = thumbImageData;
-//                        [self decrementNetworkActivity:nil];
-//                        [self.fetchedResultsController.managedObjectContext save:nil];
                         [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:@"AutoSaveRequested" object:nil]];
                     }); 
                 } else {
@@ -315,9 +305,6 @@
     }
     cell.PFObjectID = [object objectId];
     cell.photoObject = object;
-//    if ([self.fetchedResultsController.fetchedObjects count]) {
-//        cell.cellPhoto = [self.fetchedResultsController objectAtIndexPath:indexPath];
-//    }
     NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"DHPhoto"];
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"pfObjectID == %@", [object objectId]];
     NSArray *results = [self.context executeFetchRequest:fetchRequest error:nil];
@@ -470,19 +457,7 @@
     }
 }
 
-#pragma mark - DHExpandingStreamCellDelegate Methods
 
-- (UIImage *)cell:(DHExpandingStreamCell *)cell wantsImageForObjectID:(NSString *)objectID
-{
-    UIImage *image = [self.photosCache objectForKey:objectID];
-    if (image != NULL) return image;
-    return nil;
-}
-
-- (void)cell:(DHExpandingStreamCell *)cell loadedImage:(UIImage *)image forObjectID:(NSString *)objectID
-{
-    [self.photosCache setObject:image forKey:objectID];
-}
 
 #pragma mark - Upload Notification Handlers
 
@@ -615,7 +590,13 @@
     self.fetchedResultsController = [self fetchedResultsControllerBasedOnSortDefaults];
     [self.fetchedResultsController performFetch:nil];
     [self loadObjects];
-//    [self sortButtonPressed];
+}
+
+#pragma mark - DHGalleryVCDelegate Methods
+
+- (PFObject *)parseObjectForIndex:(int)index
+{
+    return [self objectAtIndex:[NSIndexPath indexPathForRow:index inSection:0]];
 }
 
 

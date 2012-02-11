@@ -13,6 +13,7 @@
 #import "DHPhoto+Photo_PF.h"
 #import "Parse/PFUser.h"
 #import "UIBarButtonItem+CustomImage.h"
+#import "DHImageDetailContainerViewController.h"
 
 @interface DHGalleryVC() <DHGalleryPresenterDelegate>
 @property (nonatomic, strong) UIScrollView *scrollView;
@@ -228,27 +229,36 @@
 
 - (void)buttonClicked:(UIButton *)button
 {
-    if (!galleryPresenter) {
+    if (self.galleryDelegate) {
         NSInteger index = button.tag;
         NSIndexPath *indexPathForCurrentIndex = [NSIndexPath indexPathForRow:index inSection:0];
         DHPhoto *photo = [self.fetchedResultsController objectAtIndexPath:indexPathForCurrentIndex];
-        galleryPresenter = [[DHGalleryPresenterVC alloc] initWithPhoto:photo];
-        galleryPresenter.delegate = self;
-        UITapGestureRecognizer *tapgr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(galleryXButtonPressed)];
-        [galleryPresenter.view addGestureRecognizer:tapgr];
-        [galleryPresenter prepareToAddToSuperviewInRect:button.frame];
-        [self.scrollView addSubview:galleryPresenter.view];
-        CGRect screenRect = self.scrollView.frame;
-        CGRect newFrame = button.frame;
-        CGPoint newOrigin = CGPointMake((screenRect.size.width / 2) - (DEFAULT_BIG_IMAGE_WIDTH / 2), self.scrollView.contentOffset.y + (screenRect.size.height / 2) - (DEFAULT_BIG_IMAGE_HEIGHT / 2) - 45);
-        CGSize newSize = CGSizeMake(DEFAULT_BIG_IMAGE_WIDTH, DEFAULT_BIG_IMAGE_HEIGHT);
-        newFrame.origin = newOrigin;
-        newFrame.size = newSize;
-        [galleryPresenter expandAndConfigureForRect:newFrame];
-        [self.scrollView setScrollEnabled:NO];
-    } else {
-        [self galleryXButtonPressed];
+        DHImageDetailContainerViewController *detailVC = [[DHImageDetailContainerViewController alloc] init];
+        detailVC.photoObject = [self.galleryDelegate parseObjectForIndex:index];
+        detailVC.managedPhoto = photo;
+        [self.navigationController pushViewController:detailVC animated:YES];
     }
+//    if (!galleryPresenter) {
+//        NSInteger index = button.tag;
+//        NSIndexPath *indexPathForCurrentIndex = [NSIndexPath indexPathForRow:index inSection:0];
+//        DHPhoto *photo = [self.fetchedResultsController objectAtIndexPath:indexPathForCurrentIndex];
+//        galleryPresenter = [[DHGalleryPresenterVC alloc] initWithPhoto:photo];
+//        galleryPresenter.delegate = self;
+//        UITapGestureRecognizer *tapgr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(galleryXButtonPressed)];
+//        [galleryPresenter.view addGestureRecognizer:tapgr];
+//        [galleryPresenter prepareToAddToSuperviewInRect:button.frame];
+//        [self.scrollView addSubview:galleryPresenter.view];
+//        CGRect screenRect = self.scrollView.frame;
+//        CGRect newFrame = button.frame;
+//        CGPoint newOrigin = CGPointMake((screenRect.size.width / 2) - (DEFAULT_BIG_IMAGE_WIDTH / 2), self.scrollView.contentOffset.y + (screenRect.size.height / 2) - (DEFAULT_BIG_IMAGE_HEIGHT / 2) - 45);
+//        CGSize newSize = CGSizeMake(DEFAULT_BIG_IMAGE_WIDTH, DEFAULT_BIG_IMAGE_HEIGHT);
+//        newFrame.origin = newOrigin;
+//        newFrame.size = newSize;
+//        [galleryPresenter expandAndConfigureForRect:newFrame];
+//        [self.scrollView setScrollEnabled:NO];
+//    } else {
+//        [self galleryXButtonPressed];
+//    }
 }
 
 
