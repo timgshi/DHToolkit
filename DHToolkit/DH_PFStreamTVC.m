@@ -24,7 +24,6 @@
 
 @interface DH_PFStreamTVC() <DHImageRatingDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, DHExpandingStreamCellDelegate, DHSortBoxViewDelegate>
 @property (nonatomic, strong) NSMutableSet *expandedIndexPaths;
-@property (nonatomic, strong) NSCache *photosCache;
 @property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
 @property (nonatomic, strong) DHGalleryVC *galleryVC;
 @property (nonatomic, strong) DHUploadNotificationView *uploadNotificationView;
@@ -38,7 +37,6 @@
 @implementation DH_PFStreamTVC
 
 @synthesize expandedIndexPaths;
-@synthesize photosCache;
 @synthesize context;
 @synthesize fetchedResultsController;
 @synthesize galleryVC;
@@ -108,14 +106,6 @@
     return expandedIndexPaths;
 }
 
-- (NSCache *)photosCache
-{
-    if (!photosCache) {
-        photosCache = [[NSCache alloc] init];
-        photosCache.countLimit = 25;
-    }
-    return photosCache;
-}
 
 #pragma mark - View lifecycle
 
@@ -156,8 +146,10 @@
     if (sortBox) {
         [self sortButtonPressed];
     }
-    galleryVC = [[DHGalleryVC alloc] initInManagedObjectContext:self.context];
-    galleryVC.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    if (!galleryVC) {
+        galleryVC = [[DHGalleryVC alloc] initInManagedObjectContext:self.context];
+        galleryVC.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    }
     UINavigationController *galleryNav = [[UINavigationController alloc] initWithRootViewController:galleryVC];
     [self presentViewController:galleryNav animated:YES completion:^{
         
@@ -193,8 +185,10 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadSuccess:) name:DH_PHOTO_UPLOAD_SUCCESS_NOTIFICATION object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadFailure:) name:DH_PHOTO_UPLOAD_FAILURE_NOTIFICATION object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(imageDeleted:) name:DH_PHOTO_DELETE_NOTIFICATION object:nil];
-    [super viewDidLoad];
     [self.navigationItem setBackBarButtonItem:[UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"backarrow.png"] target:nil action:nil]];
+    galleryVC = [[DHGalleryVC alloc] initInManagedObjectContext:self.context];
+    galleryVC.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    [super viewDidLoad];
     
 }
 
@@ -225,9 +219,11 @@
     [super viewDidUnload];
     self.uploadNotificationView = nil;
     self.expandedIndexPaths = nil;
-    self.photosCache = nil;
     self.fetchedResultsController = nil;
     self.galleryVC = nil;
+    self.uploadNotificationView = nil;
+    self.sortBox = nil;
+    self.opaqueView = nil;
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
 }

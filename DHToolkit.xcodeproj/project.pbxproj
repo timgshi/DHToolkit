@@ -425,12 +425,8 @@
 		4B34352214A26EB8002831BD = {
 			isa = PBXGroup;
 			children = (
-				4BF19C1C14DD3C55007017ED /* Twitter.framework */,
-				4BF19C1A14DD3C50007017ED /* Accounts.framework */,
 				4B515CED14CE179100CD6C7E /* DHT-Logo@2x.png */,
 				4B515CEB14CE178D00CD6C7E /* DHT-Logo.png */,
-				4B7A688D14BB6A160074B1CC /* CoreLocation.framework */,
-				4B7A688B14BB62F50074B1CC /* MapKit.framework */,
 				4B9BB0DC14A66AE00062C1EE /* libKIF.a */,
 				4B34353914A26EB8002831BD /* DHToolkit */,
 				4B34355514A26EB9002831BD /* DHToolkitTests */,
@@ -453,6 +449,10 @@
 		4B34353014A26EB8002831BD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4BF19C1C14DD3C55007017ED /* Twitter.framework */,
+				4BF19C1A14DD3C50007017ED /* Accounts.framework */,
+				4B7A688D14BB6A160074B1CC /* CoreLocation.framework */,
+				4B7A688B14BB62F50074B1CC /* MapKit.framework */,
 				4B6E6DD314E6FE0B00DCCD48 /* Parse.framework */,
 				4B9BB0A414A32C140062C1EE /* QuartzCore.framework */,
 				4B9BB08E14A31CB50062C1EE /* libTestFlight.a */,
