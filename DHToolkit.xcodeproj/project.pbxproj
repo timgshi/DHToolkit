@@ -25,6 +25,8 @@
 		4B3435B714A27123002831BD /* DHStreamTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B3435B614A27123002831BD /* DHStreamTVC.m */; };
 		4B3435BA14A2725D002831BD /* CoreDataTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B3435B914A2725C002831BD /* CoreDataTableViewController.m */; };
 		4B36D02B14E8E57600C02C8D /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B36D02A14E8E57600C02C8D /* Parse.framework */; };
+		4B48B1F714E8FE56009740D9 /* DHImageDetailMetaHeaderVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B48B1F514E8FE56009740D9 /* DHImageDetailMetaHeaderVC.m */; };
+		4B48B1F814E8FE56009740D9 /* DHImageDetailMetaHeaderVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4B48B1F614E8FE56009740D9 /* DHImageDetailMetaHeaderVC.xib */; };
 		4B4A183014DCB94500AC08FF /* DHImageDetailContainerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B4A182F14DCB94500AC08FF /* DHImageDetailContainerViewController.m */; };
 		4B515CAB14CD6C1C00CD6C7E /* UIBarButtonItem+CustomImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B515CAA14CD6C1C00CD6C7E /* UIBarButtonItem+CustomImage.m */; };
 		4B515CBF14CD72E400CD6C7E /* itc lubalin graph lt demi.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4B515CBD14CD72E400CD6C7E /* itc lubalin graph lt demi.ttf */; };
@@ -218,6 +220,9 @@
 		4B3435B814A2725C002831BD /* CoreDataTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreDataTableViewController.h; sourceTree = "<group>"; };
 		4B3435B914A2725C002831BD /* CoreDataTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreDataTableViewController.m; sourceTree = "<group>"; };
 		4B36D02A14E8E57600C02C8D /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
+		4B48B1F414E8FE56009740D9 /* DHImageDetailMetaHeaderVC.h */ = {isa = PBXFileReference; fileEncoding = 4; name = DHImageDetailMetaHeaderVC.h; path = ../DHImageDetailMetaHeaderVC.h; sourceTree = "<group>"; };
+		4B48B1F514E8FE56009740D9 /* DHImageDetailMetaHeaderVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DHImageDetailMetaHeaderVC.m; path = ../DHImageDetailMetaHeaderVC.m; sourceTree = "<group>"; };
+		4B48B1F614E8FE56009740D9 /* DHImageDetailMetaHeaderVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = DHImageDetailMetaHeaderVC.xib; path = ../DHImageDetailMetaHeaderVC.xib; sourceTree = "<group>"; };
 		4B4A182E14DCB94500AC08FF /* DHImageDetailContainerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DHImageDetailContainerViewController.h; path = ../DHImageDetailContainerViewController.h; sourceTree = "<group>"; };
 		4B4A182F14DCB94500AC08FF /* DHImageDetailContainerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DHImageDetailContainerViewController.m; path = ../DHImageDetailContainerViewController.m; sourceTree = "<group>"; };
 		4B515CA914CD6C1C00CD6C7E /* UIBarButtonItem+CustomImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIBarButtonItem+CustomImage.h"; sourceTree = "<group>"; };
@@ -475,6 +480,9 @@
 		4B34353914A26EB8002831BD /* DHToolkit */ = {
 			isa = PBXGroup;
 			children = (
+				4B48B1F414E8FE56009740D9 /* DHImageDetailMetaHeaderVC.h */,
+				4B48B1F514E8FE56009740D9 /* DHImageDetailMetaHeaderVC.m */,
+				4B48B1F614E8FE56009740D9 /* DHImageDetailMetaHeaderVC.xib */,
 				4BF19C0B14DCBB23007017ED /* DHImageDetailImageVC.h */,
 				4BF19C0C14DCBB23007017ED /* DHImageDetailImageVC.m */,
 				4B4A182E14DCB94500AC08FF /* DHImageDetailContainerViewController.h */,
@@ -863,6 +871,7 @@
 				4BF19C1414DCFE07007017ED /* trash.png in Resources */,
 				4BF19C1514DCFE07007017ED /* trash@2x.png in Resources */,
 				4BF19C2A14DD4618007017ED /* fbicon.png in Resources */,
+				4B48B1F814E8FE56009740D9 /* DHImageDetailMetaHeaderVC.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -952,6 +961,7 @@
 				4B4A183014DCB94500AC08FF /* DHImageDetailContainerViewController.m in Sources */,
 				4BF19C0D14DCBB23007017ED /* DHImageDetailImageVC.m in Sources */,
 				4BF19C1114DCBBA7007017ED /* DHImageDetailMetaVC.m in Sources */,
+				4B48B1F714E8FE56009740D9 /* DHImageDetailMetaHeaderVC.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
