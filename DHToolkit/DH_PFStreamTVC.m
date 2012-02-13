@@ -23,7 +23,7 @@
 #import "DHImageDetailContainerViewController.h"
 #import "AppDelegate.h"
 
-@interface DH_PFStreamTVC() <DHImageRatingDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, DHSortBoxViewDelegate, DHGalleryVCDelegate>
+@interface DH_PFStreamTVC() <DHImageRatingDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, DHSortBoxViewDelegate, DHGalleryVCDelegate, UIScrollViewDelegate>
 @property (nonatomic, strong) NSMutableSet *expandedIndexPaths;
 @property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
 @property (nonatomic, strong) DHGalleryVC *galleryVC;
@@ -49,19 +49,19 @@
 @synthesize objectsLoading;
 
 
-- (id)initWithStyle:(UITableViewStyle)style
-{
-    self = [super initWithStyle:style];
-    if (self) {
-        self.className = @"DHPhoto";
-        self.keyToDisplay = @"DHDataSixWord";
-        self.pullToRefreshEnabled = YES;
-        self.paginationEnabled = YES;
-        self.objectsPerPage = 25;
-        self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    }
-    return self;
-}
+//- (id)initWithStyle:(UITableViewStyle)style
+//{
+//    self = [super initWithStyle:style];
+//    if (self) {
+//        self.className = @"DHPhoto";
+//        self.keyToDisplay = @"DHDataSixWord";
+//        self.pullToRefreshEnabled = YES;
+//        self.paginationEnabled = NO;
+//        self.objectsPerPage = 25;
+//        self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+//    }
+//    return self;
+//}
 
 - initInManagedObjectContext:(NSManagedObjectContext *)aContext
 {
@@ -322,6 +322,22 @@
     return cell;
 }
 
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForNextPageAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *loadMoreCellIdentifier = @"load more cell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:loadMoreCellIdentifier];
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:loadMoreCellIdentifier];
+    }
+    [cell setBackgroundColor:[UIColor blackColor]];
+    [cell.contentView setBackgroundColor:[UIColor blackColor]];
+    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+    spinner.frame = CGRectMake((cell.frame.size.width / 2) - (spinner.frame.size.width / 2), (cell.frame.size.height / 2) - (spinner.frame.size.height / 2), spinner.frame.size.width, spinner.frame.size.width);
+    [spinner startAnimating];
+    [cell.contentView addSubview:spinner];
+    return cell;
+}
+
 - (void)objectsWillLoad
 {
     [super objectsWillLoad];
@@ -331,6 +347,7 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
 //    return ([self.expandedIndexPaths containsObject:indexPath]) ? DH_EXPANDING_CELL_BIG_HEIGHT : DH_EXPANDING_CELL_SMALL_HEIGHT;
+    if (indexPath.row >= [self objects].count) return 40;
     return DH_CELL_HEIGHT;
 }
 
@@ -656,6 +673,22 @@
     AppDelegate *theDelegate = [[UIApplication sharedApplication] delegate];
     [[theDelegate managedObjectContext] performSelectorOnMainThread:@selector(mergeChangesFromContextDidSaveNotification:) withObject:notification waitUntilDone:YES];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSManagedObjectContextDidSaveNotification object:nil];
+}
+
+#pragma mark - UIScrollViewDelegate Methods
+
+- (void)scrollViewDidScroll:(UIScrollView *)aScrollView {
+    CGPoint offset = aScrollView.contentOffset;
+    CGRect bounds = aScrollView.bounds;
+    CGSize size = aScrollView.contentSize;
+    UIEdgeInsets inset = aScrollView.contentInset;
+    float y = offset.y + bounds.size.height - inset.bottom;
+    float h = size.height;
+    float reload_distance = 40;
+    if(y > h - reload_distance) {
+        if (![self isLoading])
+        [self loadNextPage];
+    }
 }
 
 @end
