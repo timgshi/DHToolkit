@@ -7,11 +7,17 @@
 //
 
 #import "DHImageDetailMetaVC.h"
+#import "DHImageDetailMetaHeaderVC.h"
+
+@interface DHImageDetailMetaVC()
+@property (nonatomic, strong) DHImageDetailMetaHeaderVC *headerVC;
+@end
 
 @implementation DHImageDetailMetaVC
 
 @synthesize photoObject;
 @synthesize managedPhoto;
+@synthesize headerVC;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -39,13 +45,15 @@
 }
 */
 
-/*
+
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.headerVC = [[DHImageDetailMetaHeaderVC alloc] init];
+    [self.view addSubview:self.headerVC.view];
 }
-*/
+
 
 - (void)viewDidUnload
 {
