@@ -29,6 +29,7 @@
 @property (nonatomic, strong) DHUploadNotificationView *uploadNotificationView;
 @property (nonatomic, strong) DHSortBoxView *sortBox;
 @property (nonatomic, strong) UIView *opaqueView;
+@property BOOL objectsLoading;
 
 - (PFQuery *)queryBasedOnSortDefaults;
 - (NSFetchedResultsController *)fetchedResultsControllerBasedOnSortDefaults;
@@ -43,6 +44,7 @@
 @synthesize uploadNotificationView;
 @synthesize sortBox;
 @synthesize opaqueView;
+@synthesize objectsLoading;
 
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -312,10 +314,17 @@
         cell.cellPhoto = [results lastObject];
     }
     [cell.spinner stopAnimating];
-    [self DHSetImageFromPhoto:cell.cellPhoto withPhotoObject:object forStreamCell:cell];
+    if (![self objectsLoading]) {
+        [self DHSetImageFromPhoto:cell.cellPhoto withPhotoObject:object forStreamCell:cell];
+    }
     return cell;
 }
 
+- (void)objectsWillLoad
+{
+    [super objectsWillLoad];
+    self.objectsLoading = YES;
+}
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -341,6 +350,7 @@
 
 - (void)objectsDidLoad:(NSError *)error
 {
+    self.objectsLoading = NO;
     [super objectsDidLoad:error];
     for (PFObject *obj in self.objects) {
 //        [DHPhoto photoWithPFObject:obj inManagedObjectContext:self.context];

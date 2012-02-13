@@ -24,6 +24,7 @@
 		4B34356714A26F61002831BD /* DHMainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B34356614A26F61002831BD /* DHMainStoryboard.storyboard */; };
 		4B3435B714A27123002831BD /* DHStreamTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B3435B614A27123002831BD /* DHStreamTVC.m */; };
 		4B3435BA14A2725D002831BD /* CoreDataTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B3435B914A2725C002831BD /* CoreDataTableViewController.m */; };
+		4B36D02B14E8E57600C02C8D /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B36D02A14E8E57600C02C8D /* Parse.framework */; };
 		4B4A183014DCB94500AC08FF /* DHImageDetailContainerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B4A182F14DCB94500AC08FF /* DHImageDetailContainerViewController.m */; };
 		4B515CAB14CD6C1C00CD6C7E /* UIBarButtonItem+CustomImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B515CAA14CD6C1C00CD6C7E /* UIBarButtonItem+CustomImage.m */; };
 		4B515CBF14CD72E400CD6C7E /* itc lubalin graph lt demi.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4B515CBD14CD72E400CD6C7E /* itc lubalin graph lt demi.ttf */; };
@@ -51,7 +52,6 @@
 		4B6C365814BEE8B800367C90 /* UIImage+Resize.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B6C365414BEE8B800367C90 /* UIImage+Resize.m */; };
 		4B6C365914BEE8B800367C90 /* UIImage+RoundedCorner.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B6C365614BEE8B800367C90 /* UIImage+RoundedCorner.m */; };
 		4B6C365C14BF758700367C90 /* DHPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B6C365B14BF758700367C90 /* DHPhoto.m */; };
-		4B6E6DD414E6FE0B00DCCD48 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B6E6DD314E6FE0B00DCCD48 /* Parse.framework */; };
 		4B7A686814BA673B0074B1CC /* 86-camera.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B7A686614BA673B0074B1CC /* 86-camera.png */; };
 		4B7A686914BA673B0074B1CC /* 86-camera@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B7A686714BA673B0074B1CC /* 86-camera@2x.png */; };
 		4B7A687114BA77C00074B1CC /* DHImageRatingTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B7A687014BA77C00074B1CC /* DHImageRatingTVC.m */; };
@@ -217,6 +217,7 @@
 		4B3435B614A27123002831BD /* DHStreamTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DHStreamTVC.m; sourceTree = "<group>"; };
 		4B3435B814A2725C002831BD /* CoreDataTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreDataTableViewController.h; sourceTree = "<group>"; };
 		4B3435B914A2725C002831BD /* CoreDataTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreDataTableViewController.m; sourceTree = "<group>"; };
+		4B36D02A14E8E57600C02C8D /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
 		4B4A182E14DCB94500AC08FF /* DHImageDetailContainerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DHImageDetailContainerViewController.h; path = ../DHImageDetailContainerViewController.h; sourceTree = "<group>"; };
 		4B4A182F14DCB94500AC08FF /* DHImageDetailContainerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DHImageDetailContainerViewController.m; path = ../DHImageDetailContainerViewController.m; sourceTree = "<group>"; };
 		4B515CA914CD6C1C00CD6C7E /* UIBarButtonItem+CustomImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIBarButtonItem+CustomImage.h"; sourceTree = "<group>"; };
@@ -255,7 +256,6 @@
 		4B6C365614BEE8B800367C90 /* UIImage+RoundedCorner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+RoundedCorner.m"; sourceTree = "<group>"; };
 		4B6C365A14BF758700367C90 /* DHPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHPhoto.h; sourceTree = "<group>"; };
 		4B6C365B14BF758700367C90 /* DHPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DHPhoto.m; sourceTree = "<group>"; };
-		4B6E6DD314E6FE0B00DCCD48 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
 		4B7A686614BA673B0074B1CC /* 86-camera.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "86-camera.png"; sourceTree = "<group>"; };
 		4B7A686714BA673B0074B1CC /* 86-camera@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "86-camera@2x.png"; sourceTree = "<group>"; };
 		4B7A686F14BA77C00074B1CC /* DHImageRatingTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHImageRatingTVC.h; sourceTree = "<group>"; };
@@ -384,7 +384,7 @@
 				4B34353414A26EB8002831BD /* Foundation.framework in Frameworks */,
 				4B34353814A26EB8002831BD /* CoreData.framework in Frameworks */,
 				4B9BB09014A31CB50062C1EE /* libTestFlight.a in Frameworks */,
-				4B6E6DD414E6FE0B00DCCD48 /* Parse.framework in Frameworks */,
+				4B36D02B14E8E57600C02C8D /* Parse.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -449,11 +449,11 @@
 		4B34353014A26EB8002831BD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4B36D02A14E8E57600C02C8D /* Parse.framework */,
 				4BF19C1C14DD3C55007017ED /* Twitter.framework */,
 				4BF19C1A14DD3C50007017ED /* Accounts.framework */,
 				4B7A688D14BB6A160074B1CC /* CoreLocation.framework */,
 				4B7A688B14BB62F50074B1CC /* MapKit.framework */,
-				4B6E6DD314E6FE0B00DCCD48 /* Parse.framework */,
 				4B9BB0A414A32C140062C1EE /* QuartzCore.framework */,
 				4B9BB08E14A31CB50062C1EE /* libTestFlight.a */,
 				4B9BB08F14A31CB50062C1EE /* TestFlight.h */,
