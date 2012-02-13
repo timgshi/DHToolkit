@@ -8,6 +8,5 @@ project.pbxproj
 build/
 *.pbxuser
 *.perspective
-*.xcuserstate
 *.perspectivev3
 xcuserdata/
