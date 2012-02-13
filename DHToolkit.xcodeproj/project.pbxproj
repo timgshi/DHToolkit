@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B30D2E614E9186000134B50 /* DHImageDetailCommentTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B30D2E514E9186000134B50 /* DHImageDetailCommentTVC.m */; };
+		4B30D2EA14E91C2600134B50 /* DHCommentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B30D2E914E91C2600134B50 /* DHCommentCell.m */; };
 		4B34353214A26EB8002831BD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B34353114A26EB8002831BD /* UIKit.framework */; };
 		4B34353414A26EB8002831BD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B34353314A26EB8002831BD /* Foundation.framework */; };
 		4B34353614A26EB8002831BD /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B34353514A26EB8002831BD /* CoreGraphics.framework */; };
@@ -196,6 +198,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4B30D2E414E9186000134B50 /* DHImageDetailCommentTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHImageDetailCommentTVC.h; sourceTree = "<group>"; };
+		4B30D2E514E9186000134B50 /* DHImageDetailCommentTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DHImageDetailCommentTVC.m; sourceTree = "<group>"; };
+		4B30D2E814E91C2600134B50 /* DHCommentCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHCommentCell.h; sourceTree = "<group>"; };
+		4B30D2E914E91C2600134B50 /* DHCommentCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DHCommentCell.m; sourceTree = "<group>"; };
 		4B34352D14A26EB8002831BD /* DHToolkit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DHToolkit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B34353114A26EB8002831BD /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		4B34353314A26EB8002831BD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -220,7 +226,7 @@
 		4B3435B814A2725C002831BD /* CoreDataTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreDataTableViewController.h; sourceTree = "<group>"; };
 		4B3435B914A2725C002831BD /* CoreDataTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreDataTableViewController.m; sourceTree = "<group>"; };
 		4B36D02A14E8E57600C02C8D /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
-		4B48B1F414E8FE56009740D9 /* DHImageDetailMetaHeaderVC.h */ = {isa = PBXFileReference; fileEncoding = 4; name = DHImageDetailMetaHeaderVC.h; path = ../DHImageDetailMetaHeaderVC.h; sourceTree = "<group>"; };
+		4B48B1F414E8FE56009740D9 /* DHImageDetailMetaHeaderVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DHImageDetailMetaHeaderVC.h; path = ../DHImageDetailMetaHeaderVC.h; sourceTree = "<group>"; };
 		4B48B1F514E8FE56009740D9 /* DHImageDetailMetaHeaderVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DHImageDetailMetaHeaderVC.m; path = ../DHImageDetailMetaHeaderVC.m; sourceTree = "<group>"; };
 		4B48B1F614E8FE56009740D9 /* DHImageDetailMetaHeaderVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = DHImageDetailMetaHeaderVC.xib; path = ../DHImageDetailMetaHeaderVC.xib; sourceTree = "<group>"; };
 		4B4A182E14DCB94500AC08FF /* DHImageDetailContainerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DHImageDetailContainerViewController.h; path = ../DHImageDetailContainerViewController.h; sourceTree = "<group>"; };
@@ -483,12 +489,16 @@
 				4B48B1F414E8FE56009740D9 /* DHImageDetailMetaHeaderVC.h */,
 				4B48B1F514E8FE56009740D9 /* DHImageDetailMetaHeaderVC.m */,
 				4B48B1F614E8FE56009740D9 /* DHImageDetailMetaHeaderVC.xib */,
+				4B30D2E414E9186000134B50 /* DHImageDetailCommentTVC.h */,
+				4B30D2E514E9186000134B50 /* DHImageDetailCommentTVC.m */,
 				4BF19C0B14DCBB23007017ED /* DHImageDetailImageVC.h */,
 				4BF19C0C14DCBB23007017ED /* DHImageDetailImageVC.m */,
 				4B4A182E14DCB94500AC08FF /* DHImageDetailContainerViewController.h */,
 				4B4A182F14DCB94500AC08FF /* DHImageDetailContainerViewController.m */,
 				4BF19C0F14DCBBA7007017ED /* DHImageDetailMetaVC.h */,
 				4BF19C1014DCBBA7007017ED /* DHImageDetailMetaVC.m */,
+				4B30D2E814E91C2600134B50 /* DHCommentCell.h */,
+				4B30D2E914E91C2600134B50 /* DHCommentCell.m */,
 				4B9671C914D60A3000F2F9A9 /* DHSortBoxView.h */,
 				4B9671CA14D60A3000F2F9A9 /* DHSortBoxView.m */,
 				4B515CDC14CDD5A400CD6C7E /* GoogleWeatherFetcher.h */,
@@ -962,6 +972,8 @@
 				4BF19C0D14DCBB23007017ED /* DHImageDetailImageVC.m in Sources */,
 				4BF19C1114DCBBA7007017ED /* DHImageDetailMetaVC.m in Sources */,
 				4B48B1F714E8FE56009740D9 /* DHImageDetailMetaHeaderVC.m in Sources */,
+				4B30D2E614E9186000134B50 /* DHImageDetailCommentTVC.m in Sources */,
+				4B30D2EA14E91C2600134B50 /* DHCommentCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

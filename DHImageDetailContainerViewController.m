@@ -15,6 +15,7 @@
 @interface DHImageDetailContainerViewController() <UIActionSheetDelegate>
 @property (nonatomic, strong) DHImageDetailImageVC *imageVC;
 @property (nonatomic, strong) DHImageDetailMetaVC *metaVC;
+@property (nonatomic, strong) UIView *containerView;
 @property BOOL photoVisible;
 @end
 
@@ -26,6 +27,7 @@
 @synthesize imageVC;
 @synthesize metaVC;
 @synthesize photoVisible;
+@synthesize containerView;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -58,6 +60,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.containerView = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.view = self.containerView;
     self.imageVC = [[DHImageDetailImageVC alloc] init];
     self.imageVC.photoObject = self.photoObject;
     self.imageVC.managedPhoto = self.managedPhoto;
@@ -66,7 +70,7 @@
     self.metaVC.photoObject = self.photoObject;
     self.metaVC.managedPhoto = self.managedPhoto;
     [self addChildViewController:self.metaVC];
-    [self.view addSubview:self.imageVC.view];
+    [self.containerView addSubview:self.imageVC.view];
     photoVisible = YES;
     self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"backarrow.png"] target:self action:@selector(backArrowPressed)];
     self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"trash.png"] target:self action:@selector(deleteButtonPressed)];
@@ -89,6 +93,11 @@
 - (void)viewDidUnload
 {
     [super viewDidUnload];
+    [self setContainerView:nil];
+    [self setMetaVC:nil];
+    [self setImageVC:nil];
+    [self setManagedPhoto:nil];
+    [self setPhotoObject:nil];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
 }

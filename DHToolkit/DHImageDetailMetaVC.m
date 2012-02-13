@@ -8,9 +8,11 @@
 
 #import "DHImageDetailMetaVC.h"
 #import "DHImageDetailMetaHeaderVC.h"
+#import "DHImageDetailCommentTVC.h"
 
 @interface DHImageDetailMetaVC()
 @property (nonatomic, strong) DHImageDetailMetaHeaderVC *headerVC;
+@property (nonatomic, strong) DHImageDetailCommentTVC *commentTVC;
 @end
 
 @implementation DHImageDetailMetaVC
@@ -18,6 +20,7 @@
 @synthesize photoObject;
 @synthesize managedPhoto;
 @synthesize headerVC;
+@synthesize commentTVC;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -50,9 +53,14 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    UIImage *backgroundImage = [[UIImage imageNamed:@"BackgroundGradient.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
+    self.view.backgroundColor = [UIColor colorWithPatternImage:backgroundImage];
     self.headerVC = [[DHImageDetailMetaHeaderVC alloc] init];
     self.headerVC.photoObject = self.photoObject;
     [self.view addSubview:self.headerVC.view];
+    self.commentTVC = [[DHImageDetailCommentTVC alloc] initWithStyle:UITableViewStylePlain];
+    self.commentTVC.tableView.frame = CGRectMake(0, self.headerVC.view.frame.size.height, 320, 160);
+    [self.view addSubview:self.commentTVC.tableView];
 }
 
 
