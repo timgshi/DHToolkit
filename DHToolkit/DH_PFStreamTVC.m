@@ -21,6 +21,7 @@
 #import "DHSortBoxView.h"
 #import "Parse/PFPush.h"
 #import "DHImageDetailContainerViewController.h"
+#import "AppDelegate.h"
 
 @interface DH_PFStreamTVC() <DHImageRatingDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, DHSortBoxViewDelegate, DHGalleryVCDelegate>
 @property (nonatomic, strong) NSMutableSet *expandedIndexPaths;
@@ -33,6 +34,7 @@
 
 - (PFQuery *)queryBasedOnSortDefaults;
 - (NSFetchedResultsController *)fetchedResultsControllerBasedOnSortDefaults;
+- (void)cleanupOldPhotos;
 @end
 
 @implementation DH_PFStreamTVC
@@ -358,6 +360,7 @@
     }
     [self.fetchedResultsController performFetch:nil];
     [self.tableView reloadData];
+    [self cleanupOldPhotos];
 }
 
 - (void)settingsButtonPressed
@@ -609,5 +612,42 @@
     return [self objectAtIndex:[NSIndexPath indexPathForRow:index inSection:0]];
 }
 
+#pragma mark - Photo Cleanup
+
+- (void)cleanupOldPhotos
+{
+    dispatch_queue_t request_queue = dispatch_queue_create("edu.stanford.gsb.DHToolkit", NULL);
+    dispatch_async(request_queue, ^{
+        AppDelegate *theDelegate = [[UIApplication sharedApplication] delegate];
+        NSManagedObjectContext *deletionContext = [[NSManagedObjectContext alloc] init];
+        [deletionContext setPersistentStoreCoordinator:[theDelegate persistentStoreCoordinator]];
+        NSNotificationCenter *notify = [NSNotificationCenter defaultCenter];
+        [notify addObserver:self 
+                   selector:@selector(mergeChanges:) 
+                       name:NSManagedObjectContextDidSaveNotification 
+                     object:deletionContext];
+        NSFetchRequest *fetch = [[NSFetchRequest alloc] init];
+        fetch.entity = [NSEntityDescription entityForName:@"DHPhoto" inManagedObjectContext:deletionContext];
+        NSArray *managedObjects = [deletionContext executeFetchRequest:fetch error:nil];
+        NSMutableSet *objectIDSet = [NSMutableSet set];
+        for (PFObject *pfPhoto in [self objects]) {
+            [objectIDSet addObject:pfPhoto.objectId];
+        }
+        for (DHPhoto *managedPhoto in managedObjects) {
+            if (![objectIDSet containsObject:managedPhoto.pfObjectID]) {
+                [deletionContext deleteObject:managedPhoto];
+            }
+        }
+        [deletionContext save:nil];
+    });
+    dispatch_release(request_queue);
+}
+
+- (void)mergeChanges:(NSNotification*)notification 
+{
+    AppDelegate *theDelegate = [[UIApplication sharedApplication] delegate];
+    [[theDelegate managedObjectContext] performSelectorOnMainThread:@selector(mergeChangesFromContextDidSaveNotification:) withObject:notification waitUntilDone:YES];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSManagedObjectContextDidSaveNotification object:nil];
+}
 
 @end
