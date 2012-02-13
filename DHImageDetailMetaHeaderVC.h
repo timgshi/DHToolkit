@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
+#import "Parse/PFObject.h"
 
 @interface DHImageDetailMetaHeaderVC : UIViewController
 
@@ -21,5 +22,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *levelLabel;
 @property (strong, nonatomic) IBOutlet UIView *levelBarView;
 @property (strong, nonatomic) IBOutlet MKMapView *locationMapView;
+
+@property (strong, nonatomic) PFObject *photoObject;
 
 @end

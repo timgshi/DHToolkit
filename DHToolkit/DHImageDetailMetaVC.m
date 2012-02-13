@@ -51,6 +51,7 @@
 {
     [super viewDidLoad];
     self.headerVC = [[DHImageDetailMetaHeaderVC alloc] init];
+    self.headerVC.photoObject = self.photoObject;
     [self.view addSubview:self.headerVC.view];
 }
 

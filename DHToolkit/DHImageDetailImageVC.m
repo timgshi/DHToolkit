@@ -65,7 +65,7 @@
     flipButton.titleLabel.text = @"Flip";
     [flipButton addTarget:self.parentViewController action:@selector(flipButtonPressed) forControlEvents:UIControlEventTouchUpInside];
     flipButton.frame = CGRectMake(20, 300, 100, 40);
-//    [self.view addSubview:flipButton];
+    [self.view addSubview:flipButton];
 }
 
 
