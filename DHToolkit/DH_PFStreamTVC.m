@@ -186,9 +186,9 @@
     UIBarButtonItem *sortButton = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"sort.png"] target:self action:@selector(sortButtonPressed)];
     self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:cameraButton, settingsButton, nil];
     self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:galleryButton, sortButton, nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadBegin:) name:DH_PHOTO_UPLOAD_BEGIN_NOTIFICATION object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadSuccess:) name:DH_PHOTO_UPLOAD_SUCCESS_NOTIFICATION object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadFailure:) name:DH_PHOTO_UPLOAD_FAILURE_NOTIFICATION object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadBegin:) name:DH_PHOTO_UPLOAD_BEGIN_NOTIFICATION object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadSuccess:) name:DH_PHOTO_UPLOAD_SUCCESS_NOTIFICATION object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadFailure:) name:DH_PHOTO_UPLOAD_FAILURE_NOTIFICATION object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(imageDeleted:) name:DH_PHOTO_DELETE_NOTIFICATION object:nil];
     [self.navigationItem setBackBarButtonItem:[UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"backarrow.png"] target:nil action:nil]];
     galleryVC = [[DHGalleryVC alloc] initInManagedObjectContext:self.context];
@@ -416,6 +416,9 @@
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadBegin:) name:DH_PHOTO_UPLOAD_BEGIN_NOTIFICATION object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadSuccess:) name:DH_PHOTO_UPLOAD_SUCCESS_NOTIFICATION object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadFailure:) name:DH_PHOTO_UPLOAD_FAILURE_NOTIFICATION object:nil];
     UIImage *selectedPhoto;
     if ([info objectForKey:UIImagePickerControllerEditedImage]) {
         selectedPhoto = [info objectForKey:UIImagePickerControllerEditedImage];
@@ -476,6 +479,7 @@
 
 - (void)uploadBegin:(NSNotification *)notification
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:DH_PHOTO_UPLOAD_BEGIN_NOTIFICATION object:nil];
     self.uploadNotificationView = [[DHUploadNotificationView alloc] initWithFrame:CGRectMake(0, self.tableView.frame.size.height, self.tableView.frame.size.width, kDH_Upload_Notification_View_Height)];
     self.uploadNotificationView.messageText = kDH_Uploading_Text;
     self.uploadNotificationView.isLoading = YES;
@@ -489,6 +493,8 @@
 
 - (void)uploadSuccess:(NSNotification *)notification
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:DH_PHOTO_UPLOAD_FAILURE_NOTIFICATION object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:DH_PHOTO_UPLOAD_SUCCESS_NOTIFICATION object:nil];
     [self loadObjects];
     NSDictionary *dict = [notification object];
     BOOL isAnonymous = [[dict objectForKey:@"isAnonymous"] boolValue];
@@ -513,6 +519,8 @@
 
 - (void)uploadFailure:(NSNotification *)notification
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:DH_PHOTO_UPLOAD_FAILURE_NOTIFICATION object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:DH_PHOTO_UPLOAD_SUCCESS_NOTIFICATION object:nil];
     self.uploadNotificationView.messageText = kDH_Failure_Text;
     self.uploadNotificationView.isLoading = NO;
     [UIView animateWithDuration:0.3 delay:2.0 options:0 animations:^{
