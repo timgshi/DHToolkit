@@ -13,4 +13,6 @@
 
 @property (nonatomic, strong) PFObject *commentObject;
 
++ (CGFloat)cellHeightForComment:(PFObject *)commentObject;
+
 @end

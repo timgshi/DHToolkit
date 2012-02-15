@@ -17,11 +17,40 @@
 @synthesize commentObject;
 @synthesize photographerNameLabel, messageLabel;
 
+#define CELL_TEXT_PADDING 10
+#define CELL_DEFAULT_HEIGHT 40
+
++ (CGFloat)messageLabelFrameHeightForComment:(PFObject *)commentObject
+{
+    NSString *name = [commentObject objectForKey:@"PFUsername"];
+    NSString *message = [commentObject objectForKey:@"message"];
+    if (!name || !message) {
+        return 0;
+    }
+    CGSize nameSize = [name sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:14]];
+    CGFloat availableWidthForMessage = 320 - nameSize.width - 15;
+    CGSize messageSize = [message sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:14] constrainedToSize:CGSizeMake(availableWidthForMessage, 1000) lineBreakMode:UILineBreakModeWordWrap];
+    CGFloat height = MAX(messageSize.height, nameSize.height);
+    return height;
+}
+
++ (CGFloat)cellHeightForComment:(PFObject *)commentObject
+{
+    NSString *name = [commentObject objectForKey:@"PFUsername"];
+    NSString *message = [commentObject objectForKey:@"message"];
+    if (!name || !message) {
+        return CELL_DEFAULT_HEIGHT;
+    }
+    return [DHCommentCell messageLabelFrameHeightForComment:commentObject] + 2 * CELL_TEXT_PADDING;
+}
+
+
+
 - (UILabel *)photographerNameLabel
 {
     if (!photographerNameLabel) {
         photographerNameLabel = [[UILabel alloc] init];
-        photographerNameLabel.frame = CGRectMake(5, 0, 320, 20);
+        photographerNameLabel.frame = CGRectMake(5, 2, 320, 20);
         [photographerNameLabel setBackgroundColor:[UIColor clearColor]];
         [photographerNameLabel setTextColor:UIColorFromRGB(DH_YELLOW_HEX_COLOR)];
         [photographerNameLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:14]];
@@ -63,13 +92,15 @@
     self.photographerNameLabel.text = [commentObject objectForKey:@"PFUsername"];
     self.messageLabel.text = [commentObject objectForKey:@"message"];
     CGSize nameSize = [self.photographerNameLabel.text sizeWithFont:[self.photographerNameLabel font]];
-    self.photographerNameLabel.frame = CGRectMake(5, 5, nameSize.width, nameSize.height);
-    if ([self.messageLabel.text sizeWithFont:[self.messageLabel font]].width > 320 - nameSize.width) {
-        self.messageLabel.frame = CGRectMake(self.photographerNameLabel.frame.origin.x + nameSize.width + 5, self.photographerNameLabel.frame.origin.y, 320 - nameSize.width, nameSize.height * 2);
-        [self.messageLabel setNumberOfLines:2];
-    } else {
-        self.messageLabel.frame = CGRectMake(self.photographerNameLabel.frame.origin.x + nameSize.width + 5, self.photographerNameLabel.frame.origin.y, 320 - nameSize.width, nameSize.height);
-    }
+    self.photographerNameLabel.frame = CGRectMake(5, 8, nameSize.width, nameSize.height);
+//    if ([self.messageLabel.text sizeWithFont:[self.messageLabel font]].width > 320 - nameSize.width) {
+//        self.messageLabel.frame = CGRectMake(self.photographerNameLabel.frame.origin.x + nameSize.width + 5, self.photographerNameLabel.frame.origin.y, 320 - nameSize.width, nameSize.height * 2);
+//        [self.messageLabel setNumberOfLines:0];
+//    } else {
+//        self.messageLabel.frame = CGRectMake(self.photographerNameLabel.frame.origin.x + nameSize.width + 5, self.photographerNameLabel.frame.origin.y, 320 - nameSize.width, nameSize.height);
+//    }
+    [self.messageLabel setNumberOfLines:0];
+    self.messageLabel.frame = CGRectMake(self.photographerNameLabel.frame.origin.x + nameSize.width + 5, self.photographerNameLabel.frame.origin.y, 320 - nameSize.width - 15, [DHCommentCell messageLabelFrameHeightForComment:commentObject]);
 
 }
 

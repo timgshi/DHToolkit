@@ -80,7 +80,8 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 60;
+    return [DHCommentCell cellHeightForComment:[self objectAtIndex:indexPath]];
+//    return 60;
 }
 
 #pragma mark - View lifecycle
@@ -111,6 +112,12 @@
 {
     // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+- (void)scrollToBottom
+{
+    int bottomIndex = ([[self objects] count]) ? [[self objects] count] - 1 : 0;
+    [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:bottomIndex inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
 }
 
 @end

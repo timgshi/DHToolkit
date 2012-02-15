@@ -639,8 +639,41 @@
 
 #pragma mark - Photo Cleanup
 
+//- (void)executeBlock:(void(^)(NSManagedObjectContext *backgroundContext))executionBlock completion:(void(^)(NSManagedObjectContext *backgroundContext))completionBlock
+//{
+//    dispatch_queue_t background_queue = dispatch_queue_create("com.your.company", NULL);
+//    dispatch_async(background_queue, ^{
+//        __block AppDelegate *theAppDelegate = [[UIApplication sharedApplication] delegate];
+//        __block NSManagedObjectContext *backgroundContext = [[NSManagedObjectContext alloc] init];
+//        [backgroundContext setPersistentStoreCoordinator:[theAppDelegate persistentStoreCoordinator]];
+//        [[NSNotificationCenter defaultCenter] addObserver:[theAppDelegate managedObjectContext] selector:@selector(mergeChangesFromContextDidSaveNotification:) name:NSManagedObjectContextDidSaveNotification object:backgroundContext];
+//        executionBlock(backgroundContext);
+//        [backgroundContext save:nil];
+//        dispatch_sync(dispatch_get_main_queue(), ^{
+//            completionBlock(backgroundContext);
+//        });
+//    });
+//    dispatch_release(background_queue);
+//}
+
 - (void)cleanupOldPhotos
 {
+//    [self executeBlock:^(NSManagedObjectContext *backgroundContext) {
+//        NSFetchRequest *fetch = [[NSFetchRequest alloc] init];
+//        fetch.entity = [NSEntityDescription entityForName:@"DHPhoto" inManagedObjectContext:backgroundContext];
+//        NSArray *managedObjects = [backgroundContext executeFetchRequest:fetch error:nil];
+//        NSMutableSet *objectIDSet = [NSMutableSet set];
+//        for (PFObject *pfPhoto in [self objects]) {
+//            [objectIDSet addObject:pfPhoto.objectId];
+//        }
+//        for (DHPhoto *managedPhoto in managedObjects) {
+//            if (![objectIDSet containsObject:managedPhoto.pfObjectID]) {
+//                [backgroundContext deleteObject:managedPhoto];
+//            }
+//        }
+//    } completion:^(NSManagedObjectContext *backgroundContext) {
+//        
+//    }];
     dispatch_queue_t request_queue = dispatch_queue_create("edu.stanford.gsb.DHToolkit", NULL);
     dispatch_async(request_queue, ^{
         AppDelegate *theDelegate = [[UIApplication sharedApplication] delegate];

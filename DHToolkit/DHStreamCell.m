@@ -201,11 +201,11 @@
     self.photoDescriptionLabel.text = [photoObject objectForKey:@"DHDataSixWord"];
     CGSize nameSize = [self.photographerNameLabel.text sizeWithFont:[self.photographerNameLabel font]];
     self.photographerNameLabel.frame = CGRectMake(5, 5, nameSize.width, nameSize.height);
-    if ([self.photoDescriptionLabel.text sizeWithFont:[self.photoDescriptionLabel font]].width > 320 - nameSize.width) {
-        self.photoDescriptionLabel.frame = CGRectMake(self.photographerNameLabel.frame.origin.x + nameSize.width + 5, self.photographerNameLabel.frame.origin.y, 320 - nameSize.width, nameSize.height * 2);
+    if ([self.photoDescriptionLabel.text sizeWithFont:[self.photoDescriptionLabel font]].width > 320 - (nameSize.width + 7)) {
+        self.photoDescriptionLabel.frame = CGRectMake(self.photographerNameLabel.frame.origin.x + nameSize.width + 5, self.photographerNameLabel.frame.origin.y, 320 - (nameSize.width + 7), nameSize.height * 2);
         [self.photoDescriptionLabel setNumberOfLines:2];
     } else {
-        self.photoDescriptionLabel.frame = CGRectMake(self.photographerNameLabel.frame.origin.x + nameSize.width + 5, self.photographerNameLabel.frame.origin.y, 320 - nameSize.width, nameSize.height);
+        self.photoDescriptionLabel.frame = CGRectMake(self.photographerNameLabel.frame.origin.x + nameSize.width + 5, self.photographerNameLabel.frame.origin.y, 320 - (nameSize.width + 7), nameSize.height);
     }
     self.levelLabel.text = [[photoObject objectForKey:@"DHDataHappinessLevel"] stringValue];
     CGRect levelBarRect = self.levelBarView.frame;

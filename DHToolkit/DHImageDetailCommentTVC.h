@@ -10,4 +10,6 @@
 
 @interface DHImageDetailCommentTVC : PFQueryTableViewController
 
+- (void)scrollToBottom;
+
 @end
