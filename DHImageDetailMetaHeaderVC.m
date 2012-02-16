@@ -7,6 +7,7 @@
 //
 
 #import "DHImageDetailMetaHeaderVC.h"
+#import <QuartzCore/QuartzCore.h>
 
 @implementation DHImageDetailMetaHeaderVC
 @synthesize usernameLabel;
@@ -64,6 +65,7 @@
         } else {
             self.weatherLabel.hidden = YES;
         }
+        self.locationMapView.layer.cornerRadius = 10.0;
         NSNumber *lat = [photoObject objectForKey:@"DHDataGeoLat"];
         NSNumber *lon = [photoObject objectForKey:@"DHDataGeoLong"];
         if (lat && lon) {
