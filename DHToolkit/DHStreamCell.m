@@ -8,11 +8,13 @@
 
 #import "DHStreamCell.h"
 #import "DHPhoto.h"
+#import "DHImageSmileTagVC.h"
 
 @interface DHStreamCell()
 @property (nonatomic, strong) UIImageView *cellImageView;
 @property (nonatomic, strong) UILabel *photographerNameLabel, *photoDescriptionLabel, *levelLabel, *weatherLabel, *locationLabel;
 @property (nonatomic, strong) UIView *infoBarContainerView, *infoBarColoredContainer, *levelBarView, *contentContainerView;
+@property (nonatomic, strong) DHImageSmileTagVC *smileTagVC;
 @end
 
 @implementation DHStreamCell
@@ -24,6 +26,7 @@
 @synthesize PFObjectID;
 @synthesize photoObject;
 @synthesize cellPhoto;
+@synthesize smileTagVC;
 
 - (UIImageView *)cellImageView
 {
@@ -149,6 +152,14 @@
     return spinner;
 }
 
+- (DHImageSmileTagVC *)smileTagVC
+{
+    if (!smileTagVC) {
+        smileTagVC = [[DHImageSmileTagVC alloc] initWithOrigin:CGPointMake(320 - 60, 20)];
+    }
+    return smileTagVC;
+}
+
 - (UIView *)contentContainerView
 {
     if (!contentContainerView) {
@@ -162,6 +173,7 @@
         [contentContainerView addSubview:self.infoBarColoredContainer];
         [contentContainerView addSubview:self.infoBarContainerView];
         [contentContainerView addSubview:self.spinner];
+        [contentContainerView addSubview:self.smileTagVC.view];
     }
     return contentContainerView;
 }
@@ -190,6 +202,7 @@
 - (void)setPhotoObject:(PFObject *)aPhotoObject
 {
     photoObject = aPhotoObject;
+    self.smileTagVC.photoObject = photoObject;
     self.cellImageView.image = nil;
     self.photographerNameLabel.text = [photoObject objectForKey:@"DHDataWhoTook"];
     if ([photoObject objectForKey:@"isAnonymous"]) {
