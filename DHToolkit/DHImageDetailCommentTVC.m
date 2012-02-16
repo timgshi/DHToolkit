@@ -11,6 +11,8 @@
 
 @implementation DHImageDetailCommentTVC
 
+@synthesize photoObject;
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -29,17 +31,20 @@
 
 }
 
-- (id)initWithStyle:(UITableViewStyle)style
+- (id)initWithStyle:(UITableViewStyle)style photoObject:(PFObject *)aPhoto
 {
     self = [super initWithStyle:style];
     if (self) {
         // This table displays items in the Todo class
+        
         self.className = @"DHPhotoComment";
+        self.photoObject = aPhoto;
         self.pullToRefreshEnabled = YES;
         self.paginationEnabled = NO;
         self.objectsPerPage = 25;
-        UIImage *backgroundImage = [[UIImage imageNamed:@"BackgroundGradient.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
-        self.tableView.backgroundColor = [UIColor colorWithPatternImage:backgroundImage];
+//        UIImage *backgroundImage = [[UIImage imageNamed:@"BackgroundGradient.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
+//        self.tableView.backgroundColor = [UIColor colorWithPatternImage:backgroundImage];
+        self.tableView.backgroundColor = [UIColor colorWithRed:45/255.0 green:45/255.0 blue:45/255.0 alpha:1.0];
     }
     return self;
 }
@@ -52,8 +57,8 @@
     if ([self.objects count] == 0) {
         query.cachePolicy = kPFCachePolicyCacheThenNetwork;
     }
-    
-    [query orderByDescending:@"createdAt"];
+    [query whereKey:@"DHPhotoID" equalTo:self.photoObject.objectId];
+    [query orderByAscending:@"createdAt"];
     
     return query;
 }
@@ -104,6 +109,7 @@
 - (void)viewDidUnload
 {
     [super viewDidUnload];
+    [self setPhotoObject:nil];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
 }
@@ -116,8 +122,11 @@
 
 - (void)scrollToBottom
 {
-    int bottomIndex = ([[self objects] count]) ? [[self objects] count] - 1 : 0;
-    [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:bottomIndex inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+    int bottomIndex = [[self objects] count] - 1;
+    if (bottomIndex >= 0) {
+        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:bottomIndex inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+    }
 }
+
 
 @end

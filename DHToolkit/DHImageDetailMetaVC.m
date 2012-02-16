@@ -10,6 +10,7 @@
 #import "DHImageDetailMetaHeaderVC.h"
 #import "DHImageDetailCommentTVC.h"
 #import "HPGrowingTextView.h"
+#import "ParsePoster.h"
 
 @interface DHImageDetailMetaVC() <HPGrowingTextViewDelegate>
 @property (nonatomic, strong) DHImageDetailMetaHeaderVC *headerVC;
@@ -83,7 +84,7 @@
     [self.containerView addSubview:self.headerVC.view];
     NSLog(@"container: %@",NSStringFromCGRect(self.containerView.frame));
     NSLog(@"header: %@", NSStringFromCGRect(self.headerVC.view.frame));
-    self.commentTVC = [[DHImageDetailCommentTVC alloc] initWithStyle:UITableViewStylePlain];
+    self.commentTVC = [[DHImageDetailCommentTVC alloc] initWithStyle:UITableViewStylePlain photoObject:self.photoObject];
     self.commentTVC.tableView.frame = CGRectMake(0, self.headerVC.view.frame.size.height, 320, self.containerView.bounds.size.height - self.headerVC.view.frame.size.height - 20);
     [self.containerView addSubview:self.commentTVC.tableView];
     [self.view addSubview:self.containerView];
@@ -138,8 +139,9 @@
     
 	growingTextView.minNumberOfLines = 1;
 	growingTextView.maxNumberOfLines = 3;
-	growingTextView.returnKeyType = UIReturnKeyGo; //just as an example
-	growingTextView.font = [UIFont systemFontOfSize:15.0f];
+    growingTextView.internalTextView.autocapitalizationType = UITextAutocapitalizationTypeNone;
+	growingTextView.returnKeyType = UIReturnKeySend; //just as an example
+	growingTextView.font = [UIFont systemFontOfSize:14.0f];
 	growingTextView.delegate = self;
     growingTextView.internalTextView.scrollIndicatorInsets = UIEdgeInsetsMake(5, 0, 5, 0);
     growingTextView.backgroundColor = [UIColor whiteColor];
@@ -179,6 +181,7 @@
     
     [doneBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
 	[doneBtn addTarget:self action:@selector(resignTextView) forControlEvents:UIControlEventTouchUpInside];
+    [doneBtn addTarget:self action:@selector(sendButtonPressed) forControlEvents:UIControlEventTouchUpInside];
     [doneBtn setBackgroundImage:sendBtnBackground forState:UIControlStateNormal];
     [doneBtn setBackgroundImage:selectedSendBtnBackground forState:UIControlStateSelected];
 	[textViewContainerView addSubview:doneBtn];
@@ -277,8 +280,46 @@
 //        [alert show];
 //    }
 	[growingTextView resignFirstResponder];
-    growingTextView.text = @"";
+//    growingTextView.text = @"";
     
+}
+
+- (void)sendButtonPressed
+{
+    if ([PFUser currentUser]) {
+        [ParsePoster postCommentForPhoto:self.photoObject withMessage:self.growingTextView.text];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(commentSucceeded) name:DH_COMMENT_UPLOAD_SUCCESS_NOTIFICATION object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(commentFailed) name:DH_COMMENT_UPLOAD_FAILURE_NOTIFICATION object:nil];
+    } else {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" 
+                                                        message:@"You must be logged in to comment!" 
+                                                       delegate:nil 
+                                              cancelButtonTitle:@"OK" 
+                                              otherButtonTitles: nil];
+        [alert show];
+    }
+
+}
+
+- (BOOL)growingTextViewShouldReturn:(HPGrowingTextView *)growingTextView
+{
+    [self sendButtonPressed];
+    [self resignTextView];
+    return YES;
+}
+
+- (void)commentSucceeded
+{
+    self.growingTextView.text = @"";
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:DH_COMMENT_UPLOAD_SUCCESS_NOTIFICATION object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:DH_COMMENT_UPLOAD_FAILURE_NOTIFICATION object:nil];
+    [self.commentTVC loadObjects];
+}
+
+- (void)commentFailed
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:DH_COMMENT_UPLOAD_SUCCESS_NOTIFICATION object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:DH_COMMENT_UPLOAD_FAILURE_NOTIFICATION object:nil];
 }
 
 

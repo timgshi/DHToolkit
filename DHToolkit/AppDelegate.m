@@ -104,6 +104,10 @@
     [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge|
      UIRemoteNotificationTypeAlert|
      UIRemoteNotificationTypeSound];
+//    PFUser *curUser = [PFUser currentUser];
+//    if (curUser) {
+//        [PFPush subscribeToChannelInBackground:[NSString stringWithFormat:@"user-%@", curUser.username]];
+//    }
     return YES;
 }
 

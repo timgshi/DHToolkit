@@ -10,6 +10,10 @@
 
 @interface DHImageDetailCommentTVC : PFQueryTableViewController
 
+@property (nonatomic, strong) PFObject *photoObject;
+
 - (void)scrollToBottom;
+
+- (id)initWithStyle:(UITableViewStyle)style photoObject:(PFObject *)aPhoto;
 
 @end
