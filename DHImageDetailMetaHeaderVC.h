@@ -10,7 +10,7 @@
 #import <MapKit/MapKit.h>
 #import "Parse/PFObject.h"
 
-@interface DHImageDetailMetaHeaderVC : UIViewController
+@interface DHImageDetailMetaHeaderVC : UIViewController <MKMapViewDelegate>
 
 
 @property (strong, nonatomic) IBOutlet UILabel *usernameLabel;

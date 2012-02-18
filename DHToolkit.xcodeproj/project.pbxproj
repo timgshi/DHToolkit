@@ -15,21 +15,24 @@
 		4B096A8214ECE467007AB50D /* smile.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B096A8014ECE467007AB50D /* smile.png */; };
 		4B096A8514ECF45B007AB50D /* comment@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B096A8414ECF45B007AB50D /* comment@2x.png */; };
 		4B096A8714ECF49F007AB50D /* smile@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B096A8614ECF49F007AB50D /* smile@2x.png */; };
-		4B096A8914ECF4AD007AB50D /* sendbutton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B096A8814ECF4AC007AB50D /* sendbutton@2x.png */; };
 		4B096A8C14ECFF46007AB50D /* smileyellow.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B096A8A14ECFF46007AB50D /* smileyellow.png */; };
 		4B096A8D14ECFF46007AB50D /* smileyellow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B096A8B14ECFF46007AB50D /* smileyellow@2x.png */; };
 		4B096A9014EDA7A6007AB50D /* DHImageSmileTagVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B096A8F14EDA7A5007AB50D /* DHImageSmileTagVC.m */; };
-		4B096A9514EDA895007AB50D /* smiletaggray.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B096A9114EDA895007AB50D /* smiletaggray.png */; };
-		4B096A9614EDA895007AB50D /* smiletaggray@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B096A9214EDA895007AB50D /* smiletaggray@2x.png */; };
-		4B096A9714EDA895007AB50D /* smiletagyellow.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B096A9314EDA895007AB50D /* smiletagyellow.png */; };
-		4B096A9814EDA895007AB50D /* smiletagyellow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B096A9414EDA895007AB50D /* smiletagyellow@2x.png */; };
+		4B096A9B14EF6DA0007AB50D /* PFObject+DHPhoto_MKAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B096A9A14EF6D9F007AB50D /* PFObject+DHPhoto_MKAnnotation.m */; };
+		4B096AA114EF9E1A007AB50D /* smiletaggray.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B096A9D14EF9E1A007AB50D /* smiletaggray.png */; };
+		4B096AA214EF9E1A007AB50D /* smiletaggray@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B096A9E14EF9E1A007AB50D /* smiletaggray@2x.png */; };
+		4B096AA314EF9E1A007AB50D /* smiletagyellow.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B096A9F14EF9E1A007AB50D /* smiletagyellow.png */; };
+		4B096AA414EF9E1A007AB50D /* smiletagyellow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B096AA014EF9E1A007AB50D /* smiletagyellow@2x.png */; };
+		4B096AAA14EF9E94007AB50D /* commentfield.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B096AA514EF9E94007AB50D /* commentfield.png */; };
+		4B096AAB14EF9E94007AB50D /* commentfield@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B096AA614EF9E94007AB50D /* commentfield@2x.png */; };
+		4B096AAC14EF9E94007AB50D /* commentfieldbackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B096AA714EF9E94007AB50D /* commentfieldbackground.png */; };
+		4B096AAD14EF9E94007AB50D /* sendbutton.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B096AA814EF9E94007AB50D /* sendbutton.png */; };
+		4B096AAE14EF9E94007AB50D /* sendbutton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B096AA914EF9E94007AB50D /* sendbutton@2x.png */; };
+		4B096AB014EFA5E9007AB50D /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B096AAF14EFA5E9007AB50D /* Parse.framework */; };
 		4B30D2E614E9186000134B50 /* DHImageDetailCommentTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B30D2E514E9186000134B50 /* DHImageDetailCommentTVC.m */; };
 		4B30D2EA14E91C2600134B50 /* DHCommentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B30D2E914E91C2600134B50 /* DHCommentCell.m */; };
 		4B30D2EF14E924CB00134B50 /* HPGrowingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B30D2EC14E924CB00134B50 /* HPGrowingTextView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		4B30D2F014E924CB00134B50 /* HPTextViewInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B30D2EE14E924CB00134B50 /* HPTextViewInternal.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		4B30D2F514E9288B00134B50 /* commentfield.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B30D2F214E9288B00134B50 /* commentfield.png */; };
-		4B30D2F614E9288B00134B50 /* commentfield@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B30D2F314E9288B00134B50 /* commentfield@2x.png */; };
-		4B30D2F714E9288B00134B50 /* sendbutton.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B30D2F414E9288B00134B50 /* sendbutton.png */; };
 		4B30D30014E9336B00134B50 /* MessageEntryBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B30D2F814E9336B00134B50 /* MessageEntryBackground.png */; };
 		4B30D30114E9336B00134B50 /* MessageEntryBackground@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B30D2F914E9336B00134B50 /* MessageEntryBackground@2x.png */; };
 		4B30D30214E9336B00134B50 /* MessageEntryInputField.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B30D2FA14E9336B00134B50 /* MessageEntryInputField.png */; };
@@ -55,7 +58,6 @@
 		4B34356714A26F61002831BD /* DHMainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B34356614A26F61002831BD /* DHMainStoryboard.storyboard */; };
 		4B3435B714A27123002831BD /* DHStreamTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B3435B614A27123002831BD /* DHStreamTVC.m */; };
 		4B3435BA14A2725D002831BD /* CoreDataTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B3435B914A2725C002831BD /* CoreDataTableViewController.m */; };
-		4B36D02B14E8E57600C02C8D /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B36D02A14E8E57600C02C8D /* Parse.framework */; };
 		4B48B1F714E8FE56009740D9 /* DHImageDetailMetaHeaderVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B48B1F514E8FE56009740D9 /* DHImageDetailMetaHeaderVC.m */; };
 		4B48B1F814E8FE56009740D9 /* DHImageDetailMetaHeaderVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4B48B1F614E8FE56009740D9 /* DHImageDetailMetaHeaderVC.xib */; };
 		4B4A183014DCB94500AC08FF /* DHImageDetailContainerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B4A182F14DCB94500AC08FF /* DHImageDetailContainerViewController.m */; };
@@ -235,15 +237,22 @@
 		4B096A8014ECE467007AB50D /* smile.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = smile.png; sourceTree = "<group>"; };
 		4B096A8414ECF45B007AB50D /* comment@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "comment@2x.png"; sourceTree = "<group>"; };
 		4B096A8614ECF49F007AB50D /* smile@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "smile@2x.png"; sourceTree = "<group>"; };
-		4B096A8814ECF4AC007AB50D /* sendbutton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sendbutton@2x.png"; sourceTree = "<group>"; };
 		4B096A8A14ECFF46007AB50D /* smileyellow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = smileyellow.png; sourceTree = "<group>"; };
 		4B096A8B14ECFF46007AB50D /* smileyellow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "smileyellow@2x.png"; sourceTree = "<group>"; };
 		4B096A8E14EDA7A5007AB50D /* DHImageSmileTagVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHImageSmileTagVC.h; sourceTree = "<group>"; };
 		4B096A8F14EDA7A5007AB50D /* DHImageSmileTagVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DHImageSmileTagVC.m; sourceTree = "<group>"; };
-		4B096A9114EDA895007AB50D /* smiletaggray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = smiletaggray.png; sourceTree = "<group>"; };
-		4B096A9214EDA895007AB50D /* smiletaggray@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "smiletaggray@2x.png"; sourceTree = "<group>"; };
-		4B096A9314EDA895007AB50D /* smiletagyellow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = smiletagyellow.png; sourceTree = "<group>"; };
-		4B096A9414EDA895007AB50D /* smiletagyellow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "smiletagyellow@2x.png"; sourceTree = "<group>"; };
+		4B096A9914EF6D9F007AB50D /* PFObject+DHPhoto_MKAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PFObject+DHPhoto_MKAnnotation.h"; sourceTree = "<group>"; };
+		4B096A9A14EF6D9F007AB50D /* PFObject+DHPhoto_MKAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PFObject+DHPhoto_MKAnnotation.m"; sourceTree = "<group>"; };
+		4B096A9D14EF9E1A007AB50D /* smiletaggray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = smiletaggray.png; sourceTree = "<group>"; };
+		4B096A9E14EF9E1A007AB50D /* smiletaggray@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "smiletaggray@2x.png"; sourceTree = "<group>"; };
+		4B096A9F14EF9E1A007AB50D /* smiletagyellow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = smiletagyellow.png; sourceTree = "<group>"; };
+		4B096AA014EF9E1A007AB50D /* smiletagyellow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "smiletagyellow@2x.png"; sourceTree = "<group>"; };
+		4B096AA514EF9E94007AB50D /* commentfield.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = commentfield.png; sourceTree = "<group>"; };
+		4B096AA614EF9E94007AB50D /* commentfield@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "commentfield@2x.png"; sourceTree = "<group>"; };
+		4B096AA714EF9E94007AB50D /* commentfieldbackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = commentfieldbackground.png; sourceTree = "<group>"; };
+		4B096AA814EF9E94007AB50D /* sendbutton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sendbutton.png; sourceTree = "<group>"; };
+		4B096AA914EF9E94007AB50D /* sendbutton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sendbutton@2x.png"; sourceTree = "<group>"; };
+		4B096AAF14EFA5E9007AB50D /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
 		4B30D2E414E9186000134B50 /* DHImageDetailCommentTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHImageDetailCommentTVC.h; sourceTree = "<group>"; };
 		4B30D2E514E9186000134B50 /* DHImageDetailCommentTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DHImageDetailCommentTVC.m; sourceTree = "<group>"; };
 		4B30D2E814E91C2600134B50 /* DHCommentCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHCommentCell.h; sourceTree = "<group>"; };
@@ -252,9 +261,6 @@
 		4B30D2EC14E924CB00134B50 /* HPGrowingTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPGrowingTextView.m; sourceTree = "<group>"; };
 		4B30D2ED14E924CB00134B50 /* HPTextViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HPTextViewInternal.h; sourceTree = "<group>"; };
 		4B30D2EE14E924CB00134B50 /* HPTextViewInternal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPTextViewInternal.m; sourceTree = "<group>"; };
-		4B30D2F214E9288B00134B50 /* commentfield.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = commentfield.png; sourceTree = "<group>"; };
-		4B30D2F314E9288B00134B50 /* commentfield@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "commentfield@2x.png"; sourceTree = "<group>"; };
-		4B30D2F414E9288B00134B50 /* sendbutton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sendbutton.png; sourceTree = "<group>"; };
 		4B30D2F814E9336B00134B50 /* MessageEntryBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MessageEntryBackground.png; sourceTree = "<group>"; };
 		4B30D2F914E9336B00134B50 /* MessageEntryBackground@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MessageEntryBackground@2x.png"; sourceTree = "<group>"; };
 		4B30D2FA14E9336B00134B50 /* MessageEntryInputField.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MessageEntryInputField.png; sourceTree = "<group>"; };
@@ -286,7 +292,6 @@
 		4B3435B614A27123002831BD /* DHStreamTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DHStreamTVC.m; sourceTree = "<group>"; };
 		4B3435B814A2725C002831BD /* CoreDataTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreDataTableViewController.h; sourceTree = "<group>"; };
 		4B3435B914A2725C002831BD /* CoreDataTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreDataTableViewController.m; sourceTree = "<group>"; };
-		4B36D02A14E8E57600C02C8D /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
 		4B48B1F414E8FE56009740D9 /* DHImageDetailMetaHeaderVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DHImageDetailMetaHeaderVC.h; path = ../DHImageDetailMetaHeaderVC.h; sourceTree = "<group>"; };
 		4B48B1F514E8FE56009740D9 /* DHImageDetailMetaHeaderVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DHImageDetailMetaHeaderVC.m; path = ../DHImageDetailMetaHeaderVC.m; sourceTree = "<group>"; };
 		4B48B1F614E8FE56009740D9 /* DHImageDetailMetaHeaderVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = DHImageDetailMetaHeaderVC.xib; path = ../DHImageDetailMetaHeaderVC.xib; sourceTree = "<group>"; };
@@ -456,7 +461,7 @@
 				4B34353414A26EB8002831BD /* Foundation.framework in Frameworks */,
 				4B34353814A26EB8002831BD /* CoreData.framework in Frameworks */,
 				4B9BB09014A31CB50062C1EE /* libTestFlight.a in Frameworks */,
-				4B36D02B14E8E57600C02C8D /* Parse.framework in Frameworks */,
+				4B096AB014EFA5E9007AB50D /* Parse.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -494,6 +499,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4B096A9C14EF9DFF007AB50D /* Comment Images */ = {
+			isa = PBXGroup;
+			children = (
+				4B30D2F814E9336B00134B50 /* MessageEntryBackground.png */,
+				4B30D2F914E9336B00134B50 /* MessageEntryBackground@2x.png */,
+				4B30D2FA14E9336B00134B50 /* MessageEntryInputField.png */,
+				4B30D2FB14E9336B00134B50 /* MessageEntryInputField@2x.png */,
+				4B30D2FC14E9336B00134B50 /* MessageEntrySendButton.png */,
+				4B30D2FD14E9336B00134B50 /* MessageEntrySendButton@2x.png */,
+				4B30D2FE14E9336B00134B50 /* MessageEntrySendButtonPressed.png */,
+				4B30D2FF14E9336B00134B50 /* MessageEntrySendButtonPressed@2x.png */,
+				4B096AA514EF9E94007AB50D /* commentfield.png */,
+				4B096AA614EF9E94007AB50D /* commentfield@2x.png */,
+				4B096AA714EF9E94007AB50D /* commentfieldbackground.png */,
+				4B096AA814EF9E94007AB50D /* sendbutton.png */,
+				4B096AA914EF9E94007AB50D /* sendbutton@2x.png */,
+			);
+			name = "Comment Images";
+			sourceTree = "<group>";
+		};
 		4B30D2F114E924D100134B50 /* HPGrowingTextView */ = {
 			isa = PBXGroup;
 			children = (
@@ -532,7 +557,7 @@
 		4B34353014A26EB8002831BD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				4B36D02A14E8E57600C02C8D /* Parse.framework */,
+				4B096AAF14EFA5E9007AB50D /* Parse.framework */,
 				4BF19C1C14DD3C55007017ED /* Twitter.framework */,
 				4BF19C1A14DD3C50007017ED /* Accounts.framework */,
 				4B7A688D14BB6A160074B1CC /* CoreLocation.framework */,
@@ -558,6 +583,8 @@
 		4B34353914A26EB8002831BD /* DHToolkit */ = {
 			isa = PBXGroup;
 			children = (
+				4B096A9914EF6D9F007AB50D /* PFObject+DHPhoto_MKAnnotation.h */,
+				4B096A9A14EF6D9F007AB50D /* PFObject+DHPhoto_MKAnnotation.m */,
 				4B096A8E14EDA7A5007AB50D /* DHImageSmileTagVC.h */,
 				4B096A8F14EDA7A5007AB50D /* DHImageSmileTagVC.m */,
 				4B48B1F414E8FE56009740D9 /* DHImageDetailMetaHeaderVC.h */,
@@ -620,18 +647,7 @@
 		4B34353A14A26EB8002831BD /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				4B30D2F814E9336B00134B50 /* MessageEntryBackground.png */,
-				4B30D2F914E9336B00134B50 /* MessageEntryBackground@2x.png */,
-				4B30D2FA14E9336B00134B50 /* MessageEntryInputField.png */,
-				4B30D2FB14E9336B00134B50 /* MessageEntryInputField@2x.png */,
-				4B30D2FC14E9336B00134B50 /* MessageEntrySendButton.png */,
-				4B30D2FD14E9336B00134B50 /* MessageEntrySendButton@2x.png */,
-				4B30D2FE14E9336B00134B50 /* MessageEntrySendButtonPressed.png */,
-				4B30D2FF14E9336B00134B50 /* MessageEntrySendButtonPressed@2x.png */,
-				4B30D2F214E9288B00134B50 /* commentfield.png */,
-				4B30D2F314E9288B00134B50 /* commentfield@2x.png */,
-				4B30D2F414E9288B00134B50 /* sendbutton.png */,
-				4B096A8814ECF4AC007AB50D /* sendbutton@2x.png */,
+				4B096A9C14EF9DFF007AB50D /* Comment Images */,
 				4B98514214B24C370081CFB6 /* BackgroundGradient.png */,
 				4B9BB12414A72CF00062C1EE /* Icons */,
 				4B9BB09914A328800062C1EE /* CoreData */,
@@ -742,10 +758,10 @@
 		4B9BB12414A72CF00062C1EE /* Icons */ = {
 			isa = PBXGroup;
 			children = (
-				4B096A9114EDA895007AB50D /* smiletaggray.png */,
-				4B096A9214EDA895007AB50D /* smiletaggray@2x.png */,
-				4B096A9314EDA895007AB50D /* smiletagyellow.png */,
-				4B096A9414EDA895007AB50D /* smiletagyellow@2x.png */,
+				4B096A9D14EF9E1A007AB50D /* smiletaggray.png */,
+				4B096A9E14EF9E1A007AB50D /* smiletaggray@2x.png */,
+				4B096A9F14EF9E1A007AB50D /* smiletagyellow.png */,
+				4B096AA014EF9E1A007AB50D /* smiletagyellow@2x.png */,
 				4B096A8A14ECFF46007AB50D /* smileyellow.png */,
 				4B096A8B14ECFF46007AB50D /* smileyellow@2x.png */,
 				4B096A8014ECE467007AB50D /* smile.png */,
@@ -983,9 +999,6 @@
 				4BF19C1514DCFE07007017ED /* trash@2x.png in Resources */,
 				4BF19C2A14DD4618007017ED /* fbicon.png in Resources */,
 				4B48B1F814E8FE56009740D9 /* DHImageDetailMetaHeaderVC.xib in Resources */,
-				4B30D2F514E9288B00134B50 /* commentfield.png in Resources */,
-				4B30D2F614E9288B00134B50 /* commentfield@2x.png in Resources */,
-				4B30D2F714E9288B00134B50 /* sendbutton.png in Resources */,
 				4B30D30014E9336B00134B50 /* MessageEntryBackground.png in Resources */,
 				4B30D30114E9336B00134B50 /* MessageEntryBackground@2x.png in Resources */,
 				4B30D30214E9336B00134B50 /* MessageEntryInputField.png in Resources */,
@@ -1002,13 +1015,17 @@
 				4B096A8214ECE467007AB50D /* smile.png in Resources */,
 				4B096A8514ECF45B007AB50D /* comment@2x.png in Resources */,
 				4B096A8714ECF49F007AB50D /* smile@2x.png in Resources */,
-				4B096A8914ECF4AD007AB50D /* sendbutton@2x.png in Resources */,
 				4B096A8C14ECFF46007AB50D /* smileyellow.png in Resources */,
 				4B096A8D14ECFF46007AB50D /* smileyellow@2x.png in Resources */,
-				4B096A9514EDA895007AB50D /* smiletaggray.png in Resources */,
-				4B096A9614EDA895007AB50D /* smiletaggray@2x.png in Resources */,
-				4B096A9714EDA895007AB50D /* smiletagyellow.png in Resources */,
-				4B096A9814EDA895007AB50D /* smiletagyellow@2x.png in Resources */,
+				4B096AA114EF9E1A007AB50D /* smiletaggray.png in Resources */,
+				4B096AA214EF9E1A007AB50D /* smiletaggray@2x.png in Resources */,
+				4B096AA314EF9E1A007AB50D /* smiletagyellow.png in Resources */,
+				4B096AA414EF9E1A007AB50D /* smiletagyellow@2x.png in Resources */,
+				4B096AAA14EF9E94007AB50D /* commentfield.png in Resources */,
+				4B096AAB14EF9E94007AB50D /* commentfield@2x.png in Resources */,
+				4B096AAC14EF9E94007AB50D /* commentfieldbackground.png in Resources */,
+				4B096AAD14EF9E94007AB50D /* sendbutton.png in Resources */,
+				4B096AAE14EF9E94007AB50D /* sendbutton@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1104,6 +1121,7 @@
 				4B30D2EF14E924CB00134B50 /* HPGrowingTextView.m in Sources */,
 				4B30D2F014E924CB00134B50 /* HPTextViewInternal.m in Sources */,
 				4B096A9014EDA7A6007AB50D /* DHImageSmileTagVC.m in Sources */,
+				4B096A9B14EF6DA0007AB50D /* PFObject+DHPhoto_MKAnnotation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

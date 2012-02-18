@@ -225,7 +225,7 @@
 //    }
     self.levelLabel.text = [[photoObject objectForKey:@"DHDataHappinessLevel"] stringValue];
     CGRect levelBarRect = self.levelBarView.frame;
-    levelBarRect.size.width = (CGFloat) 250 * ([[photoObject objectForKey:@"DHDataHappinessLevel"] floatValue] / 10);
+    levelBarRect.size.width = (CGFloat) 320 * ([[photoObject objectForKey:@"DHDataHappinessLevel"] floatValue] / 10);
     self.levelBarView.frame = levelBarRect;
     NSString *weatherCondition = [photoObject objectForKey:@"DHDataWeatherCondition"];
     NSString *weatherTemperature = [photoObject objectForKey:@"DHDataWeatherTemperature"];

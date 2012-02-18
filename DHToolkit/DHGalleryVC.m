@@ -14,6 +14,7 @@
 #import "Parse/PFUser.h"
 #import "UIBarButtonItem+CustomImage.h"
 #import "DHImageDetailContainerViewController.h"
+#import "DHImageDetailMetaVC.h"
 
 @interface DHGalleryVC() <DHGalleryPresenterDelegate>
 @property (nonatomic, strong) UIScrollView *scrollView;
@@ -233,7 +234,7 @@
         NSInteger index = button.tag;
         NSIndexPath *indexPathForCurrentIndex = [NSIndexPath indexPathForRow:index inSection:0];
         DHPhoto *photo = [self.fetchedResultsController objectAtIndexPath:indexPathForCurrentIndex];
-        DHImageDetailContainerViewController *detailVC = [[DHImageDetailContainerViewController alloc] init];
+        DHImageDetailMetaVC *detailVC = [[DHImageDetailMetaVC alloc] init];
         detailVC.photoObject = [self.galleryDelegate parseObjectForIndex:index];
         detailVC.managedPhoto = photo;
         [self.navigationController pushViewController:detailVC animated:YES];

@@ -8,6 +8,7 @@
 
 #import "DHImageDetailMetaHeaderVC.h"
 #import <QuartzCore/QuartzCore.h>
+#import "PFObject+DHPhoto_MKAnnotation.h"
 
 @implementation DHImageDetailMetaHeaderVC
 @synthesize usernameLabel;
@@ -54,7 +55,7 @@
         [dateFormatter setTimeStyle:kCFDateFormatterMediumStyle];
         self.levelLabel.text = [[photoObject objectForKey:@"DHDataHappinessLevel"] stringValue];
         CGRect levelBarRect = self.levelBarView.frame;
-        levelBarRect.size.width = (CGFloat) 250 * ([[photoObject objectForKey:@"DHDataHappinessLevel"] floatValue] / 10);
+        levelBarRect.size.width = (CGFloat) 320 * ([[photoObject objectForKey:@"DHDataHappinessLevel"] floatValue] / 10);
         self.levelBarView.frame = levelBarRect;
         self.dateLabel.text = [dateFormatter stringFromDate:self.photoObject.createdAt];
         NSString *weatherCondition = [photoObject objectForKey:@"DHDataWeatherCondition"];
@@ -66,11 +67,15 @@
             self.weatherLabel.hidden = YES;
         }
         self.locationMapView.layer.cornerRadius = 10.0;
+        self.locationMapView.layer.shadowOffset = CGSizeMake(6, -6);
+        self.locationMapView.layer.shadowColor = [UIColor blackColor].CGColor;
+        self.locationMapView.layer.shadowOpacity = 0.75;
         NSNumber *lat = [photoObject objectForKey:@"DHDataGeoLat"];
         NSNumber *lon = [photoObject objectForKey:@"DHDataGeoLong"];
         if (lat && lon) {
 //            self.locationMapView.centerCoordinate = CLLocationCoordinate2DMake([lat doubleValue], [lon doubleValue]);
             self.locationMapView.region = MKCoordinateRegionMakeWithDistance(CLLocationCoordinate2DMake([lat doubleValue], [lon doubleValue]), 5000, 5000);
+            [self.locationMapView addAnnotation:self.photoObject];
             
         } else {
             self.locationMapView.hidden = YES;
@@ -81,6 +86,7 @@
     }
     // Do any additional setup after loading the view from its nib.
 }
+
 
 - (void)viewDidUnload
 {
@@ -103,6 +109,18 @@
 {
     // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+#pragma mark - MKMapViewDelegate Methods
+
+- (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation
+{
+    MKAnnotationView *pinView = [mapView dequeueReusableAnnotationViewWithIdentifier:@"MK"];
+    if (!pinView) {
+        pinView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"MK"];
+        pinView.canShowCallout = NO;
+    }
+    return pinView;
 }
 
 @end

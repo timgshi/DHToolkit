@@ -11,12 +11,15 @@
 #import "DHImageDetailCommentTVC.h"
 #import "HPGrowingTextView.h"
 #import "ParsePoster.h"
+#import "UIBarButtonItem+CustomImage.h"
+#import "Parse/PFUser.h"
 
 @interface DHImageDetailMetaVC() <HPGrowingTextViewDelegate>
 @property (nonatomic, strong) DHImageDetailMetaHeaderVC *headerVC;
 @property (nonatomic, strong) DHImageDetailCommentTVC *commentTVC;
 @property (nonatomic, strong) UIView *textViewContainerView, *containerView;
 @property (nonatomic, strong) HPGrowingTextView *growingTextView;
+@property (nonatomic, strong) UIButton *sendButton;
 
 - (void)setupGrowingTextView;
 @end
@@ -29,6 +32,7 @@
 @synthesize commentTVC;
 @synthesize textViewContainerView, containerView;
 @synthesize growingTextView;
+@synthesize sendButton;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -52,7 +56,7 @@
     if (!containerView) {
         CGRect frame = self.view.frame;
 //        frame.size.height -= 64;
-//        frame.origin.y -= 40;
+        frame.origin.y -= 20;
         containerView = [[UIView alloc] initWithFrame:frame];
 //        containerView = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] applicationFrame]];
     }
@@ -75,8 +79,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    PFUser *curUser = [PFUser currentUser];
+    self.title = @"Details";
+    self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"backarrow.png"] target:self action:@selector(backArrowPressed)];
     UIImage *backgroundImage = [[UIImage imageNamed:@"BackgroundGradient.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
-    self.view.backgroundColor = [UIColor colorWithPatternImage:backgroundImage];
+//    self.view.backgroundColor = [UIColor colorWithPatternImage:backgroundImage];
+//    self.view.backgroundColor = [UIColor redColor];
     self.containerView.backgroundColor = [UIColor colorWithPatternImage:backgroundImage];
     self.headerVC = [[DHImageDetailMetaHeaderVC alloc] init];
     self.headerVC.photoObject = self.photoObject;
@@ -105,6 +113,11 @@
     [self.commentTVC.tableView addGestureRecognizer:tapGR2];
 }
 
+- (void)backArrowPressed
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
@@ -118,6 +131,8 @@
     [self setGrowingTextView:nil];
     [self setTextViewContainerView:nil];
     [self setContainerView:nil];
+    [self setCommentTVC:nil];
+    [self setSendButton:nil];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
 }
@@ -143,20 +158,22 @@
 	growingTextView.returnKeyType = UIReturnKeySend; //just as an example
 	growingTextView.font = [UIFont systemFontOfSize:14.0f];
 	growingTextView.delegate = self;
+    
     growingTextView.internalTextView.scrollIndicatorInsets = UIEdgeInsetsMake(5, 0, 5, 0);
-    growingTextView.backgroundColor = [UIColor whiteColor];
+    growingTextView.internalTextView.backgroundColor = [UIColor clearColor];
+    growingTextView.backgroundColor = [UIColor clearColor];
     
     // textView.text = @"test\n\ntest";
 	// textView.animateHeightChange = NO; //turns off animation
     
     //    [self.view addSubview:textViewContainerView];
-    UIImage *rawEntryBackground = [UIImage imageNamed:@"MessageEntryInputField.png"];
+    UIImage *rawEntryBackground = [UIImage imageNamed:@"commentfield.png"];
     UIImage *entryBackground = [rawEntryBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
     UIImageView *entryImageView = [[UIImageView alloc] initWithImage:entryBackground];
     entryImageView.frame = CGRectMake(5, 0, 248, 40);
     entryImageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     
-    UIImage *rawBackground = [UIImage imageNamed:@"MessageEntryBackground.png"];
+    UIImage *rawBackground = [UIImage imageNamed:@"commentfieldbackground.png"];
     UIImage *background = [rawBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
     UIImageView *imageView = [[UIImageView alloc] initWithImage:background];
     imageView.frame = CGRectMake(0, 0, textViewContainerView.frame.size.width, textViewContainerView.frame.size.height);
@@ -164,27 +181,29 @@
 //    
     // view hierachy
     [textViewContainerView addSubview:imageView];
-    [textViewContainerView addSubview:growingTextView];
+    
     [textViewContainerView addSubview:entryImageView];
+    [textViewContainerView addSubview:growingTextView];
     
     UIImage *sendBtnBackground = [[UIImage imageNamed:@"sendButton.png"] stretchableImageWithLeftCapWidth:13 topCapHeight:0];
     UIImage *selectedSendBtnBackground = [[UIImage imageNamed:@"sendButton.png"] stretchableImageWithLeftCapWidth:13 topCapHeight:0];
     
-	UIButton *doneBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-	doneBtn.frame = CGRectMake(textViewContainerView.frame.size.width - 69, 2, 63, 35);
-    doneBtn.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-	[doneBtn setTitle:@"Send" forState:UIControlStateNormal];
+	sendButton = [UIButton buttonWithType:UIButtonTypeCustom];
+	sendButton.frame = CGRectMake(textViewContainerView.frame.size.width - 69, 2, 68, 35);
+    sendButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+	[sendButton setTitle:@"Send" forState:UIControlStateNormal];
     
-    [doneBtn setTitleShadowColor:[UIColor colorWithWhite:0 alpha:0.4] forState:UIControlStateNormal];
-    doneBtn.titleLabel.shadowOffset = CGSizeMake (0.0, -1.0);
-    doneBtn.titleLabel.font = [UIFont boldSystemFontOfSize:18.0f];
+    [sendButton setTitleShadowColor:[UIColor colorWithWhite:0 alpha:0.4] forState:UIControlStateNormal];
+    sendButton.titleLabel.shadowOffset = CGSizeMake (0.0, -1.0);
+    sendButton.titleLabel.font = [UIFont boldSystemFontOfSize:18.0f];
     
-    [doneBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-	[doneBtn addTarget:self action:@selector(resignTextView) forControlEvents:UIControlEventTouchUpInside];
-    [doneBtn addTarget:self action:@selector(sendButtonPressed) forControlEvents:UIControlEventTouchUpInside];
-    [doneBtn setBackgroundImage:sendBtnBackground forState:UIControlStateNormal];
-    [doneBtn setBackgroundImage:selectedSendBtnBackground forState:UIControlStateSelected];
-	[textViewContainerView addSubview:doneBtn];
+    [sendButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+	[sendButton addTarget:self action:@selector(resignTextView) forControlEvents:UIControlEventTouchUpInside];
+    [sendButton addTarget:self action:@selector(sendButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+    [sendButton setBackgroundImage:sendBtnBackground forState:UIControlStateNormal];
+    [sendButton setBackgroundImage:selectedSendBtnBackground forState:UIControlStateSelected];
+    sendButton.enabled = NO;
+	[textViewContainerView addSubview:sendButton];
 }
 
 //Code from Brett Schumann
@@ -305,6 +324,14 @@
 {
     [self sendButtonPressed];
     [self resignTextView];
+    return YES;
+}
+
+
+- (BOOL)growingTextView:(HPGrowingTextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+{
+    NSString *newString = [textView.text stringByReplacingCharactersInRange:range withString:text];
+    sendButton.enabled = ([newString isEqualToString:@""]) ? NO : YES;
     return YES;
 }
 
