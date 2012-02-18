@@ -22,6 +22,7 @@
 #import "Parse/PFPush.h"
 #import "DHImageDetailContainerViewController.h"
 #import "AppDelegate.h"
+#import "DHImageDetailMetaVC.h"
 
 @interface DH_PFStreamTVC() <DHImageRatingDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, DHSortBoxViewDelegate, DHGalleryVCDelegate, UIScrollViewDelegate>
 @property (nonatomic, strong) NSMutableSet *expandedIndexPaths;
@@ -358,10 +359,14 @@
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"pfObjectID == %@", [object objectId]];
     NSArray *results = [self.context executeFetchRequest:fetchRequest error:nil];
     if ([results lastObject]) {
-        DHImageDetailContainerViewController *detailVC = [[DHImageDetailContainerViewController alloc] init];
-        detailVC.photoObject = object;
-        detailVC.managedPhoto = [results lastObject];
-        [self.navigationController pushViewController:detailVC animated:YES];
+//        DHImageDetailContainerViewController *detailVC = [[DHImageDetailContainerViewController alloc] init];
+//        detailVC.photoObject = object;
+//        detailVC.managedPhoto = [results lastObject];
+//        [self.navigationController pushViewController:detailVC animated:YES];
+        DHImageDetailMetaVC *metaVC = [[DHImageDetailMetaVC alloc] init];
+        metaVC.photoObject = object;
+        metaVC.managedPhoto = [results lastObject];
+        [self.navigationController pushViewController:metaVC animated:YES];
     }
     
     

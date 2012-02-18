@@ -60,6 +60,7 @@
         [photoDescriptionLabel setShadowOffset:CGSizeMake(-1, 1)];
         [photoDescriptionLabel setShadowColor:[UIColor blackColor]];
         [photoDescriptionLabel setLineBreakMode:UILineBreakModeWordWrap];
+        [photoDescriptionLabel setNumberOfLines:0];
     }
     return photoDescriptionLabel;
 }
@@ -155,7 +156,7 @@
 - (DHImageSmileTagVC *)smileTagVC
 {
     if (!smileTagVC) {
-        smileTagVC = [[DHImageSmileTagVC alloc] initWithOrigin:CGPointMake(320 - 60, 20)];
+        smileTagVC = [[DHImageSmileTagVC alloc] initWithOrigin:CGPointMake(320 - 57, 3)];
     }
     return smileTagVC;
 }
@@ -214,12 +215,14 @@
     self.photoDescriptionLabel.text = [photoObject objectForKey:@"DHDataSixWord"];
     CGSize nameSize = [self.photographerNameLabel.text sizeWithFont:[self.photographerNameLabel font]];
     self.photographerNameLabel.frame = CGRectMake(5, 5, nameSize.width, nameSize.height);
-    if ([self.photoDescriptionLabel.text sizeWithFont:[self.photoDescriptionLabel font]].width > 320 - (nameSize.width + 7)) {
-        self.photoDescriptionLabel.frame = CGRectMake(self.photographerNameLabel.frame.origin.x + nameSize.width + 5, self.photographerNameLabel.frame.origin.y, 320 - (nameSize.width + 7), nameSize.height * 2);
-        [self.photoDescriptionLabel setNumberOfLines:2];
-    } else {
-        self.photoDescriptionLabel.frame = CGRectMake(self.photographerNameLabel.frame.origin.x + nameSize.width + 5, self.photographerNameLabel.frame.origin.y, 320 - (nameSize.width + 7), nameSize.height);
-    }
+    CGSize descriptionSize = [self.photoDescriptionLabel.text sizeWithFont:self.photoDescriptionLabel.font constrainedToSize:CGSizeMake(320 - (nameSize.width - 7) - (57 + 12), 2000.0f) lineBreakMode:UILineBreakModeWordWrap];
+    self.photoDescriptionLabel.frame = CGRectMake(self.photographerNameLabel.frame.origin.x + nameSize.width + 5, self.photographerNameLabel.frame.origin.y, descriptionSize.width, descriptionSize.height);
+//    if ([self.photoDescriptionLabel.text sizeWithFont:[self.photoDescriptionLabel font]].width > 320 - (nameSize.width + 7)) {
+//        self.photoDescriptionLabel.frame = CGRectMake(self.photographerNameLabel.frame.origin.x + nameSize.width + 5, self.photographerNameLabel.frame.origin.y, 320 - (nameSize.width + 7), nameSize.height * 2);
+//        [self.photoDescriptionLabel setNumberOfLines:2];
+//    } else {
+//        self.photoDescriptionLabel.frame = CGRectMake(self.photographerNameLabel.frame.origin.x + nameSize.width + 5, self.photographerNameLabel.frame.origin.y, 320 - (nameSize.width + 7), nameSize.height);
+//    }
     self.levelLabel.text = [[photoObject objectForKey:@"DHDataHappinessLevel"] stringValue];
     CGRect levelBarRect = self.levelBarView.frame;
     levelBarRect.size.width = (CGFloat) 250 * ([[photoObject objectForKey:@"DHDataHappinessLevel"] floatValue] / 10);

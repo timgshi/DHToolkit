@@ -51,8 +51,8 @@
 {
     if (!containerView) {
         CGRect frame = self.view.frame;
-        frame.size.height -= 64;
-        frame.origin.y -= 40;
+//        frame.size.height -= 64;
+//        frame.origin.y -= 40;
         containerView = [[UIView alloc] initWithFrame:frame];
 //        containerView = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] applicationFrame]];
     }
@@ -85,7 +85,7 @@
     NSLog(@"container: %@",NSStringFromCGRect(self.containerView.frame));
     NSLog(@"header: %@", NSStringFromCGRect(self.headerVC.view.frame));
     self.commentTVC = [[DHImageDetailCommentTVC alloc] initWithStyle:UITableViewStylePlain photoObject:self.photoObject];
-    self.commentTVC.tableView.frame = CGRectMake(0, self.headerVC.view.frame.size.height, 320, self.containerView.bounds.size.height - self.headerVC.view.frame.size.height - 20);
+    self.commentTVC.tableView.frame = CGRectMake(0, self.headerVC.view.frame.size.height, 320, self.containerView.bounds.size.height - self.headerVC.view.frame.size.height - 80);
     [self.containerView addSubview:self.commentTVC.tableView];
     [self.view addSubview:self.containerView];
     [self setupGrowingTextView];
@@ -132,7 +132,7 @@
 
 - (void)setupGrowingTextView
 {
-    textViewContainerView = [[UIView alloc] initWithFrame:CGRectMake(0, self.containerView.bounds.size.height - 40, 320, 40)];
+    textViewContainerView = [[UIView alloc] initWithFrame:CGRectMake(0, self.containerView.frame.size.height - 80, 320, 40)];
     
 	growingTextView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(6, 3, 240, 40)];
     growingTextView.contentInset = UIEdgeInsetsMake(0, 5, 0, 5);
