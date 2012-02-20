@@ -22,6 +22,10 @@
 @property (strong, nonatomic) IBOutlet UILabel *levelLabel;
 @property (strong, nonatomic) IBOutlet UIView *levelBarView;
 @property (strong, nonatomic) IBOutlet MKMapView *locationMapView;
+@property (strong, nonatomic) IBOutlet UILabel *smileLabel;
+@property (strong, nonatomic) IBOutlet UILabel *commentLabel;
+@property (strong, nonatomic) IBOutlet UIImageView *smileImageView;
+@property (strong, nonatomic) IBOutlet UIImageView *commentImageView;
 
 @property (strong, nonatomic) PFObject *photoObject;
 

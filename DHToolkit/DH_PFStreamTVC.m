@@ -31,7 +31,6 @@
 @property (nonatomic, strong) DHUploadNotificationView *uploadNotificationView;
 @property (nonatomic, strong) DHSortBoxView *sortBox;
 @property (nonatomic, strong) UIView *opaqueView;
-@property (nonatomic, strong) NSMutableSet *fileRequestsSet;
 @property BOOL objectsLoading;
 @property BOOL photosLoading;
 
@@ -50,16 +49,9 @@
 @synthesize sortBox;
 @synthesize opaqueView;
 @synthesize objectsLoading;
-@synthesize fileRequestsSet;
 @synthesize photosLoading;
 
-- (NSMutableSet *)fileRequestsSet
-{
-    if (!fileRequestsSet) {
-        fileRequestsSet = [NSMutableSet set];
-    }
-    return fileRequestsSet;
-}
+
 
 //- (id)initWithStyle:(UITableViewStyle)style
 //{
@@ -206,6 +198,7 @@
     galleryVC = [[DHGalleryVC alloc] initInManagedObjectContext:self.context];
     galleryVC.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     galleryVC.galleryDelegate = self;
+    
     [super viewDidLoad];
     
 }
@@ -213,6 +206,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadAfterSave) name:NSManagedObjectContextDidSaveNotification object:nil];
     [self.navigationController.navigationBar setBackgroundImage:[[UIImage imageNamed:@"navbar.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 11)] forBarMetrics:UIBarMetricsDefault];
 //    [self performSelector:@selector(uploadBegin:) withObject:nil afterDelay:2];
 //    self.uploadNotificationView = [[DHUploadNotificationView alloc] initWithFrame:kDH_Upload_Notification_Default_Rect(self.tableView.frame.size.width, self.tableView.frame.size.height)];
@@ -227,9 +221,16 @@
 
 - (void)viewWillDisappear:(BOOL)animated
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSManagedObjectContextDidSaveNotification object:nil];
     [self.navigationController.navigationBar setBackgroundImage:[[UIImage imageNamed:@"navbarblack.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)] forBarMetrics:UIBarMetricsDefault];
     [super viewDidDisappear:animated];
     
+}
+
+- (void)reloadAfterSave
+{
+    [NSObject cancelPreviousPerformRequestsWithTarget:self.tableView selector:@selector(reloadData) object:nil];
+    [self.tableView performSelector:@selector(reloadData) withObject:nil afterDelay:2.0];
 }
 
 - (void)viewDidUnload
@@ -254,6 +255,20 @@
     return [self queryBasedOnSortDefaults];
 }
 
+- (void)DHSetImageFromPhoto:(DHPhoto *)cellPhoto withPhotoObject:(PFObject *)photoObject forStreamCell:(DHStreamCell *)cell
+{
+    if (cell) {
+        if (cellPhoto.photoData == NULL) {
+            [cell setImageForCellImageView:nil];
+            [cell.spinner startAnimating];
+        } else if ([cell.PFObjectID isEqualToString:cellPhoto.pfObjectID]) {
+            [cell.spinner stopAnimating];
+            [cell setImageForCellImageView:[UIImage imageWithData:cellPhoto.photoData]];
+        }
+    }
+}
+
+/*
 - (void)DHSetImageFromPhoto:(DHPhoto *)cellPhoto withPhotoObject:(PFObject *)photoObject forStreamCell:(DHStreamCell *)cell
 {
     if (cell) {
@@ -312,6 +327,7 @@
         }
     }
 }
+*/
 
 - (UITableViewCell *)tableView:(UITableView *)tableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -417,6 +433,7 @@
 //        [self DHSetImageFromPhoto:[DHPhoto photoWithPFObject:obj inManagedObjectContext:self.context] withPhotoObject:obj forStreamCell:nil];
     }
     [self.tableView reloadData];
+    [self.tableView performSelector:@selector(reloadData) withObject:nil afterDelay:5];
     self.photosLoading = NO;
     [self.fetchedResultsController performFetch:nil];
     [self.tableView reloadData];

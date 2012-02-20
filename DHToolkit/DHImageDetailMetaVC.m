@@ -150,6 +150,7 @@
     textViewContainerView = [[UIView alloc] initWithFrame:CGRectMake(0, self.containerView.frame.size.height - 80, 320, 40)];
     
 	growingTextView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(6, 3, 240, 40)];
+    growingTextView.delegate = self;
     growingTextView.contentInset = UIEdgeInsetsMake(0, 5, 0, 5);
     
 	growingTextView.minNumberOfLines = 1;
@@ -157,7 +158,7 @@
     growingTextView.internalTextView.autocapitalizationType = UITextAutocapitalizationTypeNone;
 	growingTextView.returnKeyType = UIReturnKeySend; //just as an example
 	growingTextView.font = [UIFont systemFontOfSize:14.0f];
-	growingTextView.delegate = self;
+	
     
     growingTextView.internalTextView.scrollIndicatorInsets = UIEdgeInsetsMake(5, 0, 5, 0);
     growingTextView.internalTextView.backgroundColor = [UIColor clearColor];
