@@ -73,6 +73,17 @@
     }];
 }
 
+- (void)setupLabels
+{
+    CGSize descriptionSize = [self.descriptionLabel.text sizeWithFont:self.descriptionLabel.font constrainedToSize:CGSizeMake(147, 40) lineBreakMode:UILineBreakModeTailTruncation];
+    self.descriptionLabel.numberOfLines = 2;
+    CGFloat xForAll = self.usernameLabel.frame.origin.x;
+    self.descriptionLabel.frame = CGRectMake(xForAll, self.usernameLabel.frame.origin.y + self.usernameLabel.frame.size.height - 4, descriptionSize.width, descriptionSize.height);
+    self.dateHeaderLabel.frame = CGRectMake(xForAll, self.descriptionLabel.frame.origin.y + self.descriptionLabel.frame.size.height, self.dateHeaderLabel.frame.size.width, self.dateHeaderLabel.frame.size.height);
+    self.dateLabel.frame = CGRectMake(xForAll, self.dateHeaderLabel.frame.origin.y + self.dateHeaderLabel.frame.size.height - 4, self.dateLabel.frame.size.width, self.dateLabel.frame.size.height);
+    self.weatherHeaderLabel.frame = CGRectMake(xForAll, self.dateLabel.frame.origin.y + self.dateLabel.frame.size.height, self.weatherHeaderLabel.frame.size.width, self.weatherHeaderLabel.frame.size.height);
+    self.weatherLabel.frame = CGRectMake(xForAll, self.weatherHeaderLabel.frame.origin.y + self.weatherHeaderLabel.frame.size.height - 4, self.weatherLabel.frame.size.width, self.weatherLabel.frame.size.height);
+}
 
 - (void)viewDidLoad
 {
@@ -88,8 +99,8 @@
         self.usernameLabel.text = [photoObject objectForKey:@"DHDataWhoTook"];
         self.descriptionLabel.text = [photoObject objectForKey:@"DHDataSixWord"];
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        [dateFormatter setDateStyle:kCFDateFormatterMediumStyle];
-        [dateFormatter setTimeStyle:kCFDateFormatterMediumStyle];
+        [dateFormatter setDateStyle:kCFDateFormatterShortStyle];
+        [dateFormatter setTimeStyle:kCFDateFormatterShortStyle];
         self.levelLabel.text = [[photoObject objectForKey:@"DHDataHappinessLevel"] stringValue];
         CGRect levelBarRect = self.levelBarView.frame;
         levelBarRect.size.width = (CGFloat) 320 * ([[photoObject objectForKey:@"DHDataHappinessLevel"] floatValue] / 10);
@@ -104,20 +115,24 @@
             self.weatherLabel.hidden = YES;
         }
         self.locationMapView.layer.cornerRadius = 10.0;
-        self.locationMapView.layer.shadowOffset = CGSizeMake(6, -6);
+        self.locationMapView.layer.shadowOffset = CGSizeMake(0, 3);
         self.locationMapView.layer.shadowColor = [UIColor blackColor].CGColor;
         self.locationMapView.layer.shadowOpacity = 0.75;
+        self.locationMapView.layer.shadowRadius = 10.0f;
+        self.locationMapView.userInteractionEnabled = YES;
+        UITapGestureRecognizer *tapgr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(mapClicked)];
+        [self.locationMapView addGestureRecognizer:tapgr];
         NSNumber *lat = [photoObject objectForKey:@"DHDataGeoLat"];
         NSNumber *lon = [photoObject objectForKey:@"DHDataGeoLong"];
         if (lat && lon) {
 //            self.locationMapView.centerCoordinate = CLLocationCoordinate2DMake([lat doubleValue], [lon doubleValue]);
-            self.locationMapView.region = MKCoordinateRegionMakeWithDistance(CLLocationCoordinate2DMake([lat doubleValue], [lon doubleValue]), 5000, 5000);
+            self.locationMapView.region = MKCoordinateRegionMakeWithDistance(CLLocationCoordinate2DMake([lat doubleValue], [lon doubleValue]), 500, 500);
             [self.locationMapView addAnnotation:self.photoObject];
             
         } else {
             self.locationMapView.hidden = YES;
         }
-        
+        [self setupLabels];
     } else {
         
     }
@@ -193,5 +208,14 @@
     [self updateIcons];
 }
 
+- (void)mapClicked
+{
+    NSNumber *lat = [photoObject objectForKey:@"DHDataGeoLat"];
+    NSNumber *lon = [photoObject objectForKey:@"DHDataGeoLong"];
+    NSString *urlString = [NSString stringWithFormat:@"http://maps.google.com/maps?z=1000&q=%f,%f", [lat doubleValue], [lon doubleValue]];
+    urlString = [urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSURL *mapURL = [NSURL URLWithString:urlString];
+    [[UIApplication sharedApplication] openURL:mapURL];
+}
 
 @end

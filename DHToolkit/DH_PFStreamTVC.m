@@ -183,7 +183,7 @@
     self.paginationEnabled = YES;
     self.objectsPerPage = 25;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    self.title = @"DHStream";
+    self.title = @"Stream";
     UIBarButtonItem *settingsButton = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"settings.png"] target:self action:@selector(settingsButtonPressed)];
     UIBarButtonItem *cameraButton = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"camera.png"] target:self action:@selector(cameraButtonPressed)];
     UIBarButtonItem *galleryButton = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"gallery.png"] target:self action:@selector(galleryButtonPressed)];

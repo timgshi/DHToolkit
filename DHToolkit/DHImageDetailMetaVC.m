@@ -13,8 +13,9 @@
 #import "ParsePoster.h"
 #import "UIBarButtonItem+CustomImage.h"
 #import "Parse/PFUser.h"
+#import "UIBarButtonItem+CustomImage.h"
 
-@interface DHImageDetailMetaVC() <HPGrowingTextViewDelegate>
+@interface DHImageDetailMetaVC() <HPGrowingTextViewDelegate, UIActionSheetDelegate>
 @property (nonatomic, strong) DHImageDetailMetaHeaderVC *headerVC;
 @property (nonatomic, strong) DHImageDetailCommentTVC *commentTVC;
 @property (nonatomic, strong) UIView *textViewContainerView, *containerView;
@@ -79,7 +80,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    PFUser *curUser = [PFUser currentUser];
     self.title = @"Details";
     self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"backarrow.png"] target:self action:@selector(backArrowPressed)];
     UIImage *backgroundImage = [[UIImage imageNamed:@"BackgroundGradient.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
@@ -93,7 +93,7 @@
     NSLog(@"container: %@",NSStringFromCGRect(self.containerView.frame));
     NSLog(@"header: %@", NSStringFromCGRect(self.headerVC.view.frame));
     self.commentTVC = [[DHImageDetailCommentTVC alloc] initWithStyle:UITableViewStylePlain photoObject:self.photoObject];
-    self.commentTVC.tableView.frame = CGRectMake(0, self.headerVC.view.frame.size.height, 320, self.containerView.bounds.size.height - self.headerVC.view.frame.size.height - 80);
+    self.commentTVC.tableView.frame = CGRectMake(0, self.headerVC.view.frame.size.height, 320, self.containerView.bounds.size.height - self.headerVC.view.frame.size.height - 84);
     [self.containerView addSubview:self.commentTVC.tableView];
     [self.view addSubview:self.containerView];
     [self setupGrowingTextView];
@@ -111,6 +111,32 @@
     UITapGestureRecognizer *tapGR2 = [[UITapGestureRecognizer alloc] initWithTarget:growingTextView action:@selector(resignFirstResponder)];
     [self.headerVC.view addGestureRecognizer:tapGR1];
     [self.commentTVC.tableView addGestureRecognizer:tapGR2];
+    self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"trash.png"] target:self action:@selector(deleteButtonPressed)];
+
+    PFUser *curUser = [PFUser currentUser];
+    if (!curUser) {
+        self.navigationItem.rightBarButtonItem = nil;
+    } else {
+        NSString *user1 = curUser.username;
+        PFUser *photoUser = [photoObject objectForKey:@"PFUser"];
+        NSString *user2 = photoUser.username;
+        if (![user1 isEqualToString:user2]) self.navigationItem.rightBarButtonItem = nil;
+    }
+}
+
+- (void)deleteButtonPressed
+{
+    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Are you sure you want to delete?" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Delete" otherButtonTitles: nil];
+    [actionSheet showFromBarButtonItem:self.navigationItem.rightBarButtonItem animated:YES];
+}
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == 0) {
+        [photoObject deleteInBackground];
+        [[NSNotificationCenter defaultCenter] postNotificationName:DH_PHOTO_DELETE_NOTIFICATION object:nil];
+        [self.navigationController popViewControllerAnimated:YES];
+    }
 }
 
 - (void)backArrowPressed
@@ -147,7 +173,7 @@
 
 - (void)setupGrowingTextView
 {
-    textViewContainerView = [[UIView alloc] initWithFrame:CGRectMake(0, self.containerView.frame.size.height - 80, 320, 40)];
+    textViewContainerView = [[UIView alloc] initWithFrame:CGRectMake(0, self.containerView.frame.size.height - 84, 320, 40)];
     
 	growingTextView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(6, 3, 240, 40)];
     growingTextView.delegate = self;
@@ -194,15 +220,16 @@
     sendButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
 	[sendButton setTitle:@"Send" forState:UIControlStateNormal];
     
-    [sendButton setTitleShadowColor:[UIColor colorWithWhite:0 alpha:0.4] forState:UIControlStateNormal];
-    sendButton.titleLabel.shadowOffset = CGSizeMake (0.0, -1.0);
-    sendButton.titleLabel.font = [UIFont boldSystemFontOfSize:18.0f];
+//    [sendButton setTitleShadowColor:[UIColor colorWithWhite:0 alpha:0.4] forState:UIControlStateNormal];
+//    sendButton.titleLabel.shadowOffset = CGSizeMake (0.0, -1.0);
+    sendButton.titleLabel.font = [UIFont boldSystemFontOfSize:15.0f];
     
     [sendButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
 	[sendButton addTarget:self action:@selector(resignTextView) forControlEvents:UIControlEventTouchUpInside];
     [sendButton addTarget:self action:@selector(sendButtonPressed) forControlEvents:UIControlEventTouchUpInside];
     [sendButton setBackgroundImage:sendBtnBackground forState:UIControlStateNormal];
     [sendButton setBackgroundImage:selectedSendBtnBackground forState:UIControlStateSelected];
+    [sendButton setBackgroundImage:sendBtnBackground forState:UIControlStateDisabled];
     sendButton.enabled = NO;
 	[textViewContainerView addSubview:sendButton];
 }

@@ -75,6 +75,13 @@
 {
     [self configureAppearance];
     [self setupDefaults];
+//    id payload = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+//    if (payload) {
+//        NSDictionary *payloadDict = (NSDictionary *)payload;
+//        NSString *photoID = [payloadDict objectForKey:@"photo"];
+//        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"push" message:[NSString stringWithFormat:@"%@", photoID] delegate:nil cancelButtonTitle:@"ok" otherButtonTitles: nil];
+//        [alert show];
+//    }
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(incrementNetworkActivity:) name:kDHIncrementNetworkActivityNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(decrementNetworkActivity:) name:kDHDecrementNetworkActivityNotification object:nil];
     id rootVC = self.window.rootViewController;
@@ -99,7 +106,7 @@
     stream.context = self.managedObjectContext;
     UINavigationController *streamNav = [[UINavigationController alloc] initWithRootViewController:stream];
     self.window.rootViewController = streamNav;
-//    [TestFlight takeOff:kTestFlightTeamID];
+    [TestFlight takeOff:kTestFlightTeamID];
     [Parse setFacebookApplicationId:kDH_FACEBOOK_ID];
     [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge|
      UIRemoteNotificationTypeAlert|
@@ -127,7 +134,15 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)newDeviceToken
 
 - (void)application:(UIApplication *)application 
 didReceiveRemoteNotification:(NSDictionary *)userInfo {
+//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"push remote" message:[NSString stringWithFormat:@"%@", userInfo] delegate:nil cancelButtonTitle:@"ok" otherButtonTitles: nil];
+//    [alert show];
     [PFPush handlePush:userInfo];
+}
+
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
+{
+//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"push local" message:[NSString stringWithFormat:@"%@", notification] delegate:nil cancelButtonTitle:@"ok" otherButtonTitles: nil];
+//    [alert show];
 }
 
 - (void)application:(UIApplication *)application 

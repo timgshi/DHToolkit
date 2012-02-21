@@ -12,7 +12,7 @@
 
 @interface PFObject (DHPhoto_MKAnnotation) <MKAnnotation>
 
-@property (readonly) CLLocationCoordinate2D coordinate;
-@property (readonly) NSString *title;
+@property (nonatomic, readonly) CLLocationCoordinate2D coordinate;
+@property (nonatomic, readonly) NSString *title;
 
 @end

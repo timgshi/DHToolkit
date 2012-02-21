@@ -262,7 +262,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if ([indexPath section] == 0) {
-        [self signinButtonPressed];
+        if (![PFUser currentUser]) [self signinButtonPressed];
     } else if (indexPath.section == 1 && indexPath.row == 1) {
         [self performSelector:@selector(fbIconPressed)];
     }

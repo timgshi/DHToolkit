@@ -73,7 +73,11 @@
         if (succeeded) {
             [[NSNotificationCenter defaultCenter] postNotificationName:DH_COMMENT_UPLOAD_SUCCESS_NOTIFICATION object:nil];
             NSString *username = [photoObject objectForKey:@"DHDataWhoTook"];
-            [PFPush sendPushMessageToChannelInBackground:[NSString stringWithFormat:@"user-%@", username] withMessage:[NSString stringWithFormat:@"%@ just commented on your photo!", curUser.username]];
+//            [PFPush sendPushMessageToChannelInBackground:[NSString stringWithFormat:@"user-%@", username] withMessage:[NSString stringWithFormat:@"%@ just commented on your photo!", curUser.username]];
+            NSMutableDictionary *pushData = [NSMutableDictionary dictionary];
+            [pushData setObject:[NSString stringWithFormat:@"%@ just commented on your photo!", curUser.username] forKey:@"alert"];
+            [pushData setObject:photoObject.objectId forKey:@"photo"];
+            [PFPush sendPushDataToChannelInBackground:[NSString stringWithFormat:@"user-%@", username] withData:pushData];
         } else {
             [[NSNotificationCenter defaultCenter] postNotificationName:DH_COMMENT_UPLOAD_FAILURE_NOTIFICATION object:nil];
         }
@@ -99,7 +103,6 @@
                     NSString *username = [photoObject objectForKey:@"DHDataWhoTook"];
                     PFUser *curUser = [PFUser currentUser];
                     [PFPush sendPushMessageToChannelInBackground:[NSString stringWithFormat:@"user-%@", username] withMessage:[NSString stringWithFormat:@"%@ just smiled at your photo!", curUser.username]];
-
                 }
                 
             }];
