@@ -11,8 +11,9 @@
 @class PFObject;
 
 @protocol DHGalleryVCDelegate
-- (NSArray *)objectsArray;
-- (UIImage *)imageForPhoto:(PFObject *)photoObject;
+//- (NSArray *)objectsArray;
+//- (UIImage *)imageForPhoto:(PFObject *)photoObject;
+- (PFObject *)parseObjectForIndex:(int) index;
 @end
 
 @interface DHGalleryVC : UIViewController <NSFetchedResultsControllerDelegate>

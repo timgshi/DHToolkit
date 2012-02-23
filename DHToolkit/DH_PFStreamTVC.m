@@ -20,51 +20,58 @@
 #import "DHUploadNotificationView.h"
 #import "DHSortBoxView.h"
 #import "Parse/PFPush.h"
+#import "DHImageDetailContainerViewController.h"
+#import "AppDelegate.h"
+#import "DHImageDetailMetaVC.h"
 
-@interface DH_PFStreamTVC() <DHImageRatingDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, DHExpandingStreamCellDelegate, DHSortBoxViewDelegate>
+@interface DH_PFStreamTVC() <DHImageRatingDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, DHSortBoxViewDelegate, DHGalleryVCDelegate, UIScrollViewDelegate>
 @property (nonatomic, strong) NSMutableSet *expandedIndexPaths;
-@property (nonatomic, strong) NSCache *photosCache;
 @property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
 @property (nonatomic, strong) DHGalleryVC *galleryVC;
 @property (nonatomic, strong) DHUploadNotificationView *uploadNotificationView;
 @property (nonatomic, strong) DHSortBoxView *sortBox;
 @property (nonatomic, strong) UIView *opaqueView;
+@property BOOL objectsLoading;
+@property BOOL photosLoading;
 
 - (PFQuery *)queryBasedOnSortDefaults;
 - (NSFetchedResultsController *)fetchedResultsControllerBasedOnSortDefaults;
+- (void)cleanupOldPhotos;
 @end
 
 @implementation DH_PFStreamTVC
 
 @synthesize expandedIndexPaths;
-@synthesize photosCache;
 @synthesize context;
 @synthesize fetchedResultsController;
 @synthesize galleryVC;
 @synthesize uploadNotificationView;
 @synthesize sortBox;
 @synthesize opaqueView;
+@synthesize objectsLoading;
+@synthesize photosLoading;
 
 
-- (id)initWithStyle:(UITableViewStyle)style
-{
-    self = [super initWithStyle:style];
-    if (self) {
-        self.className = @"DHPhoto";
-        self.keyToDisplay = @"DHDataSixWord";
-        self.pullToRefreshEnabled = YES;
-        self.paginationEnabled = YES;
-        self.objectsPerPage = 25;
-        self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    }
-    return self;
-}
+
+//- (id)initWithStyle:(UITableViewStyle)style
+//{
+//    self = [super initWithStyle:style];
+//    if (self) {
+//        self.className = @"DHPhoto";
+//        self.keyToDisplay = @"DHDataSixWord";
+//        self.pullToRefreshEnabled = YES;
+//        self.paginationEnabled = NO;
+//        self.objectsPerPage = 25;
+//        self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+//    }
+//    return self;
+//}
 
 - initInManagedObjectContext:(NSManagedObjectContext *)aContext
 {
     if (aContext) {
         self = [super initWithStyle:UITableViewStylePlain];
-        self.tableView.allowsSelection = NO;    
+        self.tableView.allowsSelection = YES;    
         self.context = aContext;
         self.className = @"DHPhoto";
         self.keyToDisplay = @"DHDataSixWord";
@@ -107,14 +114,6 @@
     return expandedIndexPaths;
 }
 
-- (NSCache *)photosCache
-{
-    if (!photosCache) {
-        photosCache = [[NSCache alloc] init];
-        photosCache.countLimit = 25;
-    }
-    return photosCache;
-}
 
 #pragma mark - View lifecycle
 
@@ -155,8 +154,11 @@
     if (sortBox) {
         [self sortButtonPressed];
     }
-    galleryVC = [[DHGalleryVC alloc] initInManagedObjectContext:self.context];
-    galleryVC.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    if (!galleryVC) {
+        galleryVC = [[DHGalleryVC alloc] initInManagedObjectContext:self.context];
+        galleryVC.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+        galleryVC.galleryDelegate = self;
+    }
     UINavigationController *galleryNav = [[UINavigationController alloc] initWithRootViewController:galleryVC];
     [self presentViewController:galleryNav animated:YES completion:^{
         
@@ -181,24 +183,30 @@
     self.paginationEnabled = YES;
     self.objectsPerPage = 25;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    self.title = @"DHStream";
+    self.title = @"Stream";
     UIBarButtonItem *settingsButton = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"settings.png"] target:self action:@selector(settingsButtonPressed)];
     UIBarButtonItem *cameraButton = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"camera.png"] target:self action:@selector(cameraButtonPressed)];
     UIBarButtonItem *galleryButton = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"gallery.png"] target:self action:@selector(galleryButtonPressed)];
     UIBarButtonItem *sortButton = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"sort.png"] target:self action:@selector(sortButtonPressed)];
     self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:cameraButton, settingsButton, nil];
     self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:galleryButton, sortButton, nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadBegin:) name:DH_PHOTO_UPLOAD_BEGIN_NOTIFICATION object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadSuccess:) name:DH_PHOTO_UPLOAD_SUCCESS_NOTIFICATION object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadFailure:) name:DH_PHOTO_UPLOAD_FAILURE_NOTIFICATION object:nil];
-    [super viewDidLoad];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadBegin:) name:DH_PHOTO_UPLOAD_BEGIN_NOTIFICATION object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadSuccess:) name:DH_PHOTO_UPLOAD_SUCCESS_NOTIFICATION object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadFailure:) name:DH_PHOTO_UPLOAD_FAILURE_NOTIFICATION object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(imageDeleted:) name:DH_PHOTO_DELETE_NOTIFICATION object:nil];
     [self.navigationItem setBackBarButtonItem:[UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"backarrow.png"] target:nil action:nil]];
+    galleryVC = [[DHGalleryVC alloc] initInManagedObjectContext:self.context];
+    galleryVC.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    galleryVC.galleryDelegate = self;
+    
+    [super viewDidLoad];
     
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadAfterSave) name:NSManagedObjectContextDidSaveNotification object:nil];
     [self.navigationController.navigationBar setBackgroundImage:[[UIImage imageNamed:@"navbar.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 11)] forBarMetrics:UIBarMetricsDefault];
 //    [self performSelector:@selector(uploadBegin:) withObject:nil afterDelay:2];
 //    self.uploadNotificationView = [[DHUploadNotificationView alloc] initWithFrame:kDH_Upload_Notification_Default_Rect(self.tableView.frame.size.width, self.tableView.frame.size.height)];
@@ -213,9 +221,16 @@
 
 - (void)viewWillDisappear:(BOOL)animated
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSManagedObjectContextDidSaveNotification object:nil];
     [self.navigationController.navigationBar setBackgroundImage:[[UIImage imageNamed:@"navbarblack.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)] forBarMetrics:UIBarMetricsDefault];
     [super viewDidDisappear:animated];
     
+}
+
+- (void)reloadAfterSave
+{
+    [NSObject cancelPreviousPerformRequestsWithTarget:self.tableView selector:@selector(reloadData) object:nil];
+    [self.tableView performSelector:@selector(reloadData) withObject:nil afterDelay:2.0];
 }
 
 - (void)viewDidUnload
@@ -223,30 +238,37 @@
     [super viewDidUnload];
     self.uploadNotificationView = nil;
     self.expandedIndexPaths = nil;
-    self.photosCache = nil;
     self.fetchedResultsController = nil;
     self.galleryVC = nil;
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
+    self.uploadNotificationView = nil;
+    self.sortBox = nil;
+    self.opaqueView = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
 - (PFQuery *)queryForTable
 {
-//    PFQuery *query = [PFQuery queryWithClassName:self.className];
-//    if ([self.objects count] == 0) {
-//        query.cachePolicy = kPFCachePolicyCacheThenNetwork;
-//    }
-//    [query orderByDescending:@"DHDataTimestamp"];
-//    return query;
     return [self queryBasedOnSortDefaults];
 }
 
+- (void)DHSetImageFromPhoto:(DHPhoto *)cellPhoto withPhotoObject:(PFObject *)photoObject forStreamCell:(DHStreamCell *)cell
+{
+    if (cell) {
+        if (cellPhoto.photoData == NULL) {
+            [cell setImageForCellImageView:nil];
+            [cell.spinner startAnimating];
+        } else if ([cell.PFObjectID isEqualToString:cellPhoto.pfObjectID]) {
+            [cell.spinner stopAnimating];
+            [cell setImageForCellImageView:[UIImage imageWithData:cellPhoto.photoData]];
+        }
+    }
+}
+
+/*
 - (void)DHSetImageFromPhoto:(DHPhoto *)cellPhoto withPhotoObject:(PFObject *)photoObject forStreamCell:(DHStreamCell *)cell
 {
     if (cell) {
@@ -254,32 +276,34 @@
         if (cellPhoto.photoData == NULL) {
             [cell setImageForCellImageView:nil];
             [cell.spinner startAnimating];
-            dispatch_queue_t downloadQueue = dispatch_queue_create("com.dh.photodownloader", NULL);
-            dispatch_async(downloadQueue, ^{ 
-//                [self incrementNetworkActivity:nil];
-                NSData *imageData = [ParseFetcher photoDataForPhotoObject:photoObject];
-                UIImage *image = [UIImage imageWithData:imageData];
-                UIImage *thumbImage = nil;
-                if (image) {
-                    thumbImage = [image thumbnailImage:320 transparentBorder:0 cornerRadius:0 interpolationQuality:kCGInterpolationHigh];
-                    NSData *thumbImageData = UIImageJPEGRepresentation(thumbImage, 1.0);
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        cellPhoto.photoData = thumbImageData;
-//                        [self decrementNetworkActivity:nil];
-//                        [self.fetchedResultsController.managedObjectContext save:nil];
-                        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:@"AutoSaveRequested" object:nil]];
-                    }); 
-                } else {
-                    thumbImage = [UIImage imageNamed:@"no-image-found.jpg"];
-                }
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    if ([cellID isEqualToString:cell.PFObjectID]) {
-                        [cell.spinner stopAnimating];
-                        [cell setImageForCellImageView:thumbImage];
-                    }
-                }); 
-            });
-            dispatch_release(downloadQueue);
+//            dispatch_queue_t downloadQueue = dispatch_queue_create("com.dh.photodownloader", NULL);
+//            dispatch_async(downloadQueue, ^{ 
+////                if (![self isLoading] && ![self.fileRequestsSet containsObject:photoObject.objectId]) {
+////                    [self.fileRequestsSet addObject:photoObject.objectId];
+//                    NSData *imageData = [ParseFetcher photoDataForPhotoObject:photoObject];
+////                    [self.fileRequestsSet removeObject:photoObject.objectId];
+//                    UIImage *image = [UIImage imageWithData:imageData];
+//                    UIImage *thumbImage = nil;
+//                    if (image) {
+//                        thumbImage = [image thumbnailImage:320 transparentBorder:0 cornerRadius:0 interpolationQuality:kCGInterpolationHigh];
+//                        NSData *thumbImageData = UIImageJPEGRepresentation(thumbImage, 1.0);
+//                        dispatch_async(dispatch_get_main_queue(), ^{
+//                            cellPhoto.photoData = thumbImageData;
+//                            [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:@"AutoSaveRequested" object:nil]];
+//                        }); 
+//                    } else {
+//                        thumbImage = [UIImage imageNamed:@"no-image-found.jpg"];
+//                    }
+//                    dispatch_async(dispatch_get_main_queue(), ^{
+//                        if ([cellID isEqualToString:cell.PFObjectID]) {
+//                            [cell.spinner stopAnimating];
+//                            [cell setImageForCellImageView:thumbImage];
+//                        }
+//                    }); 
+////                    [self.fileRequestsSet removeObject:photoObject.objectId];
+////                }
+//            });
+//            dispatch_release(downloadQueue);
         } else {
             [cell setImageForCellImageView:[UIImage imageWithData:cellPhoto.photoData]];
         }
@@ -303,6 +327,7 @@
         }
     }
 }
+*/
 
 - (UITableViewCell *)tableView:(UITableView *)tableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -317,9 +342,6 @@
     }
     cell.PFObjectID = [object objectId];
     cell.photoObject = object;
-//    if ([self.fetchedResultsController.fetchedObjects count]) {
-//        cell.cellPhoto = [self.fetchedResultsController objectAtIndexPath:indexPath];
-//    }
     NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"DHPhoto"];
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"pfObjectID == %@", [object objectId]];
     NSArray *results = [self.context executeFetchRequest:fetchRequest error:nil];
@@ -327,26 +349,95 @@
         cell.cellPhoto = [results lastObject];
     }
     [cell.spinner stopAnimating];
-    [self DHSetImageFromPhoto:cell.cellPhoto withPhotoObject:object forStreamCell:cell];
+    if (![self photosLoading]) {
+        [self DHSetImageFromPhoto:cell.cellPhoto withPhotoObject:object forStreamCell:cell];
+    }
     return cell;
 }
 
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForNextPageAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *loadMoreCellIdentifier = @"load more cell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:loadMoreCellIdentifier];
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:loadMoreCellIdentifier];
+    }
+    [cell setBackgroundColor:[UIColor blackColor]];
+    [cell.contentView setBackgroundColor:[UIColor blackColor]];
+    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+    spinner.frame = CGRectMake((cell.frame.size.width / 2) - (spinner.frame.size.width / 2), (cell.frame.size.height / 2) - (spinner.frame.size.height / 2), spinner.frame.size.width, spinner.frame.size.width);
+    [spinner startAnimating];
+    [cell.contentView addSubview:spinner];
+    return cell;
+}
+
+- (void)objectsWillLoad
+{
+    [super objectsWillLoad];
+    self.objectsLoading = YES;
+}
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
 //    return ([self.expandedIndexPaths containsObject:indexPath]) ? DH_EXPANDING_CELL_BIG_HEIGHT : DH_EXPANDING_CELL_SMALL_HEIGHT;
+    if (indexPath.row >= [self objects].count) return 40;
     return DH_CELL_HEIGHT;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    PFObject *object = [self objectAtIndex:indexPath];
+    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"DHPhoto"];
+    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"pfObjectID == %@", [object objectId]];
+    NSArray *results = [self.context executeFetchRequest:fetchRequest error:nil];
+    if ([results lastObject]) {
+//        DHImageDetailContainerViewController *detailVC = [[DHImageDetailContainerViewController alloc] init];
+//        detailVC.photoObject = object;
+//        detailVC.managedPhoto = [results lastObject];
+//        [self.navigationController pushViewController:detailVC animated:YES];
+        DHImageDetailMetaVC *metaVC = [[DHImageDetailMetaVC alloc] init];
+        metaVC.photoObject = object;
+        metaVC.managedPhoto = [results lastObject];
+        [self.navigationController pushViewController:metaVC animated:YES];
+    }
+    
+    
 }
 
 - (void)objectsDidLoad:(NSError *)error
 {
+    self.objectsLoading = NO;
     [super objectsDidLoad:error];
+    self.photosLoading = YES;
     for (PFObject *obj in self.objects) {
+        
+        dispatch_queue_t downloadQueue = dispatch_queue_create("com.dh.photodownloader", NULL);
+        dispatch_async(downloadQueue, ^{ 
+            NSData *imageData = [ParseFetcher photoDataForPhotoObject:obj];
+            UIImage *image = [UIImage imageWithData:imageData];
+            UIImage *thumbImage = nil;
+            if (image) {
+                thumbImage = [image thumbnailImage:320 transparentBorder:0 cornerRadius:0 interpolationQuality:kCGInterpolationHigh];
+                NSData *thumbImageData = UIImageJPEGRepresentation(thumbImage, 1.0);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    DHPhoto *cellPhoto = [DHPhoto photoWithPFObject:obj inManagedObjectContext:self.context];
+                    cellPhoto.photoData = thumbImageData;
+                    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:@"AutoSaveRequested" object:nil]];
+                    
+                }); 
+            } 
+        });
+        dispatch_release(downloadQueue);
 //        [DHPhoto photoWithPFObject:obj inManagedObjectContext:self.context];
-        [self DHSetImageFromPhoto:[DHPhoto photoWithPFObject:obj inManagedObjectContext:self.context] withPhotoObject:obj forStreamCell:nil];
+        
+//        [self DHSetImageFromPhoto:[DHPhoto photoWithPFObject:obj inManagedObjectContext:self.context] withPhotoObject:obj forStreamCell:nil];
     }
+    [self.tableView reloadData];
+    [self.tableView performSelector:@selector(reloadData) withObject:nil afterDelay:5];
+    self.photosLoading = NO;
     [self.fetchedResultsController performFetch:nil];
     [self.tableView reloadData];
+    [self cleanupOldPhotos];
 }
 
 - (void)settingsButtonPressed
@@ -402,6 +493,9 @@
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadBegin:) name:DH_PHOTO_UPLOAD_BEGIN_NOTIFICATION object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadSuccess:) name:DH_PHOTO_UPLOAD_SUCCESS_NOTIFICATION object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadFailure:) name:DH_PHOTO_UPLOAD_FAILURE_NOTIFICATION object:nil];
     UIImage *selectedPhoto;
     if ([info objectForKey:UIImagePickerControllerEditedImage]) {
         selectedPhoto = [info objectForKey:UIImagePickerControllerEditedImage];
@@ -456,24 +550,13 @@
     }
 }
 
-#pragma mark - DHExpandingStreamCellDelegate Methods
 
-- (UIImage *)cell:(DHExpandingStreamCell *)cell wantsImageForObjectID:(NSString *)objectID
-{
-    UIImage *image = [self.photosCache objectForKey:objectID];
-    if (image != NULL) return image;
-    return nil;
-}
-
-- (void)cell:(DHExpandingStreamCell *)cell loadedImage:(UIImage *)image forObjectID:(NSString *)objectID
-{
-    [self.photosCache setObject:image forKey:objectID];
-}
 
 #pragma mark - Upload Notification Handlers
 
 - (void)uploadBegin:(NSNotification *)notification
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:DH_PHOTO_UPLOAD_BEGIN_NOTIFICATION object:nil];
     self.uploadNotificationView = [[DHUploadNotificationView alloc] initWithFrame:CGRectMake(0, self.tableView.frame.size.height, self.tableView.frame.size.width, kDH_Upload_Notification_View_Height)];
     self.uploadNotificationView.messageText = kDH_Uploading_Text;
     self.uploadNotificationView.isLoading = YES;
@@ -487,9 +570,14 @@
 
 - (void)uploadSuccess:(NSNotification *)notification
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:DH_PHOTO_UPLOAD_FAILURE_NOTIFICATION object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:DH_PHOTO_UPLOAD_SUCCESS_NOTIFICATION object:nil];
     [self loadObjects];
+//    NSDictionary *dict = [notification object];
+//    BOOL isAnonymous = [[dict objectForKey:@"isAnonymous"] boolValue];
     PFUser *curUser = [PFUser currentUser];
-    NSString *pushMessage = [NSString stringWithFormat:@"%@ just shared a moment", curUser.username];
+    NSString *username = curUser.username;
+    NSString *pushMessage = [NSString stringWithFormat:@"%@ just shared a moment", username];
     [PFPush sendPushMessageToChannelInBackground:@"" withMessage:pushMessage block:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
             NSLog(@"Success push sent");
@@ -508,6 +596,8 @@
 
 - (void)uploadFailure:(NSNotification *)notification
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:DH_PHOTO_UPLOAD_FAILURE_NOTIFICATION object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:DH_PHOTO_UPLOAD_SUCCESS_NOTIFICATION object:nil];
     self.uploadNotificationView.messageText = kDH_Failure_Text;
     self.uploadNotificationView.isLoading = NO;
     [UIView animateWithDuration:0.3 delay:2.0 options:0 animations:^{
@@ -519,7 +609,10 @@
     }];
 }
 
-
+- (void)imageDeleted:(NSNotification *)notification
+{
+    [self loadObjects];
+}
 
 #pragma mark - Sorting Methods
 
@@ -595,8 +688,100 @@
     self.fetchedResultsController = [self fetchedResultsControllerBasedOnSortDefaults];
     [self.fetchedResultsController performFetch:nil];
     [self loadObjects];
-//    [self sortButtonPressed];
 }
 
+#pragma mark - DHGalleryVCDelegate Methods
+
+- (PFObject *)parseObjectForIndex:(int)index
+{
+    return [self objectAtIndex:[NSIndexPath indexPathForRow:index inSection:0]];
+}
+
+#pragma mark - Photo Cleanup
+
+//- (void)executeBlock:(void(^)(NSManagedObjectContext *backgroundContext))executionBlock completion:(void(^)(NSManagedObjectContext *backgroundContext))completionBlock
+//{
+//    dispatch_queue_t background_queue = dispatch_queue_create("com.your.company", NULL);
+//    dispatch_async(background_queue, ^{
+//        __block AppDelegate *theAppDelegate = [[UIApplication sharedApplication] delegate];
+//        __block NSManagedObjectContext *backgroundContext = [[NSManagedObjectContext alloc] init];
+//        [backgroundContext setPersistentStoreCoordinator:[theAppDelegate persistentStoreCoordinator]];
+//        [[NSNotificationCenter defaultCenter] addObserver:[theAppDelegate managedObjectContext] selector:@selector(mergeChangesFromContextDidSaveNotification:) name:NSManagedObjectContextDidSaveNotification object:backgroundContext];
+//        executionBlock(backgroundContext);
+//        [backgroundContext save:nil];
+//        dispatch_sync(dispatch_get_main_queue(), ^{
+//            completionBlock(backgroundContext);
+//        });
+//    });
+//    dispatch_release(background_queue);
+//}
+
+- (void)cleanupOldPhotos
+{
+//    [self executeBlock:^(NSManagedObjectContext *backgroundContext) {
+//        NSFetchRequest *fetch = [[NSFetchRequest alloc] init];
+//        fetch.entity = [NSEntityDescription entityForName:@"DHPhoto" inManagedObjectContext:backgroundContext];
+//        NSArray *managedObjects = [backgroundContext executeFetchRequest:fetch error:nil];
+//        NSMutableSet *objectIDSet = [NSMutableSet set];
+//        for (PFObject *pfPhoto in [self objects]) {
+//            [objectIDSet addObject:pfPhoto.objectId];
+//        }
+//        for (DHPhoto *managedPhoto in managedObjects) {
+//            if (![objectIDSet containsObject:managedPhoto.pfObjectID]) {
+//                [backgroundContext deleteObject:managedPhoto];
+//            }
+//        }
+//    } completion:^(NSManagedObjectContext *backgroundContext) {
+//        
+//    }];
+    dispatch_queue_t request_queue = dispatch_queue_create("edu.stanford.gsb.DHToolkit", NULL);
+    dispatch_async(request_queue, ^{
+        AppDelegate *theDelegate = [[UIApplication sharedApplication] delegate];
+        NSManagedObjectContext *deletionContext = [[NSManagedObjectContext alloc] init];
+        [deletionContext setPersistentStoreCoordinator:[theDelegate persistentStoreCoordinator]];
+        NSNotificationCenter *notify = [NSNotificationCenter defaultCenter];
+        [notify addObserver:self 
+                   selector:@selector(mergeChanges:) 
+                       name:NSManagedObjectContextDidSaveNotification 
+                     object:deletionContext];
+        NSFetchRequest *fetch = [[NSFetchRequest alloc] init];
+        fetch.entity = [NSEntityDescription entityForName:@"DHPhoto" inManagedObjectContext:deletionContext];
+        NSArray *managedObjects = [deletionContext executeFetchRequest:fetch error:nil];
+        NSMutableSet *objectIDSet = [NSMutableSet set];
+        for (PFObject *pfPhoto in [self objects]) {
+            [objectIDSet addObject:pfPhoto.objectId];
+        }
+        for (DHPhoto *managedPhoto in managedObjects) {
+            if (![objectIDSet containsObject:managedPhoto.pfObjectID]) {
+                [deletionContext deleteObject:managedPhoto];
+            }
+        }
+        [deletionContext save:nil];
+    });
+    dispatch_release(request_queue);
+}
+
+- (void)mergeChanges:(NSNotification*)notification 
+{
+    AppDelegate *theDelegate = [[UIApplication sharedApplication] delegate];
+    [[theDelegate managedObjectContext] performSelectorOnMainThread:@selector(mergeChangesFromContextDidSaveNotification:) withObject:notification waitUntilDone:YES];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSManagedObjectContextDidSaveNotification object:nil];
+}
+
+#pragma mark - UIScrollViewDelegate Methods
+
+- (void)scrollViewDidScroll:(UIScrollView *)aScrollView {
+    CGPoint offset = aScrollView.contentOffset;
+    CGRect bounds = aScrollView.bounds;
+    CGSize size = aScrollView.contentSize;
+    UIEdgeInsets inset = aScrollView.contentInset;
+    float y = offset.y + bounds.size.height - inset.bottom;
+    float h = size.height;
+    float reload_distance = 40;
+    if(y > h - reload_distance) {
+        if (![self isLoading])
+        [self loadNextPage];
+    }
+}
 
 @end

@@ -8,11 +8,13 @@
 
 #import "DHStreamCell.h"
 #import "DHPhoto.h"
+#import "DHImageSmileTagVC.h"
 
 @interface DHStreamCell()
 @property (nonatomic, strong) UIImageView *cellImageView;
 @property (nonatomic, strong) UILabel *photographerNameLabel, *photoDescriptionLabel, *levelLabel, *weatherLabel, *locationLabel;
 @property (nonatomic, strong) UIView *infoBarContainerView, *infoBarColoredContainer, *levelBarView, *contentContainerView;
+@property (nonatomic, strong) DHImageSmileTagVC *smileTagVC;
 @end
 
 @implementation DHStreamCell
@@ -24,6 +26,7 @@
 @synthesize PFObjectID;
 @synthesize photoObject;
 @synthesize cellPhoto;
+@synthesize smileTagVC;
 
 - (UIImageView *)cellImageView
 {
@@ -57,6 +60,7 @@
         [photoDescriptionLabel setShadowOffset:CGSizeMake(-1, 1)];
         [photoDescriptionLabel setShadowColor:[UIColor blackColor]];
         [photoDescriptionLabel setLineBreakMode:UILineBreakModeWordWrap];
+        [photoDescriptionLabel setNumberOfLines:0];
     }
     return photoDescriptionLabel;
 }
@@ -149,6 +153,14 @@
     return spinner;
 }
 
+- (DHImageSmileTagVC *)smileTagVC
+{
+    if (!smileTagVC) {
+        smileTagVC = [[DHImageSmileTagVC alloc] initWithOrigin:CGPointMake(320 - 57, 3)];
+    }
+    return smileTagVC;
+}
+
 - (UIView *)contentContainerView
 {
     if (!contentContainerView) {
@@ -162,6 +174,7 @@
         [contentContainerView addSubview:self.infoBarColoredContainer];
         [contentContainerView addSubview:self.infoBarContainerView];
         [contentContainerView addSubview:self.spinner];
+        [contentContainerView addSubview:self.smileTagVC.view];
     }
     return contentContainerView;
 }
@@ -173,6 +186,7 @@
         [self setClipsToBounds:NO];
         [self.contentView addSubview:self.contentContainerView];
         [self.contentView setClipsToBounds:NO];
+        self.selectionStyle = UITableViewCellSelectionStyleNone;
         UIView *separatorView = [[UIView alloc] initWithFrame:CGRectMake(0, DH_CELL_HEIGHT - 2, self.frame.size.width, 2)];
         [separatorView setBackgroundColor:[UIColor whiteColor]];
         [self.contentView addSubview:separatorView];
@@ -189,6 +203,7 @@
 - (void)setPhotoObject:(PFObject *)aPhotoObject
 {
     photoObject = aPhotoObject;
+    self.smileTagVC.photoObject = photoObject;
     self.cellImageView.image = nil;
     self.photographerNameLabel.text = [photoObject objectForKey:@"DHDataWhoTook"];
     if ([photoObject objectForKey:@"isAnonymous"]) {
@@ -200,15 +215,17 @@
     self.photoDescriptionLabel.text = [photoObject objectForKey:@"DHDataSixWord"];
     CGSize nameSize = [self.photographerNameLabel.text sizeWithFont:[self.photographerNameLabel font]];
     self.photographerNameLabel.frame = CGRectMake(5, 5, nameSize.width, nameSize.height);
-    if ([self.photoDescriptionLabel.text sizeWithFont:[self.photoDescriptionLabel font]].width > 320 - nameSize.width) {
-        self.photoDescriptionLabel.frame = CGRectMake(self.photographerNameLabel.frame.origin.x + nameSize.width + 5, self.photographerNameLabel.frame.origin.y, 320 - nameSize.width, nameSize.height * 2);
-        [self.photoDescriptionLabel setNumberOfLines:2];
-    } else {
-        self.photoDescriptionLabel.frame = CGRectMake(self.photographerNameLabel.frame.origin.x + nameSize.width + 5, self.photographerNameLabel.frame.origin.y, 320 - nameSize.width, nameSize.height);
-    }
+    CGSize descriptionSize = [self.photoDescriptionLabel.text sizeWithFont:self.photoDescriptionLabel.font constrainedToSize:CGSizeMake(320 - (nameSize.width - 7) - (57 + 12), 2000.0f) lineBreakMode:UILineBreakModeWordWrap];
+    self.photoDescriptionLabel.frame = CGRectMake(self.photographerNameLabel.frame.origin.x + nameSize.width + 5, self.photographerNameLabel.frame.origin.y, descriptionSize.width, descriptionSize.height);
+//    if ([self.photoDescriptionLabel.text sizeWithFont:[self.photoDescriptionLabel font]].width > 320 - (nameSize.width + 7)) {
+//        self.photoDescriptionLabel.frame = CGRectMake(self.photographerNameLabel.frame.origin.x + nameSize.width + 5, self.photographerNameLabel.frame.origin.y, 320 - (nameSize.width + 7), nameSize.height * 2);
+//        [self.photoDescriptionLabel setNumberOfLines:2];
+//    } else {
+//        self.photoDescriptionLabel.frame = CGRectMake(self.photographerNameLabel.frame.origin.x + nameSize.width + 5, self.photographerNameLabel.frame.origin.y, 320 - (nameSize.width + 7), nameSize.height);
+//    }
     self.levelLabel.text = [[photoObject objectForKey:@"DHDataHappinessLevel"] stringValue];
     CGRect levelBarRect = self.levelBarView.frame;
-    levelBarRect.size.width = (CGFloat) 250 * ([[photoObject objectForKey:@"DHDataHappinessLevel"] floatValue] / 10);
+    levelBarRect.size.width = (CGFloat) 320 * ([[photoObject objectForKey:@"DHDataHappinessLevel"] floatValue] / 10);
     self.levelBarView.frame = levelBarRect;
     NSString *weatherCondition = [photoObject objectForKey:@"DHDataWeatherCondition"];
     NSString *weatherTemperature = [photoObject objectForKey:@"DHDataWeatherTemperature"];
