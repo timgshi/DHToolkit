@@ -107,6 +107,7 @@
 		4B7A688C14BB62F50074B1CC /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B7A688B14BB62F50074B1CC /* MapKit.framework */; };
 		4B7A688E14BB6A160074B1CC /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B7A688D14BB6A160074B1CC /* CoreLocation.framework */; };
 		4B7A68A214BCE7F00074B1CC /* DH_PFStreamTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B7A68A114BCE7F00074B1CC /* DH_PFStreamTVC.m */; };
+		4B87391314F7017700DCCA17 /* libGoogleAnalytics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B87391214F7017700DCCA17 /* libGoogleAnalytics.a */; };
 		4B93338814D696C000D7481E /* rating-highlighted.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B93338414D696C000D7481E /* rating-highlighted.png */; };
 		4B93338914D696C000D7481E /* rating-highlighted@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B93338514D696C000D7481E /* rating-highlighted@2x.png */; };
 		4B93338A14D696C000D7481E /* rating.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B93338614D696C000D7481E /* rating.png */; };
@@ -361,6 +362,8 @@
 		4B7A688D14BB6A160074B1CC /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		4B7A68A014BCE7F00074B1CC /* DH_PFStreamTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DH_PFStreamTVC.h; sourceTree = "<group>"; };
 		4B7A68A114BCE7F00074B1CC /* DH_PFStreamTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DH_PFStreamTVC.m; sourceTree = "<group>"; };
+		4B87391114F7017700DCCA17 /* GANTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GANTracker.h; sourceTree = "<group>"; };
+		4B87391214F7017700DCCA17 /* libGoogleAnalytics.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libGoogleAnalytics.a; sourceTree = "<group>"; };
 		4B93338414D696C000D7481E /* rating-highlighted.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "rating-highlighted.png"; sourceTree = "<group>"; };
 		4B93338514D696C000D7481E /* rating-highlighted@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "rating-highlighted@2x.png"; sourceTree = "<group>"; };
 		4B93338614D696C000D7481E /* rating.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = rating.png; sourceTree = "<group>"; };
@@ -473,6 +476,7 @@
 				4B34353814A26EB8002831BD /* CoreData.framework in Frameworks */,
 				4B096AB014EFA5E9007AB50D /* Parse.framework in Frameworks */,
 				4B12554B14F3CF930088E92B /* libTestFlight.a in Frameworks */,
+				4B87391314F7017700DCCA17 /* libGoogleAnalytics.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -567,6 +571,8 @@
 		4B34353014A26EB8002831BD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4B87391114F7017700DCCA17 /* GANTracker.h */,
+				4B87391214F7017700DCCA17 /* libGoogleAnalytics.a */,
 				4B096AAF14EFA5E9007AB50D /* Parse.framework */,
 				4BF19C1C14DD3C55007017ED /* Twitter.framework */,
 				4BF19C1A14DD3C50007017ED /* Accounts.framework */,
