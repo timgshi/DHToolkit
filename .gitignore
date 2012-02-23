@@ -1,1 +1,13 @@
 DHToolkit.xcodeproj/project.xcworkspace/xcuserdata/timshi.xcuserdatad/UserInterfaceState.xcuserstate
+.xcodeproj
+!*.xcodeproj
+project.pbxproj
+.DS_Store
+*.swp
+*~.nib
+build/
+*.pbxuser
+*.perspective
+*.xcuserstate
+*.perspectivev3
+xcuserdata/

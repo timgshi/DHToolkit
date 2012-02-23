@@ -8,8 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
+@class PFObject;
+
 @interface ParsePoster
 
 + (void)postPhotoWithMetaInfo:(NSDictionary *)metaDict andPhotoData:(NSData *)photoData;
+
++ (void)postCommentForPhoto:(PFObject *)photoObject withMessage:(NSString *)message;
+
++ (void)postSmileForPhoto:(PFObject *)photoObject;
 
 @end
