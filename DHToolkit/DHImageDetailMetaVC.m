@@ -117,10 +117,15 @@
     if (!curUser) {
         self.navigationItem.rightBarButtonItem = nil;
     } else {
-        NSString *user1 = curUser.username;
-        PFUser *photoUser = [photoObject objectForKey:@"PFUser"];
-        NSString *user2 = photoUser.username;
-        if (![user1 isEqualToString:user2]) self.navigationItem.rightBarButtonItem = nil;
+        __block NSString *user1 = curUser.username;
+        [photoObject objectForKey:@"PFUser" inBackgroundWithBlock:^(id object, NSError *error) {
+            PFUser *photoUser = (PFUser *)object;
+            __block NSString *user2 = photoUser.username;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (![user1 isEqualToString:user2]) self.navigationItem.rightBarButtonItem = nil;
+            });
+        }];
+        
     }
 }
 
