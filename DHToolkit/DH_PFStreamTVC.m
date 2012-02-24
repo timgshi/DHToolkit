@@ -25,12 +25,16 @@
 #import "DHImageDetailMetaVC.h"
 
 @interface DH_PFStreamTVC() <DHImageRatingDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, DHSortBoxViewDelegate, DHGalleryVCDelegate, UIScrollViewDelegate>
+{
+    time_t funcStart, funcEnd;
+}
 @property (nonatomic, strong) NSMutableSet *expandedIndexPaths;
 @property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
 @property (nonatomic, strong) DHGalleryVC *galleryVC;
 @property (nonatomic, strong) DHUploadNotificationView *uploadNotificationView;
 @property (nonatomic, strong) DHSortBoxView *sortBox;
 @property (nonatomic, strong) UIView *opaqueView;
+@property (nonatomic, strong) NSMutableDictionary *objectIDDict;
 @property BOOL objectsLoading;
 @property BOOL photosLoading;
 
@@ -50,7 +54,7 @@
 @synthesize opaqueView;
 @synthesize objectsLoading;
 @synthesize photosLoading;
-
+@synthesize objectIDDict;
 
 
 //- (id)initWithStyle:(UITableViewStyle)style
@@ -70,6 +74,8 @@
 - initInManagedObjectContext:(NSManagedObjectContext *)aContext
 {
     if (aContext) {
+        funcStart = 0;
+        funcEnd = 0;
         self = [super initWithStyle:UITableViewStylePlain];
         self.tableView.allowsSelection = YES;    
         self.context = aContext;
@@ -114,6 +120,13 @@
     return expandedIndexPaths;
 }
 
+- (NSMutableDictionary *)objectIDDict
+{
+    if (!objectIDDict) {
+        objectIDDict = [NSMutableDictionary dictionary];
+    }
+    return objectIDDict;
+}
 
 #pragma mark - View lifecycle
 
@@ -208,6 +221,7 @@
     [super viewWillAppear:animated];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadAfterSave) name:NSManagedObjectContextDidSaveNotification object:nil];
     [self.navigationController.navigationBar setBackgroundImage:[[UIImage imageNamed:@"navbar.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 11)] forBarMetrics:UIBarMetricsDefault];
+    
 //    [self performSelector:@selector(uploadBegin:) withObject:nil afterDelay:2];
 //    self.uploadNotificationView = [[DHUploadNotificationView alloc] initWithFrame:kDH_Upload_Notification_Default_Rect(self.tableView.frame.size.width, self.tableView.frame.size.height)];
 //    self.uploadNotificationView.messageText = @"test";
@@ -217,6 +231,12 @@
     
 //    [self performSelector:@selector(uploadBegin:) withObject:nil afterDelay:1];
 //    [self performSelector:@selector(uploadSuccess:) withObject:nil afterDelay:5];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    [[GANTracker sharedTracker] trackPageview:@"app_entry_point/stream" withError:nil];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -243,6 +263,7 @@
     self.uploadNotificationView = nil;
     self.sortBox = nil;
     self.opaqueView = nil;
+    self.objectIDDict = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -342,12 +363,38 @@
     }
     cell.PFObjectID = [object objectId];
     cell.photoObject = object;
-    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"DHPhoto"];
-    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"pfObjectID == %@", [object objectId]];
-    NSArray *results = [self.context executeFetchRequest:fetchRequest error:nil];
-    if ([results lastObject]) {
-        cell.cellPhoto = [results lastObject];
+    NSManagedObjectID *managedID = [self.objectIDDict objectForKey:object.objectId];
+    DHPhoto *managedObject = nil;
+    if (managedID) {
+//        managedObject = (DHPhoto *)[self.context objectRegisteredForID:managedID];
+        managedObject = (DHPhoto *)[self.context objectWithID:managedID];
+        if (!managedObject) {
+            NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"DHPhoto"];
+            fetchRequest.predicate = [NSPredicate predicateWithFormat:@"pfObjectID == %@", [object objectId]];
+            NSArray *results = [self.context executeFetchRequest:fetchRequest error:nil];
+            if ([results lastObject]) {
+                managedObject = [results lastObject];
+                [self.objectIDDict setObject:managedObject.objectID forKey:object.objectId];
+            }
+        }
+    } else {
+        NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"DHPhoto"];
+        fetchRequest.predicate = [NSPredicate predicateWithFormat:@"pfObjectID == %@", [object objectId]];
+        NSArray *results = [self.context executeFetchRequest:fetchRequest error:nil];
+        if ([results lastObject]) {
+            managedObject = [results lastObject];
+            [self.objectIDDict setObject:managedObject.objectID forKey:object.objectId];
+        }
     }
+    if (managedObject) {
+        cell.cellPhoto = managedObject;
+    }
+//    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"DHPhoto"];
+//    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"pfObjectID == %@", [object objectId]];
+//    NSArray *results = [self.context executeFetchRequest:fetchRequest error:nil];
+//    if ([results lastObject]) {
+//        cell.cellPhoto = [results lastObject];
+//    }
     [cell.spinner stopAnimating];
     if (![self photosLoading]) {
         [self DHSetImageFromPhoto:cell.cellPhoto withPhotoObject:object forStreamCell:cell];
@@ -387,55 +434,118 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     PFObject *object = [self objectAtIndex:indexPath];
-    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"DHPhoto"];
-    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"pfObjectID == %@", [object objectId]];
-    NSArray *results = [self.context executeFetchRequest:fetchRequest error:nil];
-    if ([results lastObject]) {
-//        DHImageDetailContainerViewController *detailVC = [[DHImageDetailContainerViewController alloc] init];
-//        detailVC.photoObject = object;
-//        detailVC.managedPhoto = [results lastObject];
-//        [self.navigationController pushViewController:detailVC animated:YES];
+    NSManagedObjectID *managedID = [self.objectIDDict objectForKey:object.objectId];
+    DHPhoto *managedObject = nil;
+    if (managedID) {
+        managedObject = (DHPhoto *)[self.context objectWithID:managedID];
+    } else {
+        NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"DHPhoto"];
+        fetchRequest.predicate = [NSPredicate predicateWithFormat:@"pfObjectID == %@", [object objectId]];
+        NSArray *results = [self.context executeFetchRequest:fetchRequest error:nil];
+        if ([results lastObject]) {
+            managedObject = [results lastObject];
+            [self.objectIDDict setObject:managedObject.objectID forKey:object.objectId];
+        }
+    }
+    if (managedObject) {
         DHImageDetailMetaVC *metaVC = [[DHImageDetailMetaVC alloc] init];
         metaVC.photoObject = object;
-        metaVC.managedPhoto = [results lastObject];
+        metaVC.managedPhoto = managedObject;
+        [[GANTracker sharedTracker] setCustomVariableAtIndex:2 name:@"photo-detail-id" value:metaVC.photoObject.objectId withError:nil];
+        [[GANTracker sharedTracker] trackPageview:@"app_entry_point/stream/detail_view" withError:nil];
         [self.navigationController pushViewController:metaVC animated:YES];
+
     }
+//    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"DHPhoto"];
+//    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"pfObjectID == %@", [object objectId]];
+//    NSArray *results = [self.context executeFetchRequest:fetchRequest error:nil];
+//    if ([results lastObject]) {
+////        DHImageDetailContainerViewController *detailVC = [[DHImageDetailContainerViewController alloc] init];
+////        detailVC.photoObject = object;
+////        detailVC.managedPhoto = [results lastObject];
+////        [self.navigationController pushViewController:detailVC animated:YES];
+//        DHImageDetailMetaVC *metaVC = [[DHImageDetailMetaVC alloc] init];
+//        metaVC.photoObject = object;
+//        metaVC.managedPhoto = [results lastObject];
+//        [[GANTracker sharedTracker] setCustomVariableAtIndex:2 name:@"photo-detail-id" value:metaVC.photoObject.objectId withError:nil];
+//        [[GANTracker sharedTracker] trackPageview:@"app_entry_point/stream/detail_view" withError:nil];
+//        [self.navigationController pushViewController:metaVC animated:YES];
+//    }
     
     
 }
 
 - (void)objectsDidLoad:(NSError *)error
 {
+    self.objectIDDict = nil;
     self.objectsLoading = NO;
     [super objectsDidLoad:error];
     self.photosLoading = YES;
-    for (PFObject *obj in self.objects) {
-        
-        dispatch_queue_t downloadQueue = dispatch_queue_create("com.dh.photodownloader", NULL);
-        dispatch_async(downloadQueue, ^{ 
-            NSData *imageData = [ParseFetcher photoDataForPhotoObject:obj];
-            UIImage *image = [UIImage imageWithData:imageData];
-            UIImage *thumbImage = nil;
-            if (image) {
-                thumbImage = [image thumbnailImage:320 transparentBorder:0 cornerRadius:0 interpolationQuality:kCGInterpolationHigh];
-                NSData *thumbImageData = UIImageJPEGRepresentation(thumbImage, 1.0);
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    DHPhoto *cellPhoto = [DHPhoto photoWithPFObject:obj inManagedObjectContext:self.context];
-                    cellPhoto.photoData = thumbImageData;
-                    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:@"AutoSaveRequested" object:nil]];
-                    
-                }); 
-            } 
-        });
-        dispatch_release(downloadQueue);
-//        [DHPhoto photoWithPFObject:obj inManagedObjectContext:self.context];
-        
-//        [self DHSetImageFromPhoto:[DHPhoto photoWithPFObject:obj inManagedObjectContext:self.context] withPhotoObject:obj forStreamCell:nil];
+    __block NSMutableDictionary *pfObjectIDs = [NSMutableDictionary dictionary];
+    for (PFObject *pfobj in self.objects) {
+        [pfObjectIDs setObject:pfobj forKey:pfobj.objectId];
     }
+    dispatch_queue_t batchImportQueue = dispatch_queue_create("edu.gsb.stanford.DHToolkit.batchImportQueue", NULL);
+    dispatch_async(batchImportQueue, ^{
+        NSManagedObjectContext *importContext = [[NSManagedObjectContext alloc] init];
+        importContext.persistentStoreCoordinator = self.context.persistentStoreCoordinator;
+        importContext.undoManager = nil;
+        NSNotificationCenter *notify = [NSNotificationCenter defaultCenter];
+        [notify addObserver:self 
+                   selector:@selector(mergeChanges:) 
+                       name:NSManagedObjectContextDidSaveNotification 
+                     object:importContext];
+        NSArray *managedPhotos = [DHPhoto batchUpdatePhotosWithPFObjects:self.objects inManagedObjectContext:importContext];
+        for (DHPhoto *managedPhoto in managedPhotos) {
+            __block NSManagedObjectID *managedID = managedPhoto.objectID;
+            __block NSString *pfObjID = managedPhoto.pfObjectID;
+            dispatch_queue_t downloadQueue = dispatch_queue_create("com.dh.photodownloader", NULL);
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{ 
+                NSData *imageData = [ParseFetcher photoDataForPhotoObject:[pfObjectIDs objectForKey:pfObjID]];
+                UIImage *image = [UIImage imageWithData:imageData];
+                UIImage *thumbImage = nil;
+                if (image) {
+                    thumbImage = [image thumbnailImage:320 transparentBorder:0 cornerRadius:0 interpolationQuality:kCGInterpolationHigh];
+                    NSData *thumbImageData = UIImageJPEGRepresentation(thumbImage, 1.0);
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        DHPhoto *thisPhoto = (DHPhoto *)[self.context objectWithID:managedID];
+                        thisPhoto.photoData = thumbImageData;
+                        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:@"AutoSaveRequested" object:nil]];
+                        [self.objectIDDict setObject:thisPhoto.objectID forKey:thisPhoto.pfObjectID];
+                    }); 
+                } 
+            });
+            dispatch_release(downloadQueue);
+        }
+    });
+    dispatch_release(batchImportQueue);
+    //    for (PFObject *obj in self.objects) {
+//        
+//        dispatch_queue_t downloadQueue = dispatch_queue_create("com.dh.photodownloader", NULL);
+//        dispatch_async(downloadQueue, ^{ 
+//            NSData *imageData = [ParseFetcher photoDataForPhotoObject:obj];
+//            UIImage *image = [UIImage imageWithData:imageData];
+//            UIImage *thumbImage = nil;
+//            if (image) {
+//                thumbImage = [image thumbnailImage:320 transparentBorder:0 cornerRadius:0 interpolationQuality:kCGInterpolationHigh];
+//                NSData *thumbImageData = UIImageJPEGRepresentation(thumbImage, 1.0);
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    DHPhoto *cellPhoto = [DHPhoto photoWithPFObject:obj inManagedObjectContext:self.context];
+//                    cellPhoto.photoData = thumbImageData;
+//                    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:@"AutoSaveRequested" object:nil]];
+//                    [self.objectIDDict setObject:cellPhoto.objectID forKey:obj.objectId];
+//                }); 
+//            } 
+//        });
+//        dispatch_release(downloadQueue);
+////        [DHPhoto photoWithPFObject:obj inManagedObjectContext:self.context];
+//        
+////        [self DHSetImageFromPhoto:[DHPhoto photoWithPFObject:obj inManagedObjectContext:self.context] withPhotoObject:obj forStreamCell:nil];
+//    }
     [self.tableView reloadData];
     [self.tableView performSelector:@selector(reloadData) withObject:nil afterDelay:5];
     self.photosLoading = NO;
-    [self.fetchedResultsController performFetch:nil];
+//    [self.fetchedResultsController performFetch:nil];
     [self.tableView reloadData];
     [self cleanupOldPhotos];
 }
@@ -454,6 +564,11 @@
 - (void)displayImagePickerWithSource:(UIImagePickerControllerSourceType)src;
 {
     if([UIImagePickerController isSourceTypeAvailable:src]) {
+        if (src == UIImagePickerControllerSourceTypeCamera) {
+            [[GANTracker sharedTracker] trackEvent:@"photo_upload" action:@"camera_button_pressed" label:@"camera" value:0 withError:nil];
+        } else {
+            [[GANTracker sharedTracker] trackEvent:@"photo_upload" action:@"camera_button_pressed" label:@"album" value:0 withError:nil];
+        }
         UIImagePickerController *picker = [[UIImagePickerController alloc] init];
         [picker setSourceType:src];
         [picker setDelegate:self];
@@ -556,6 +671,7 @@
 
 - (void)uploadBegin:(NSNotification *)notification
 {
+    time(&funcStart);
     [[NSNotificationCenter defaultCenter] removeObserver:self name:DH_PHOTO_UPLOAD_BEGIN_NOTIFICATION object:nil];
     self.uploadNotificationView = [[DHUploadNotificationView alloc] initWithFrame:CGRectMake(0, self.tableView.frame.size.height, self.tableView.frame.size.width, kDH_Upload_Notification_View_Height)];
     self.uploadNotificationView.messageText = kDH_Uploading_Text;
@@ -570,12 +686,18 @@
 
 - (void)uploadSuccess:(NSNotification *)notification
 {
+    time(&funcEnd);
+    double timeDiff = difftime(funcEnd, funcStart);
+    funcStart = 0;
+    funcEnd = 0;
+    PFUser *curUser = [PFUser currentUser];
+    [[GANTracker sharedTracker] setCustomVariableAtIndex:1 name:@"upload_user" value:curUser.username withError:nil];
+    [[GANTracker sharedTracker] trackEvent:@"photo_upload" action:@"success" label:@"upload_time" value:(NSInteger)timeDiff withError:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:DH_PHOTO_UPLOAD_FAILURE_NOTIFICATION object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:DH_PHOTO_UPLOAD_SUCCESS_NOTIFICATION object:nil];
     [self loadObjects];
 //    NSDictionary *dict = [notification object];
 //    BOOL isAnonymous = [[dict objectForKey:@"isAnonymous"] boolValue];
-    PFUser *curUser = [PFUser currentUser];
     NSString *username = curUser.username;
     NSString *pushMessage = [NSString stringWithFormat:@"%@ just shared a moment", username];
     [PFPush sendPushMessageToChannelInBackground:@"" withMessage:pushMessage block:^(BOOL succeeded, NSError *error) {
@@ -765,7 +887,7 @@
 {
     AppDelegate *theDelegate = [[UIApplication sharedApplication] delegate];
     [[theDelegate managedObjectContext] performSelectorOnMainThread:@selector(mergeChangesFromContextDidSaveNotification:) withObject:notification waitUntilDone:YES];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSManagedObjectContextDidSaveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSManagedObjectContextDidSaveNotification object:[notification object]];
 }
 
 #pragma mark - UIScrollViewDelegate Methods

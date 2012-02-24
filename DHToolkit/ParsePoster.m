@@ -14,6 +14,7 @@
 #import "Parse/PFGeopoint.h"
 #import "Parse/PFQuery.h"
 #import "Parse/PFPush.h"
+#import <time.h>
 
 @implementation ParsePoster
 
@@ -51,6 +52,7 @@
                 if (succeeded) {
                     BOOL isAnonymous = [[metaDict objectForKey:@"isAnonymous"] boolValue];
                     [[NSNotificationCenter defaultCenter] postNotificationName:DH_PHOTO_UPLOAD_SUCCESS_NOTIFICATION object:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:isAnonymous] forKey:@"isAnonymous"]];
+                    [[GANTracker sharedTracker] setCustomVariableAtIndex:0 name:@"upload-success" value:newPhoto.objectId withError:nil];
                 } else {
                     [[NSNotificationCenter defaultCenter] postNotificationName:DH_PHOTO_UPLOAD_FAILURE_NOTIFICATION object:nil];
                 }
@@ -71,6 +73,7 @@
     [commentObject setObject:[NSDate date] forKey:@"timestamp"];
     [commentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
+            [[GANTracker sharedTracker] trackEvent:@"social_interaction" action:@"comment" label:photoObject.objectId value:0 withError:nil];
             [[NSNotificationCenter defaultCenter] postNotificationName:DH_COMMENT_UPLOAD_SUCCESS_NOTIFICATION object:nil];
             NSString *username = [photoObject objectForKey:@"DHDataWhoTook"];
 //            [PFPush sendPushMessageToChannelInBackground:[NSString stringWithFormat:@"user-%@", username] withMessage:[NSString stringWithFormat:@"%@ just commented on your photo!", curUser.username]];
@@ -98,6 +101,7 @@
             [smileObject setObject:photoObject.objectId forKey:@"DHPhotoID"];
             [smileObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                 if (succeeded) {
+                    [[GANTracker sharedTracker] trackEvent:@"social_interaction" action:@"smile" label:photoObject.objectId value:0 withError:nil];
                     [[NSNotificationCenter defaultCenter] postNotificationName:DH_SMILE_UPLOAD_SUCCESS_NOTIFICATION object:nil];
                     [[NSNotificationCenter defaultCenter] postNotificationName:DH_COMMENT_UPLOAD_SUCCESS_NOTIFICATION object:nil];
                     NSString *username = [photoObject objectForKey:@"DHDataWhoTook"];

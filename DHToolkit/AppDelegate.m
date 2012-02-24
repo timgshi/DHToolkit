@@ -28,6 +28,8 @@
 @synthesize persistentStoreCoordinator = __persistentStoreCoordinator;
 
 #define kTestFlightTeamID @"bd3d87cddcb2bc398c93be36bbbf4307_MjQ3MzAyMDExLTA4LTIyIDEzOjMzOjA5LjQ4MDY3OA"
+#define kGANPropertyID @"UA-29443463-1"
+static const NSInteger kGANDispatchPeriodSec = 20;
 
 - (void)autosave:(id)context
 {
@@ -41,7 +43,7 @@
 {
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(autosave:) object:self.managedObjectContext];
     // request a new autosave in a few tenths of a second
-    [self performSelector:@selector(autosave:) withObject:self.managedObjectContext afterDelay:0.2];
+    [self performSelector:@selector(autosave:) withObject:self.managedObjectContext afterDelay:0.5];
 }
 
 - (void)configureAppearance
@@ -107,6 +109,8 @@
     UINavigationController *streamNav = [[UINavigationController alloc] initWithRootViewController:stream];
     self.window.rootViewController = streamNav;
     [TestFlight takeOff:kTestFlightTeamID];
+    [[GANTracker sharedTracker] startTrackerWithAccountID:kGANPropertyID dispatchPeriod:kGANDispatchPeriodSec delegate:nil];
+    [[GANTracker sharedTracker] trackPageview:@"/app_entry_point" withError:nil];
     [Parse setFacebookApplicationId:kDH_FACEBOOK_ID];
     [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge|
      UIRemoteNotificationTypeAlert|

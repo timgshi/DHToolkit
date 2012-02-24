@@ -237,6 +237,8 @@
         DHImageDetailMetaVC *detailVC = [[DHImageDetailMetaVC alloc] init];
         detailVC.photoObject = [self.galleryDelegate parseObjectForIndex:index];
         detailVC.managedPhoto = photo;
+        [[GANTracker sharedTracker] setCustomVariableAtIndex:2 name:@"photo-detail-id" value:detailVC.photoObject.objectId withError:nil];
+        [[GANTracker sharedTracker] trackPageview:@"app_entry_point/gallery/detail_view" withError:nil];
         [self.navigationController pushViewController:detailVC animated:YES];
     }
 //    if (!galleryPresenter) {
@@ -298,6 +300,12 @@
     if (!self.fetchedResultsController.fetchedObjects) {
         [self performFetch];
     }
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    [[GANTracker sharedTracker] trackPageview:@"app_entry_point/gallery" withError:nil];
 }
 
 - (void)viewDidUnload
