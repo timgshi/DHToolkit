@@ -48,6 +48,7 @@
 		4B30D30514E9336B00134B50 /* MessageEntrySendButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B30D2FD14E9336B00134B50 /* MessageEntrySendButton@2x.png */; };
 		4B30D30614E9336B00134B50 /* MessageEntrySendButtonPressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B30D2FE14E9336B00134B50 /* MessageEntrySendButtonPressed.png */; };
 		4B30D30714E9336B00134B50 /* MessageEntrySendButtonPressed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B30D2FF14E9336B00134B50 /* MessageEntrySendButtonPressed@2x.png */; };
+		4B3105D214F70332007B30CD /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B3105D114F70332007B30CD /* libsqlite3.0.dylib */; };
 		4B34353214A26EB8002831BD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B34353114A26EB8002831BD /* UIKit.framework */; };
 		4B34353414A26EB8002831BD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B34353314A26EB8002831BD /* Foundation.framework */; };
 		4B34353614A26EB8002831BD /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B34353514A26EB8002831BD /* CoreGraphics.framework */; };
@@ -283,6 +284,7 @@
 		4B30D2FD14E9336B00134B50 /* MessageEntrySendButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MessageEntrySendButton@2x.png"; sourceTree = "<group>"; };
 		4B30D2FE14E9336B00134B50 /* MessageEntrySendButtonPressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MessageEntrySendButtonPressed.png; sourceTree = "<group>"; };
 		4B30D2FF14E9336B00134B50 /* MessageEntrySendButtonPressed@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MessageEntrySendButtonPressed@2x.png"; sourceTree = "<group>"; };
+		4B3105D114F70332007B30CD /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
 		4B34352D14A26EB8002831BD /* DHToolkit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DHToolkit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B34353114A26EB8002831BD /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		4B34353314A26EB8002831BD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -459,6 +461,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B3105D214F70332007B30CD /* libsqlite3.0.dylib in Frameworks */,
 				4BF19C1D14DD3C55007017ED /* Twitter.framework in Frameworks */,
 				4BF19C1B14DD3C50007017ED /* Accounts.framework in Frameworks */,
 				4B7A688E14BB6A160074B1CC /* CoreLocation.framework in Frameworks */,
@@ -571,6 +574,7 @@
 		4B34353014A26EB8002831BD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4B3105D114F70332007B30CD /* libsqlite3.0.dylib */,
 				4B87391114F7017700DCCA17 /* GANTracker.h */,
 				4B87391214F7017700DCCA17 /* libGoogleAnalytics.a */,
 				4B096AAF14EFA5E9007AB50D /* Parse.framework */,

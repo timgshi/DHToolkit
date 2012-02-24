@@ -9,12 +9,12 @@
          continueAfterRunningActions = "No"
          isPathRelative = "1"
          filePath = "DHToolkit/AppDelegate.m"
-         timestampString = "351504931.952442"
+         timestampString = "351733583.431859"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "135"
-         endingLineNumber = "135"
-         landmarkName = "-application:didReceiveRemoteNotification:"
+         startingLineNumber = "134"
+         endingLineNumber = "134"
+         landmarkName = "-application:didRegisterForRemoteNotificationsWithDeviceToken:"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -23,12 +23,12 @@
          continueAfterRunningActions = "No"
          isPathRelative = "1"
          filePath = "DHToolkit/AppDelegate.m"
-         timestampString = "351505139.348879"
+         timestampString = "351733583.431859"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "142"
-         endingLineNumber = "142"
-         landmarkName = "-application:didReceiveLocalNotification:"
+         startingLineNumber = "141"
+         endingLineNumber = "141"
+         landmarkName = "-application:didReceiveRemoteNotification:"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>

@@ -210,6 +210,7 @@
 
 - (void)mapClicked
 {
+    [[GANTracker sharedTracker] trackEvent:@"detail_interaction" action:@"map_pressed" label:self.photoObject.objectId value:0 withError:nil];
     NSNumber *lat = [photoObject objectForKey:@"DHDataGeoLat"];
     NSNumber *lon = [photoObject objectForKey:@"DHDataGeoLong"];
     NSString *urlString = [NSString stringWithFormat:@"http://maps.google.com/maps?z=1000&q=%f,%f", [lat doubleValue], [lon doubleValue]];

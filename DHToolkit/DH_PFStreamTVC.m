@@ -25,6 +25,9 @@
 #import "DHImageDetailMetaVC.h"
 
 @interface DH_PFStreamTVC() <DHImageRatingDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, DHSortBoxViewDelegate, DHGalleryVCDelegate, UIScrollViewDelegate>
+{
+    time_t funcStart, funcEnd;
+}
 @property (nonatomic, strong) NSMutableSet *expandedIndexPaths;
 @property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
 @property (nonatomic, strong) DHGalleryVC *galleryVC;
@@ -70,6 +73,8 @@
 - initInManagedObjectContext:(NSManagedObjectContext *)aContext
 {
     if (aContext) {
+        funcStart = 0;
+        funcEnd = 0;
         self = [super initWithStyle:UITableViewStylePlain];
         self.tableView.allowsSelection = YES;    
         self.context = aContext;
@@ -208,6 +213,7 @@
     [super viewWillAppear:animated];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadAfterSave) name:NSManagedObjectContextDidSaveNotification object:nil];
     [self.navigationController.navigationBar setBackgroundImage:[[UIImage imageNamed:@"navbar.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 11)] forBarMetrics:UIBarMetricsDefault];
+    
 //    [self performSelector:@selector(uploadBegin:) withObject:nil afterDelay:2];
 //    self.uploadNotificationView = [[DHUploadNotificationView alloc] initWithFrame:kDH_Upload_Notification_Default_Rect(self.tableView.frame.size.width, self.tableView.frame.size.height)];
 //    self.uploadNotificationView.messageText = @"test";
@@ -217,6 +223,12 @@
     
 //    [self performSelector:@selector(uploadBegin:) withObject:nil afterDelay:1];
 //    [self performSelector:@selector(uploadSuccess:) withObject:nil afterDelay:5];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    [[GANTracker sharedTracker] trackPageview:@"app_entry_point/stream" withError:nil];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -398,6 +410,8 @@
         DHImageDetailMetaVC *metaVC = [[DHImageDetailMetaVC alloc] init];
         metaVC.photoObject = object;
         metaVC.managedPhoto = [results lastObject];
+        [[GANTracker sharedTracker] setCustomVariableAtIndex:2 name:@"photo-detail-id" value:metaVC.photoObject.objectId withError:nil];
+        [[GANTracker sharedTracker] trackPageview:@"app_entry_point/stream/detail_view" withError:nil];
         [self.navigationController pushViewController:metaVC animated:YES];
     }
     
@@ -454,6 +468,11 @@
 - (void)displayImagePickerWithSource:(UIImagePickerControllerSourceType)src;
 {
     if([UIImagePickerController isSourceTypeAvailable:src]) {
+        if (src == UIImagePickerControllerSourceTypeCamera) {
+            [[GANTracker sharedTracker] trackEvent:@"photo_upload" action:@"camera_button_pressed" label:@"camera" value:0 withError:nil];
+        } else {
+            [[GANTracker sharedTracker] trackEvent:@"photo_upload" action:@"camera_button_pressed" label:@"album" value:0 withError:nil];
+        }
         UIImagePickerController *picker = [[UIImagePickerController alloc] init];
         [picker setSourceType:src];
         [picker setDelegate:self];
@@ -556,6 +575,7 @@
 
 - (void)uploadBegin:(NSNotification *)notification
 {
+    time(&funcStart);
     [[NSNotificationCenter defaultCenter] removeObserver:self name:DH_PHOTO_UPLOAD_BEGIN_NOTIFICATION object:nil];
     self.uploadNotificationView = [[DHUploadNotificationView alloc] initWithFrame:CGRectMake(0, self.tableView.frame.size.height, self.tableView.frame.size.width, kDH_Upload_Notification_View_Height)];
     self.uploadNotificationView.messageText = kDH_Uploading_Text;
@@ -570,12 +590,18 @@
 
 - (void)uploadSuccess:(NSNotification *)notification
 {
+    time(&funcEnd);
+    double timeDiff = difftime(funcEnd, funcStart);
+    funcStart = 0;
+    funcEnd = 0;
+    PFUser *curUser = [PFUser currentUser];
+    [[GANTracker sharedTracker] setCustomVariableAtIndex:1 name:@"upload_user" value:curUser.username withError:nil];
+    [[GANTracker sharedTracker] trackEvent:@"photo_upload" action:@"success" label:@"upload_time" value:(NSInteger)timeDiff withError:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:DH_PHOTO_UPLOAD_FAILURE_NOTIFICATION object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:DH_PHOTO_UPLOAD_SUCCESS_NOTIFICATION object:nil];
     [self loadObjects];
 //    NSDictionary *dict = [notification object];
 //    BOOL isAnonymous = [[dict objectForKey:@"isAnonymous"] boolValue];
-    PFUser *curUser = [PFUser currentUser];
     NSString *username = curUser.username;
     NSString *pushMessage = [NSString stringWithFormat:@"%@ just shared a moment", username];
     [PFPush sendPushMessageToChannelInBackground:@"" withMessage:pushMessage block:^(BOOL succeeded, NSError *error) {

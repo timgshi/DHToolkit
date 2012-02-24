@@ -189,8 +189,10 @@
     [metaDict setObject:[NSNumber numberWithBool:self.anonymousSwitch.on] forKey:@"isAnonymous"];
     if (twitterSwitch.on) {
         [self tweetMomentWithPhotoData:UIImageJPEGRepresentation(selectedPhoto, 0.8)];
+        [[GANTracker sharedTracker] trackEvent:@"social_sharing" action:@"twitter" label:curUser.username value:0 withError:nil];
     }
     if (facebookSwitch.on) {
+        [[GANTracker sharedTracker] trackEvent:@"social_sharing" action:@"facebook" label:curUser.username value:0 withError:nil];
         [self postMomentToFacebookWithImage:self.selectedPhoto];
     }
     [ParsePoster postPhotoWithMetaInfo:metaDict andPhotoData:UIImageJPEGRepresentation(selectedPhoto, 0.8)];
@@ -241,6 +243,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    [[GANTracker sharedTracker] trackPageview:@"app_entry_point/stream/image_rating" withError:nil];
     if ([CLLocationManager locationServicesEnabled]) {
         [self.locationManager startUpdatingLocation];
     }
