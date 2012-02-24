@@ -12,6 +12,9 @@
 
 @interface DHPhoto (Photo_PF)
 
++ (NSArray *)batchUpdatePhotosWithPFObjects:(NSArray *)pfObjects 
+                     inManagedObjectContext:(NSManagedObjectContext *)context;
+
 + (DHPhoto *)photoWithPFObject:(PFObject *)photoObject 
         inManagedObjectContext:(NSManagedObjectContext *)context;
 
