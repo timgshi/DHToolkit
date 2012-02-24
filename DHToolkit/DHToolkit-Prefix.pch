@@ -12,6 +12,7 @@
     #import <UIKit/UIKit.h>
     #import <Foundation/Foundation.h>
     #import <CoreData/CoreData.h>
+    #import "GANTracker.h"
     #define kDHIncrementNetworkActivityNotification @"dhIncrementNetworkActivity"
     #define kDHDecrementNetworkActivityNotification @"dhDecrementNetworkActivity"
     #define kDH_FACEBOOK_ID @"171752956231417"
