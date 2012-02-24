@@ -366,7 +366,17 @@
     NSManagedObjectID *managedID = [self.objectIDDict objectForKey:object.objectId];
     DHPhoto *managedObject = nil;
     if (managedID) {
-        managedObject = (DHPhoto *)[self.context objectRegisteredForID:managedID];
+//        managedObject = (DHPhoto *)[self.context objectRegisteredForID:managedID];
+        managedObject = (DHPhoto *)[self.context objectWithID:managedID];
+        if (!managedObject) {
+            NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"DHPhoto"];
+            fetchRequest.predicate = [NSPredicate predicateWithFormat:@"pfObjectID == %@", [object objectId]];
+            NSArray *results = [self.context executeFetchRequest:fetchRequest error:nil];
+            if ([results lastObject]) {
+                managedObject = [results lastObject];
+                [self.objectIDDict setObject:managedObject.objectID forKey:object.objectId];
+            }
+        }
     } else {
         NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"DHPhoto"];
         fetchRequest.predicate = [NSPredicate predicateWithFormat:@"pfObjectID == %@", [object objectId]];
@@ -427,7 +437,7 @@
     NSManagedObjectID *managedID = [self.objectIDDict objectForKey:object.objectId];
     DHPhoto *managedObject = nil;
     if (managedID) {
-        managedObject = (DHPhoto *)[self.context objectRegisteredForID:managedID];
+        managedObject = (DHPhoto *)[self.context objectWithID:managedID];
     } else {
         NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"DHPhoto"];
         fetchRequest.predicate = [NSPredicate predicateWithFormat:@"pfObjectID == %@", [object objectId]];
@@ -471,29 +481,67 @@
     self.objectsLoading = NO;
     [super objectsDidLoad:error];
     self.photosLoading = YES;
-    for (PFObject *obj in self.objects) {
-        
-        dispatch_queue_t downloadQueue = dispatch_queue_create("com.dh.photodownloader", NULL);
-        dispatch_async(downloadQueue, ^{ 
-            NSData *imageData = [ParseFetcher photoDataForPhotoObject:obj];
-            UIImage *image = [UIImage imageWithData:imageData];
-            UIImage *thumbImage = nil;
-            if (image) {
-                thumbImage = [image thumbnailImage:320 transparentBorder:0 cornerRadius:0 interpolationQuality:kCGInterpolationHigh];
-                NSData *thumbImageData = UIImageJPEGRepresentation(thumbImage, 1.0);
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    DHPhoto *cellPhoto = [DHPhoto photoWithPFObject:obj inManagedObjectContext:self.context];
-                    cellPhoto.photoData = thumbImageData;
-                    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:@"AutoSaveRequested" object:nil]];
-                    
-                }); 
-            } 
-        });
-        dispatch_release(downloadQueue);
-//        [DHPhoto photoWithPFObject:obj inManagedObjectContext:self.context];
-        
-//        [self DHSetImageFromPhoto:[DHPhoto photoWithPFObject:obj inManagedObjectContext:self.context] withPhotoObject:obj forStreamCell:nil];
+    __block NSMutableDictionary *pfObjectIDs = [NSMutableDictionary dictionary];
+    for (PFObject *pfobj in self.objects) {
+        [pfObjectIDs setObject:pfobj forKey:pfobj.objectId];
     }
+    dispatch_queue_t batchImportQueue = dispatch_queue_create("edu.gsb.stanford.DHToolkit.batchImportQueue", NULL);
+    dispatch_async(batchImportQueue, ^{
+        NSManagedObjectContext *importContext = [[NSManagedObjectContext alloc] init];
+        importContext.persistentStoreCoordinator = self.context.persistentStoreCoordinator;
+        importContext.undoManager = nil;
+        NSNotificationCenter *notify = [NSNotificationCenter defaultCenter];
+        [notify addObserver:self 
+                   selector:@selector(mergeChanges:) 
+                       name:NSManagedObjectContextDidSaveNotification 
+                     object:importContext];
+        NSArray *managedPhotos = [DHPhoto batchUpdatePhotosWithPFObjects:self.objects inManagedObjectContext:importContext];
+        for (DHPhoto *managedPhoto in managedPhotos) {
+            __block NSManagedObjectID *managedID = managedPhoto.objectID;
+            __block NSString *pfObjID = managedPhoto.pfObjectID;
+            dispatch_queue_t downloadQueue = dispatch_queue_create("com.dh.photodownloader", NULL);
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{ 
+                NSData *imageData = [ParseFetcher photoDataForPhotoObject:[pfObjectIDs objectForKey:pfObjID]];
+                UIImage *image = [UIImage imageWithData:imageData];
+                UIImage *thumbImage = nil;
+                if (image) {
+                    thumbImage = [image thumbnailImage:320 transparentBorder:0 cornerRadius:0 interpolationQuality:kCGInterpolationHigh];
+                    NSData *thumbImageData = UIImageJPEGRepresentation(thumbImage, 1.0);
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        DHPhoto *thisPhoto = (DHPhoto *)[self.context objectWithID:managedID];
+                        thisPhoto.photoData = thumbImageData;
+                        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:@"AutoSaveRequested" object:nil]];
+                        [self.objectIDDict setObject:thisPhoto.objectID forKey:thisPhoto.pfObjectID];
+                    }); 
+                } 
+            });
+            dispatch_release(downloadQueue);
+        }
+    });
+    dispatch_release(batchImportQueue);
+    //    for (PFObject *obj in self.objects) {
+//        
+//        dispatch_queue_t downloadQueue = dispatch_queue_create("com.dh.photodownloader", NULL);
+//        dispatch_async(downloadQueue, ^{ 
+//            NSData *imageData = [ParseFetcher photoDataForPhotoObject:obj];
+//            UIImage *image = [UIImage imageWithData:imageData];
+//            UIImage *thumbImage = nil;
+//            if (image) {
+//                thumbImage = [image thumbnailImage:320 transparentBorder:0 cornerRadius:0 interpolationQuality:kCGInterpolationHigh];
+//                NSData *thumbImageData = UIImageJPEGRepresentation(thumbImage, 1.0);
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    DHPhoto *cellPhoto = [DHPhoto photoWithPFObject:obj inManagedObjectContext:self.context];
+//                    cellPhoto.photoData = thumbImageData;
+//                    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:@"AutoSaveRequested" object:nil]];
+//                    [self.objectIDDict setObject:cellPhoto.objectID forKey:obj.objectId];
+//                }); 
+//            } 
+//        });
+//        dispatch_release(downloadQueue);
+////        [DHPhoto photoWithPFObject:obj inManagedObjectContext:self.context];
+//        
+////        [self DHSetImageFromPhoto:[DHPhoto photoWithPFObject:obj inManagedObjectContext:self.context] withPhotoObject:obj forStreamCell:nil];
+//    }
     [self.tableView reloadData];
     [self.tableView performSelector:@selector(reloadData) withObject:nil afterDelay:5];
     self.photosLoading = NO;
@@ -839,7 +887,7 @@
 {
     AppDelegate *theDelegate = [[UIApplication sharedApplication] delegate];
     [[theDelegate managedObjectContext] performSelectorOnMainThread:@selector(mergeChangesFromContextDidSaveNotification:) withObject:notification waitUntilDone:YES];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSManagedObjectContextDidSaveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSManagedObjectContextDidSaveNotification object:[notification object]];
 }
 
 #pragma mark - UIScrollViewDelegate Methods

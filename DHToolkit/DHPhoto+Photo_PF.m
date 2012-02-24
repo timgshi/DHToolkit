@@ -68,6 +68,86 @@
 #define kDHDataLocationStringKey @"DHDataLocationString"
 #define kDHDataPrivacyKey @"isPrivate"
 
++ (NSArray *)batchUpdatePhotosWithPFObjects:(NSArray *)pfObjects inManagedObjectContext:(NSManagedObjectContext *)context
+{
+    NSArray *photos = nil;
+    NSMutableArray *tempPhotos = [NSMutableArray array];
+    NSMutableSet *pfIDs = [NSMutableSet set];
+    for (PFObject *obj in pfObjects) {
+        [pfIDs addObject:obj.objectId];
+    }
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    fetchRequest.entity = [NSEntityDescription entityForName:NSStringFromClass([self class]) inManagedObjectContext:context];
+    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"pfObjectID IN %@", pfIDs];
+    NSError *error = nil;
+    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
+    if (!fetchedObjects) {
+        return nil;
+    }
+    NSMutableDictionary *idDict = [NSMutableDictionary dictionary];
+    for (DHPhoto *photo in fetchedObjects) {
+        [idDict setObject:photo forKey:photo.pfObjectID];
+    }
+    for (PFObject *photoObject in pfObjects) {
+        DHPhoto *photo = [idDict objectForKey:photoObject.objectId];
+        if (!photo) {
+            photo = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([self class]) inManagedObjectContext:context];
+        }
+        photo.pfObjectID = photoObject.objectId;
+        if ([photoObject objectForKey:kDHDataSixWordKey] == [NSNull null]) {
+            photo.photoDescription = @"";
+        } else {
+            photo.photoDescription = [photoObject objectForKey:kDHDataSixWordKey];
+        }
+        
+        NSNumber *privacy = [photoObject objectForKey:kDHDataPrivacyKey];
+        if (privacy) {
+            photo.isPrivate = privacy;
+        } else {
+            photo.isPrivate = [NSNumber numberWithBool:NO];
+        }
+        //photo.happinessLevel = [NSNumber numberWithInt:[[photoObject objectForKey:kDHDataHappinessLevelKey] integerValue]];
+        photo.happinessLevel = [photoObject objectForKey:kDHDataHappinessLevelKey];
+        photo.photographerUsername = [photoObject objectForKey:kDHDataWhoTookKey];
+        //photo.dateupload = [photoObject objectForKey:kDHDataTimestampKey];
+        photo.timestamp = [photoObject objectForKey:kDHDataTimestampKey];
+        //            photo.timestamp = [photoObject objectForKey:@"createdAt"];
+        //photo.latitude = [NSNumber numberWithDouble:[[photoObject objectForKey:kDHDataGeoLatKey] doubleValue]];
+        if ([photoObject objectForKey:kDHDataGeoLatKey] != [NSNull null]) {
+            photo.latitude = [photoObject objectForKey:kDHDataGeoLatKey];
+        } else {
+            photo.latitude = nil;
+        }
+        
+        //photo.longitude = [NSNumber numberWithDouble:[[photoObject objectForKey:kDHDataGeoLongKey] doubleValue]];
+        if ([photoObject objectForKey:kDHDataGeoLongKey] != [NSNull null]) {
+            photo.longitude = [photoObject objectForKey:kDHDataGeoLongKey];
+        } else {
+            photo.longitude = nil;
+        }
+        if ([photoObject objectForKey:kDHDataWeatherConditionKey] != [NSNull null]) {
+            photo.weatherCondition = [photoObject objectForKey:kDHDataWeatherConditionKey];
+        } else {
+            photo.weatherCondition = nil;
+        }
+        if ([photoObject objectForKey:kDHDataWeatherTemperatureKey] != [NSNull null]) {
+            photo.weatherTemperature = [photoObject objectForKey:kDHDataWeatherTemperatureKey];
+        } else {
+            photo.weatherTemperature = nil;
+        }
+        if ([photoObject objectForKey:kDHDataLocationStringKey] != [NSNull null]) {
+            photo.locationName = [photoObject objectForKey:kDHDataLocationStringKey];
+        } else {
+            photo.locationName = nil;
+        }
+        [tempPhotos addObject:photo];
+    }
+//    [[NSNotificationCenter defaultCenter] postNotificationName:@"AutoSaveRequested" object:nil];
+    [context save:nil];
+    if ([tempPhotos count]) photos = [NSArray arrayWithArray:tempPhotos];
+    return photos;
+}
+
 + (DHPhoto *)photoWithPFObject:(PFObject *)photoObject inManagedObjectContext:(NSManagedObjectContext *)context
 {
     DHPhoto *photo = nil;

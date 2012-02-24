@@ -29,7 +29,7 @@
 
 #define kTestFlightTeamID @"bd3d87cddcb2bc398c93be36bbbf4307_MjQ3MzAyMDExLTA4LTIyIDEzOjMzOjA5LjQ4MDY3OA"
 #define kGANPropertyID @"UA-29443463-1"
-static const NSInteger kGANDispatchPeriodSec = 10;
+static const NSInteger kGANDispatchPeriodSec = 20;
 
 - (void)autosave:(id)context
 {
