@@ -34,6 +34,7 @@
 @property (nonatomic, strong) DHUploadNotificationView *uploadNotificationView;
 @property (nonatomic, strong) DHSortBoxView *sortBox;
 @property (nonatomic, strong) UIView *opaqueView;
+@property (nonatomic, strong) NSMutableDictionary *objectIDDict;
 @property BOOL objectsLoading;
 @property BOOL photosLoading;
 
@@ -53,7 +54,7 @@
 @synthesize opaqueView;
 @synthesize objectsLoading;
 @synthesize photosLoading;
-
+@synthesize objectIDDict;
 
 
 //- (id)initWithStyle:(UITableViewStyle)style
@@ -119,6 +120,13 @@
     return expandedIndexPaths;
 }
 
+- (NSMutableDictionary *)objectIDDict
+{
+    if (!objectIDDict) {
+        objectIDDict = [NSMutableDictionary dictionary];
+    }
+    return objectIDDict;
+}
 
 #pragma mark - View lifecycle
 
@@ -255,6 +263,7 @@
     self.uploadNotificationView = nil;
     self.sortBox = nil;
     self.opaqueView = nil;
+    self.objectIDDict = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -354,12 +363,28 @@
     }
     cell.PFObjectID = [object objectId];
     cell.photoObject = object;
-    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"DHPhoto"];
-    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"pfObjectID == %@", [object objectId]];
-    NSArray *results = [self.context executeFetchRequest:fetchRequest error:nil];
-    if ([results lastObject]) {
-        cell.cellPhoto = [results lastObject];
+    NSManagedObjectID *managedID = [self.objectIDDict objectForKey:object.objectId];
+    DHPhoto *managedObject = nil;
+    if (managedID) {
+        managedObject = (DHPhoto *)[self.context objectRegisteredForID:managedID];
+    } else {
+        NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"DHPhoto"];
+        fetchRequest.predicate = [NSPredicate predicateWithFormat:@"pfObjectID == %@", [object objectId]];
+        NSArray *results = [self.context executeFetchRequest:fetchRequest error:nil];
+        if ([results lastObject]) {
+            managedObject = [results lastObject];
+            [self.objectIDDict setObject:managedObject.objectID forKey:object.objectId];
+        }
     }
+    if (managedObject) {
+        cell.cellPhoto = managedObject;
+    }
+//    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"DHPhoto"];
+//    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"pfObjectID == %@", [object objectId]];
+//    NSArray *results = [self.context executeFetchRequest:fetchRequest error:nil];
+//    if ([results lastObject]) {
+//        cell.cellPhoto = [results lastObject];
+//    }
     [cell.spinner stopAnimating];
     if (![self photosLoading]) {
         [self DHSetImageFromPhoto:cell.cellPhoto withPhotoObject:object forStreamCell:cell];
@@ -399,27 +424,50 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     PFObject *object = [self objectAtIndex:indexPath];
-    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"DHPhoto"];
-    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"pfObjectID == %@", [object objectId]];
-    NSArray *results = [self.context executeFetchRequest:fetchRequest error:nil];
-    if ([results lastObject]) {
-//        DHImageDetailContainerViewController *detailVC = [[DHImageDetailContainerViewController alloc] init];
-//        detailVC.photoObject = object;
-//        detailVC.managedPhoto = [results lastObject];
-//        [self.navigationController pushViewController:detailVC animated:YES];
+    NSManagedObjectID *managedID = [self.objectIDDict objectForKey:object.objectId];
+    DHPhoto *managedObject = nil;
+    if (managedID) {
+        managedObject = (DHPhoto *)[self.context objectRegisteredForID:managedID];
+    } else {
+        NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"DHPhoto"];
+        fetchRequest.predicate = [NSPredicate predicateWithFormat:@"pfObjectID == %@", [object objectId]];
+        NSArray *results = [self.context executeFetchRequest:fetchRequest error:nil];
+        if ([results lastObject]) {
+            managedObject = [results lastObject];
+            [self.objectIDDict setObject:managedObject.objectID forKey:object.objectId];
+        }
+    }
+    if (managedObject) {
         DHImageDetailMetaVC *metaVC = [[DHImageDetailMetaVC alloc] init];
         metaVC.photoObject = object;
-        metaVC.managedPhoto = [results lastObject];
+        metaVC.managedPhoto = managedObject;
         [[GANTracker sharedTracker] setCustomVariableAtIndex:2 name:@"photo-detail-id" value:metaVC.photoObject.objectId withError:nil];
         [[GANTracker sharedTracker] trackPageview:@"app_entry_point/stream/detail_view" withError:nil];
         [self.navigationController pushViewController:metaVC animated:YES];
+
     }
+//    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"DHPhoto"];
+//    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"pfObjectID == %@", [object objectId]];
+//    NSArray *results = [self.context executeFetchRequest:fetchRequest error:nil];
+//    if ([results lastObject]) {
+////        DHImageDetailContainerViewController *detailVC = [[DHImageDetailContainerViewController alloc] init];
+////        detailVC.photoObject = object;
+////        detailVC.managedPhoto = [results lastObject];
+////        [self.navigationController pushViewController:detailVC animated:YES];
+//        DHImageDetailMetaVC *metaVC = [[DHImageDetailMetaVC alloc] init];
+//        metaVC.photoObject = object;
+//        metaVC.managedPhoto = [results lastObject];
+//        [[GANTracker sharedTracker] setCustomVariableAtIndex:2 name:@"photo-detail-id" value:metaVC.photoObject.objectId withError:nil];
+//        [[GANTracker sharedTracker] trackPageview:@"app_entry_point/stream/detail_view" withError:nil];
+//        [self.navigationController pushViewController:metaVC animated:YES];
+//    }
     
     
 }
 
 - (void)objectsDidLoad:(NSError *)error
 {
+    self.objectIDDict = nil;
     self.objectsLoading = NO;
     [super objectsDidLoad:error];
     self.photosLoading = YES;
@@ -449,7 +497,7 @@
     [self.tableView reloadData];
     [self.tableView performSelector:@selector(reloadData) withObject:nil afterDelay:5];
     self.photosLoading = NO;
-    [self.fetchedResultsController performFetch:nil];
+//    [self.fetchedResultsController performFetch:nil];
     [self.tableView reloadData];
     [self cleanupOldPhotos];
 }

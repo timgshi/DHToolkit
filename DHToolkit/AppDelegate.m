@@ -43,7 +43,7 @@ static const NSInteger kGANDispatchPeriodSec = 10;
 {
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(autosave:) object:self.managedObjectContext];
     // request a new autosave in a few tenths of a second
-    [self performSelector:@selector(autosave:) withObject:self.managedObjectContext afterDelay:0.2];
+    [self performSelector:@selector(autosave:) withObject:self.managedObjectContext afterDelay:0.5];
 }
 
 - (void)configureAppearance

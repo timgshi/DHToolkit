@@ -61,14 +61,16 @@
             self.commentLabel.hidden = NO;
             self.smileLabel.hidden = NO;
             PFUser *curUser = [PFUser currentUser];
-            PFQuery *personalSmileQuery = [PFQuery queryWithClassName:@"DHPhotoSmile"];
-            [personalSmileQuery whereKey:@"DHPhotoID" equalTo:self.photoObject.objectId];
-            [personalSmileQuery whereKey:@"PFUsername" equalTo:curUser.username];
-            [personalSmileQuery countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
-                if (number > 0) {
-                    [self.smileImageView setHighlighted:YES];
-                }
-            }];
+            if (curUser) {
+                PFQuery *personalSmileQuery = [PFQuery queryWithClassName:@"DHPhotoSmile"];
+                [personalSmileQuery whereKey:@"DHPhotoID" equalTo:self.photoObject.objectId];
+                [personalSmileQuery whereKey:@"PFUsername" equalTo:curUser.username];
+                [personalSmileQuery countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
+                    if (number > 0) {
+                        [self.smileImageView setHighlighted:YES];
+                    }
+                }];
+            }
         }];
     }];
 }

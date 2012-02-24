@@ -131,11 +131,11 @@
             } else {
                 photo.locationName = nil;
             }
-            
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"AutoSaveRequested" object:nil];
             // if we recently scheduled an autosave, cancel it
-            [self cancelPreviousPerformRequestsWithTarget:self selector:@selector(autosave:) object:context];
-            // request a new autosave in a few tenths of a second
-            [self performSelector:@selector(autosave:) withObject:context afterDelay:0.2];
+//            [self cancelPreviousPerformRequestsWithTarget:self selector:@selector(autosave:) object:context];
+//            // request a new autosave in a few tenths of a second
+//            [self performSelector:@selector(autosave:) withObject:context afterDelay:0.2];
         }
         else {
             if (!photo.isPrivate) {
