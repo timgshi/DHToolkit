@@ -819,6 +819,12 @@
     return [self objectAtIndex:[NSIndexPath indexPathForRow:index inSection:0]];
 }
 
+- (void)loadMorePhotosForGallery
+{
+    if (![self isLoading])
+    [self loadNextPage];
+}
+
 #pragma mark - Photo Cleanup
 
 //- (void)executeBlock:(void(^)(NSManagedObjectContext *backgroundContext))executionBlock completion:(void(^)(NSManagedObjectContext *backgroundContext))completionBlock

@@ -16,11 +16,12 @@
 #import "DHImageDetailContainerViewController.h"
 #import "DHImageDetailMetaVC.h"
 
-@interface DHGalleryVC() <DHGalleryPresenterDelegate>
+@interface DHGalleryVC() <DHGalleryPresenterDelegate, UIScrollViewDelegate>
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) UIView *containerView;
 @property (nonatomic, strong) DHGalleryPresenterVC *galleryPresenter;
 @property (nonatomic, strong) NSCache *thumbnailCache;
+@property (nonatomic, strong) UIActivityIndicatorView *loadingSpinner;
 @end
 
 @implementation DHGalleryVC
@@ -30,12 +31,14 @@
 @synthesize galleryPresenter;
 @synthesize galleryDelegate;
 @synthesize thumbnailCache;
+@synthesize loadingSpinner;
 
 - (UIScrollView *)scrollView
 {
     if (!scrollView) {
         scrollView = [[UIScrollView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
         scrollView.backgroundColor = [UIColor blackColor];
+        scrollView.delegate = self;
     }
     return scrollView;
 }
@@ -56,6 +59,14 @@
         thumbnailCache.countLimit = 25;
     }
     return thumbnailCache;
+}
+
+- (UIActivityIndicatorView *)loadingSpinner
+{
+    if (!loadingSpinner) {
+        loadingSpinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+    }
+    return loadingSpinner;
 }
 
 
@@ -209,6 +220,7 @@
         }
     }
     [self.scrollView setContentSize:CGSizeMake(320, (row+3) * DEFAULT_THUMB_HEIGHT)];
+    self.loadingSpinner.frame = CGRectMake(320/2 - (self.loadingSpinner.frame.size.width / 2), (row + 1) * DEFAULT_THUMB_HEIGHT + 10, self.loadingSpinner.frame.size.width, self.loadingSpinner.frame.size.height);
 }
 
 - (void)performFetch
@@ -284,6 +296,8 @@
 {
     [super viewDidLoad];
     UIScrollView *scroller = self.scrollView;
+    [scroller addSubview:self.loadingSpinner];
+    [self.loadingSpinner startAnimating];
     [self.containerView addSubview:scroller];
     [self.containerView setBackgroundColor:[UIColor blackColor]];
     self.view = self.containerView;
@@ -384,6 +398,21 @@
 //        [self.tableView reloadData];  // iOS bug workaround (section indexes don't update)
 //    }
     [self updateDisplay];
+}
+
+#pragma mark - UIScrollViewDelegate Methods
+
+- (void)scrollViewDidScroll:(UIScrollView *)aScrollView {
+    CGPoint offset = aScrollView.contentOffset;
+    CGRect bounds = aScrollView.bounds;
+    CGSize size = aScrollView.contentSize;
+    UIEdgeInsets inset = aScrollView.contentInset;
+    float y = offset.y + bounds.size.height - inset.bottom;
+    float h = size.height;
+    float reload_distance = 45;
+    if(y > h - reload_distance) {
+        if (self.galleryDelegate) [self.galleryDelegate loadMorePhotosForGallery];
+    }
 }
 
 

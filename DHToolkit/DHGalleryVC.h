@@ -14,6 +14,7 @@
 //- (NSArray *)objectsArray;
 //- (UIImage *)imageForPhoto:(PFObject *)photoObject;
 - (PFObject *)parseObjectForIndex:(int) index;
+- (void)loadMorePhotosForGallery;	
 @end
 
 @interface DHGalleryVC : UIViewController <NSFetchedResultsControllerDelegate>
