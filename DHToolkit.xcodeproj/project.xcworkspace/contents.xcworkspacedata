@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:../../GitHub/SDWebImage/SDWebImage.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "self:DHToolkit.xcodeproj">
    </FileRef>
 </Workspace>

@@ -206,6 +206,7 @@
 		4B9BB11514A72CE90062C1EE /* location.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B9BB0FC14A72CE70062C1EE /* location.png */; };
 		4B9BB11614A72CE90062C1EE /* location@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B9BB0FD14A72CE70062C1EE /* location@2x.png */; };
 		4B9BB11714A72CE90062C1EE /* location@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B9BB0FD14A72CE70062C1EE /* location@2x.png */; };
+		4BA4964B14FCD827006FC848 /* libSDWebImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BA4964A14FCD827006FC848 /* libSDWebImage.a */; };
 		4BD7EE1114D6A2EE0089DE1E /* navbarblack.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BD7EE1014D6A2EE0089DE1E /* navbarblack.png */; };
 		4BD7EE1714D6A5630089DE1E /* signin.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BD7EE1314D6A5630089DE1E /* signin.png */; };
 		4BD7EE1814D6A5630089DE1E /* signin@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BD7EE1414D6A5630089DE1E /* signin@2x.png */; };
@@ -435,6 +436,7 @@
 		4B9BB0F914A72CE50062C1EE /* check@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "check@2x.png"; sourceTree = "<group>"; };
 		4B9BB0FC14A72CE70062C1EE /* location.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = location.png; sourceTree = "<group>"; };
 		4B9BB0FD14A72CE70062C1EE /* location@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "location@2x.png"; sourceTree = "<group>"; };
+		4BA4964A14FCD827006FC848 /* libSDWebImage.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libSDWebImage.a; path = "../GitHub/SDWebImage/build/Release-iphoneos/libSDWebImage.a"; sourceTree = "<group>"; };
 		4BD7EE1014D6A2EE0089DE1E /* navbarblack.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = navbarblack.png; sourceTree = "<group>"; };
 		4BD7EE1314D6A5630089DE1E /* signin.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = signin.png; sourceTree = "<group>"; };
 		4BD7EE1414D6A5630089DE1E /* signin@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "signin@2x.png"; sourceTree = "<group>"; };
@@ -461,6 +463,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BA4964B14FCD827006FC848 /* libSDWebImage.a in Frameworks */,
 				4B3105D214F70332007B30CD /* libsqlite3.0.dylib in Frameworks */,
 				4BF19C1D14DD3C55007017ED /* Twitter.framework in Frameworks */,
 				4BF19C1B14DD3C50007017ED /* Accounts.framework in Frameworks */,
@@ -550,6 +553,7 @@
 		4B34352214A26EB8002831BD = {
 			isa = PBXGroup;
 			children = (
+				4BA4964A14FCD827006FC848 /* libSDWebImage.a */,
 				4B515CED14CE179100CD6C7E /* DHT-Logo@2x.png */,
 				4B515CEB14CE178D00CD6C7E /* DHT-Logo.png */,
 				4B9BB0DC14A66AE00062C1EE /* libKIF.a */,
@@ -1278,9 +1282,11 @@
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				USER_HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR/**";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1303,10 +1309,12 @@
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "8CCE07DF-0656-4C7B-96BC-D97CFDA39F82";
 				"PROVISIONING_PROFILE[sdk=*]" = "8CCE07DF-0656-4C7B-96BC-D97CFDA39F82";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				USER_HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR/**";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
