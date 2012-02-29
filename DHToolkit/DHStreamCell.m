@@ -11,7 +11,7 @@
 #import "DHImageSmileTagVC.h"
 
 @interface DHStreamCell()
-@property (nonatomic, strong) UIImageView *cellImageView;
+//@property (nonatomic, strong) UIImageView *cellImageView;
 @property (nonatomic, strong) UILabel *photographerNameLabel, *photoDescriptionLabel, *levelLabel, *weatherLabel, *locationLabel;
 @property (nonatomic, strong) UIView *infoBarContainerView, *infoBarColoredContainer, *levelBarView, *contentContainerView;
 @property (nonatomic, strong) DHImageSmileTagVC *smileTagVC;
@@ -35,6 +35,8 @@
     }
     return cellImageView;
 }
+
+
 
 - (UILabel *)photographerNameLabel
 {

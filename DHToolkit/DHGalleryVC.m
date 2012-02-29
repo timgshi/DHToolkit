@@ -15,6 +15,7 @@
 #import "UIBarButtonItem+CustomImage.h"
 #import "DHImageDetailContainerViewController.h"
 #import "DHImageDetailMetaVC.h"
+#import "UIButton+WebCache.h"
 
 @interface DHGalleryVC() <DHGalleryPresenterDelegate, UIScrollViewDelegate>
 @property (nonatomic, strong) UIScrollView *scrollView;
@@ -186,7 +187,8 @@
 	for(int i = 0; i < [self.fetchedResultsController.fetchedObjects count]; ++i) {
 //    for(int i = 0; i < [[self.galleryDelegate objectsArray] count]; ++i) {
     NSIndexPath *indexPathForCurrentIndex = [NSIndexPath indexPathForRow:i inSection:0];
-		UIImage *thumb = [self thumbForDHPhoto:[self.fetchedResultsController objectAtIndexPath:indexPathForCurrentIndex]];
+        DHPhoto *managedPhoto = [self.fetchedResultsController objectAtIndexPath:indexPathForCurrentIndex];
+//		UIImage *thumb = [self thumbForDHPhoto:[self.fetchedResultsController objectAtIndexPath:indexPathForCurrentIndex]];
 //        UIImage *thumb = [self thumbForDHPhotoObject:[[self.galleryDelegate objectsArray] objectAtIndex:i]];
 		UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
 		button.frame = CGRectMake(column * DEFAULT_THUMB_WIDTH, 
@@ -194,13 +196,14 @@
                                   DEFAULT_THUMB_WIDTH, 
                                   DEFAULT_THUMB_HEIGHT);
         button.autoresizingMask = UIViewAutoresizingNone;
-		[button setImage:thumb forState:UIControlStateNormal];
-        if (thumb == nil) {
-            UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
-            spinner.frame = CGRectMake((button.frame.size.width / 2) - (spinner.frame.size.width / 2), (button.frame.size.height / 2) - (spinner.frame.size.height / 2), spinner.frame.size.width, spinner.frame.size.height);
-            [button addSubview:spinner];
-            [spinner startAnimating];
-        }
+        [button setImageWithURL:[NSURL URLWithString:managedPhoto.photoURL]];
+//		[button setImage:thumb forState:UIControlStateNormal];
+//        if (thumb == nil) {
+//            UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+//            spinner.frame = CGRectMake((button.frame.size.width / 2) - (spinner.frame.size.width / 2), (button.frame.size.height / 2) - (spinner.frame.size.height / 2), spinner.frame.size.width, spinner.frame.size.height);
+//            [button addSubview:spinner];
+//            [spinner startAnimating];
+//        }
 		[button addTarget:self 
 				   action:@selector(buttonClicked:) 
 		 forControlEvents:UIControlEventTouchUpInside];
@@ -326,6 +329,11 @@
 {
     [super viewDidUnload];
     self.galleryPresenter = nil;
+    self.fetchedResultsController = nil;
+    self.scrollView = nil;
+    self.containerView = nil;
+    self.loadingSpinner = nil;
+    self.thumbnailCache = nil;
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
 }

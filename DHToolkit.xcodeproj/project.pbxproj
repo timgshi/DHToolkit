@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B08AEDB14FCE2F600B981E6 /* DHPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B08AEDA14FCE2F600B981E6 /* DHPhoto.m */; };
 		4B096A7714ECE1F7007AB50D /* 08-chat.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B096A7314ECE1F7007AB50D /* 08-chat.png */; };
 		4B096A7814ECE1F7007AB50D /* 08-chat@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B096A7414ECE1F7007AB50D /* 08-chat@2x.png */; };
 		4B096A7914ECE1F7007AB50D /* 09-chat-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B096A7514ECE1F7007AB50D /* 09-chat-2.png */; };
@@ -94,7 +95,6 @@
 		4B6C365714BEE8B800367C90 /* UIImage+Alpha.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B6C365214BEE8B800367C90 /* UIImage+Alpha.m */; };
 		4B6C365814BEE8B800367C90 /* UIImage+Resize.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B6C365414BEE8B800367C90 /* UIImage+Resize.m */; };
 		4B6C365914BEE8B800367C90 /* UIImage+RoundedCorner.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B6C365614BEE8B800367C90 /* UIImage+RoundedCorner.m */; };
-		4B6C365C14BF758700367C90 /* DHPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B6C365B14BF758700367C90 /* DHPhoto.m */; };
 		4B7A686814BA673B0074B1CC /* 86-camera.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B7A686614BA673B0074B1CC /* 86-camera.png */; };
 		4B7A686914BA673B0074B1CC /* 86-camera@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B7A686714BA673B0074B1CC /* 86-camera@2x.png */; };
 		4B7A687114BA77C00074B1CC /* DHImageRatingTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B7A687014BA77C00074B1CC /* DHImageRatingTVC.m */; };
@@ -237,6 +237,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4B08AED914FCE2F600B981E6 /* DHPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHPhoto.h; sourceTree = "<group>"; };
+		4B08AEDA14FCE2F600B981E6 /* DHPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DHPhoto.m; sourceTree = "<group>"; };
 		4B096A7314ECE1F7007AB50D /* 08-chat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "08-chat.png"; sourceTree = "<group>"; };
 		4B096A7414ECE1F7007AB50D /* 08-chat@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "08-chat@2x.png"; sourceTree = "<group>"; };
 		4B096A7514ECE1F7007AB50D /* 09-chat-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "09-chat-2.png"; sourceTree = "<group>"; };
@@ -338,6 +340,7 @@
 		4B515CED14CE179100CD6C7E /* DHT-Logo@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DHT-Logo@2x.png"; sourceTree = "<group>"; };
 		4B608ECC14D5404400020E69 /* DHUploadNotificationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHUploadNotificationView.h; sourceTree = "<group>"; };
 		4B608ECD14D5404400020E69 /* DHUploadNotificationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DHUploadNotificationView.m; sourceTree = "<group>"; };
+		4B61096E14FCD95C001CE5F3 /* DHToolkit 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "DHToolkit 2.xcdatamodel"; sourceTree = "<group>"; };
 		4B6C364A14BEE14D00367C90 /* DHGalleryVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHGalleryVC.h; sourceTree = "<group>"; };
 		4B6C364B14BEE14D00367C90 /* DHGalleryVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DHGalleryVC.m; sourceTree = "<group>"; };
 		4B6C364C14BEE14D00367C90 /* DHGalleryPresenterVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHGalleryPresenterVC.h; sourceTree = "<group>"; };
@@ -348,8 +351,6 @@
 		4B6C365414BEE8B800367C90 /* UIImage+Resize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Resize.m"; sourceTree = "<group>"; };
 		4B6C365514BEE8B800367C90 /* UIImage+RoundedCorner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+RoundedCorner.h"; sourceTree = "<group>"; };
 		4B6C365614BEE8B800367C90 /* UIImage+RoundedCorner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+RoundedCorner.m"; sourceTree = "<group>"; };
-		4B6C365A14BF758700367C90 /* DHPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHPhoto.h; sourceTree = "<group>"; };
-		4B6C365B14BF758700367C90 /* DHPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DHPhoto.m; sourceTree = "<group>"; };
 		4B7A686614BA673B0074B1CC /* 86-camera.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "86-camera.png"; sourceTree = "<group>"; };
 		4B7A686714BA673B0074B1CC /* 86-camera@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "86-camera@2x.png"; sourceTree = "<group>"; };
 		4B7A686F14BA77C00074B1CC /* DHImageRatingTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHImageRatingTVC.h; sourceTree = "<group>"; };
@@ -436,7 +437,7 @@
 		4B9BB0F914A72CE50062C1EE /* check@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "check@2x.png"; sourceTree = "<group>"; };
 		4B9BB0FC14A72CE70062C1EE /* location.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = location.png; sourceTree = "<group>"; };
 		4B9BB0FD14A72CE70062C1EE /* location@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "location@2x.png"; sourceTree = "<group>"; };
-		4BA4964A14FCD827006FC848 /* libSDWebImage.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libSDWebImage.a; path = "../GitHub/SDWebImage/build/Release-iphoneos/libSDWebImage.a"; sourceTree = "<group>"; };
+		4BA4964A14FCD827006FC848 /* libSDWebImage.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDWebImage.a; path = "../GitHub/SDWebImage/build/Release-iphoneos/libSDWebImage.a"; sourceTree = "<group>"; };
 		4BD7EE1014D6A2EE0089DE1E /* navbarblack.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = navbarblack.png; sourceTree = "<group>"; };
 		4BD7EE1314D6A5630089DE1E /* signin.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = signin.png; sourceTree = "<group>"; };
 		4BD7EE1414D6A5630089DE1E /* signin@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "signin@2x.png"; sourceTree = "<group>"; };
@@ -752,9 +753,9 @@
 		4B9BB09914A328800062C1EE /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
+				4B08AED914FCE2F600B981E6 /* DHPhoto.h */,
+				4B08AEDA14FCE2F600B981E6 /* DHPhoto.m */,
 				4B34354514A26EB9002831BD /* DHToolkit.xcdatamodeld */,
-				4B6C365A14BF758700367C90 /* DHPhoto.h */,
-				4B6C365B14BF758700367C90 /* DHPhoto.m */,
 				4B9BB09D14A3289A0062C1EE /* DHPhoto */,
 			);
 			name = CoreData;
@@ -1142,7 +1143,6 @@
 				4B6C365714BEE8B800367C90 /* UIImage+Alpha.m in Sources */,
 				4B6C365814BEE8B800367C90 /* UIImage+Resize.m in Sources */,
 				4B6C365914BEE8B800367C90 /* UIImage+RoundedCorner.m in Sources */,
-				4B6C365C14BF758700367C90 /* DHPhoto.m in Sources */,
 				4B515CAB14CD6C1C00CD6C7E /* UIBarButtonItem+CustomImage.m in Sources */,
 				4B515CC314CD75D400CD6C7E /* DHStreamCell.m in Sources */,
 				4B515CDE14CDD5A400CD6C7E /* GoogleWeatherFetcher.m in Sources */,
@@ -1158,6 +1158,7 @@
 				4B30D2F014E924CB00134B50 /* HPTextViewInternal.m in Sources */,
 				4B096A9014EDA7A6007AB50D /* DHImageSmileTagVC.m in Sources */,
 				4B096A9B14EF6DA0007AB50D /* PFObject+DHPhoto_MKAnnotation.m in Sources */,
+				4B08AEDB14FCE2F600B981E6 /* DHPhoto.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1286,7 +1287,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				USER_HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR/**";
+				USER_HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)/**";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1314,7 +1315,7 @@
 				PROVISIONING_PROFILE = "8CCE07DF-0656-4C7B-96BC-D97CFDA39F82";
 				"PROVISIONING_PROFILE[sdk=*]" = "8CCE07DF-0656-4C7B-96BC-D97CFDA39F82";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				USER_HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR/**";
+				USER_HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)/**";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -1462,9 +1463,10 @@
 		4B34354514A26EB9002831BD /* DHToolkit.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				4B61096E14FCD95C001CE5F3 /* DHToolkit 2.xcdatamodel */,
 				4B34354614A26EB9002831BD /* DHToolkit.xcdatamodel */,
 			);
-			currentVersion = 4B34354614A26EB9002831BD /* DHToolkit.xcdatamodel */;
+			currentVersion = 4B61096E14FCD95C001CE5F3 /* DHToolkit 2.xcdatamodel */;
 			path = DHToolkit.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

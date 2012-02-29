@@ -23,8 +23,9 @@
 #import "DHImageDetailContainerViewController.h"
 #import "AppDelegate.h"
 #import "DHImageDetailMetaVC.h"
+#import "UIImageView+WebCache.h"
 
-@interface DH_PFStreamTVC() <DHImageRatingDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, DHSortBoxViewDelegate, DHGalleryVCDelegate, UIScrollViewDelegate>
+@interface DH_PFStreamTVC() <DHImageRatingDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, DHSortBoxViewDelegate, DHGalleryVCDelegate, UIScrollViewDelegate, SDWebImageDownloaderDelegate, SDWebImageManagerDelegate>
 {
     time_t funcStart, funcEnd;
 }
@@ -279,13 +280,14 @@
 - (void)DHSetImageFromPhoto:(DHPhoto *)cellPhoto withPhotoObject:(PFObject *)photoObject forStreamCell:(DHStreamCell *)cell
 {
     if (cell) {
-        if (cellPhoto.photoData == NULL) {
-            [cell setImageForCellImageView:nil];
-            [cell.spinner startAnimating];
-        } else if ([cell.PFObjectID isEqualToString:cellPhoto.pfObjectID]) {
-            [cell.spinner stopAnimating];
-            [cell setImageForCellImageView:[UIImage imageWithData:cellPhoto.photoData]];
-        }
+        [cell.cellImageView setImageWithURL:[NSURL URLWithString:cellPhoto.photoURL]];
+//        if (cellPhoto.photoData == NULL) {
+//            [cell setImageForCellImageView:nil];
+//            [cell.spinner startAnimating];
+//        } else if ([cell.PFObjectID isEqualToString:cellPhoto.pfObjectID]) {
+//            [cell.spinner stopAnimating];
+//            [cell setImageForCellImageView:[UIImage imageWithData:cellPhoto.photoData]];
+//        }
     }
 }
 
@@ -497,26 +499,30 @@
                      object:importContext];
         NSArray *managedPhotos = [DHPhoto batchUpdatePhotosWithPFObjects:self.objects inManagedObjectContext:importContext];
         for (DHPhoto *managedPhoto in managedPhotos) {
-            __block NSManagedObjectID *managedID = managedPhoto.objectID;
-            __block NSString *pfObjID = managedPhoto.pfObjectID;
-            dispatch_queue_t downloadQueue = dispatch_queue_create("com.dh.photodownloader", NULL);
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{ 
-                NSData *imageData = [ParseFetcher photoDataForPhotoObject:[pfObjectIDs objectForKey:pfObjID]];
-                UIImage *image = [UIImage imageWithData:imageData];
-                UIImage *thumbImage = nil;
-                if (image) {
-                    thumbImage = [image thumbnailImage:320 transparentBorder:0 cornerRadius:0 interpolationQuality:kCGInterpolationHigh];
-                    NSData *thumbImageData = UIImageJPEGRepresentation(thumbImage, 1.0);
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        DHPhoto *thisPhoto = (DHPhoto *)[self.context objectWithID:managedID];
-                        thisPhoto.photoData = thumbImageData;
-                        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:@"AutoSaveRequested" object:nil]];
-                        [self.objectIDDict setObject:thisPhoto.objectID forKey:thisPhoto.pfObjectID];
-                    }); 
-                } 
-            });
-            dispatch_release(downloadQueue);
+            SDWebImageManager *imageManager = [SDWebImageManager sharedManager];
+            [imageManager downloadWithURL:[NSURL URLWithString:managedPhoto.photoURL] delegate:self];
         }
+//        for (DHPhoto *managedPhoto in managedPhotos) {
+//            __block NSManagedObjectID *managedID = managedPhoto.objectID;
+//            __block NSString *pfObjID = managedPhoto.pfObjectID;
+//            dispatch_queue_t downloadQueue = dispatch_queue_create("com.dh.photodownloader", NULL);
+//            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{ 
+//                NSData *imageData = [ParseFetcher photoDataForPhotoObject:[pfObjectIDs objectForKey:pfObjID]];
+//                UIImage *image = [UIImage imageWithData:imageData];
+//                UIImage  *thumbImage = nil;
+//                if (image) {
+//                    thumbImage = [image thumbnailImage:320 transparentBorder:0 cornerRadius:0 interpolationQuality:kCGInterpolationHigh];
+//                    NSData *thumbImageData = UIImageJPEGRepresentation(thumbImage, 1.0);
+//                    dispatch_async(dispatch_get_main_queue(), ^{
+//                        DHPhoto *thisPhoto = (DHPhoto *)[self.context objectWithID:managedID];
+//                        thisPhoto.photoData = thumbImageData;
+//                        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:@"AutoSaveRequested" object:nil]];
+//                        [self.objectIDDict setObject:thisPhoto.objectID forKey:thisPhoto.pfObjectID];
+//                    }); 
+//                } 
+//            });
+//            dispatch_release(downloadQueue);
+//        }
     });
     dispatch_release(batchImportQueue);
     //    for (PFObject *obj in self.objects) {

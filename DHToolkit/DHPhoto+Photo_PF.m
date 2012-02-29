@@ -9,6 +9,7 @@
 #import "DHPhoto+Photo_PF.h"
 #import "Parse/PFObject.h"
 #import "Parse/PFUser.h"
+#import "Parse/PFFile.h"
 #import "NSManagedObject+safeSetValuesKeysWithDictionary.h"
 
 @implementation DHPhoto (Photo_PF)
@@ -94,6 +95,8 @@
             photo = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([self class]) inManagedObjectContext:context];
         }
         photo.pfObjectID = photoObject.objectId;
+        PFFile *file = [photoObject objectForKey:@"photoData"];
+        photo.photoURL = [file url];
         if ([photoObject objectForKey:kDHDataSixWordKey] == [NSNull null]) {
             photo.photoDescription = @"";
         } else {
