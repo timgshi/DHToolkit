@@ -1,9 +1,9 @@
 //
 //  DHPhoto.h
-//  DHToolkit
+//  SDWebImage
 //
-//  Created by Tim Shi on 1/12/12.
-//  Copyright (c) 2012 www.timshi.com. All rights reserved.
+//  Created by Tim Shi on 2/28/12.
+//  Copyright (c) 2012 Dailymotion. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -19,11 +19,12 @@
 @property (nonatomic, retain) NSNumber * longitude;
 @property (nonatomic, retain) NSString * pfObjectID;
 @property (nonatomic, retain) NSData * photoData;
+@property (nonatomic, retain) NSData * photoDataThumb;
 @property (nonatomic, retain) NSString * photoDescription;
 @property (nonatomic, retain) NSString * photographerUsername;
+@property (nonatomic, retain) NSString * photoURL;
 @property (nonatomic, retain) NSDate * timestamp;
 @property (nonatomic, retain) NSString * weatherCondition;
 @property (nonatomic, retain) NSString * weatherTemperature;
-@property (nonatomic, retain) NSData * photoDataThumb;
 
 @end

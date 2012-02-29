@@ -1,9 +1,9 @@
 //
 //  DHPhoto.m
-//  DHToolkit
+//  SDWebImage
 //
-//  Created by Tim Shi on 1/12/12.
-//  Copyright (c) 2012 www.timshi.com. All rights reserved.
+//  Created by Tim Shi on 2/28/12.
+//  Copyright (c) 2012 Dailymotion. All rights reserved.
 //
 
 #import "DHPhoto.h"
@@ -18,11 +18,12 @@
 @dynamic longitude;
 @dynamic pfObjectID;
 @dynamic photoData;
+@dynamic photoDataThumb;
 @dynamic photoDescription;
 @dynamic photographerUsername;
+@dynamic photoURL;
 @dynamic timestamp;
 @dynamic weatherCondition;
 @dynamic weatherTemperature;
-@dynamic photoDataThumb;
 
 @end
