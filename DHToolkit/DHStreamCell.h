@@ -21,6 +21,8 @@
 @property (nonatomic, strong) UIActivityIndicatorView *spinner;
 @property (nonatomic, strong) NSString *PFObjectID;
 
+@property (nonatomic, strong) UIImageView *cellImageView;
+
 - (void)setImageForCellImageView:(UIImage *)anImage;
 
 @end
