@@ -623,6 +623,7 @@
     } else {
         selectedPhoto = [info objectForKey:UIImagePickerControllerOriginalImage];
     }
+    UIImageWriteToSavedPhotosAlbum([info objectForKey:UIImagePickerControllerOriginalImage], nil, nil, nil);
     [self dismissViewControllerAnimated:YES completion:^{
         DHImageRatingTVC *imageRatingTVC = [[DHImageRatingTVC alloc] init];
         imageRatingTVC.selectedPhoto = selectedPhoto;
