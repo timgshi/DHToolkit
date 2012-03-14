@@ -13,6 +13,7 @@
 #import "DH_PFStreamTVC.h"
 #import "UIBarButtonItem+CustomImage.h"
 #import "Parse/PFPush.h"
+#import "Parse/PFFacebookUtils.h"
 
 @interface AppDelegate()
 {
@@ -111,7 +112,8 @@ static const NSInteger kGANDispatchPeriodSec = 20;
     [TestFlight takeOff:kTestFlightTeamID];
     [[GANTracker sharedTracker] startTrackerWithAccountID:kGANPropertyID dispatchPeriod:kGANDispatchPeriodSec delegate:nil];
     [[GANTracker sharedTracker] trackPageview:@"/app_entry_point" withError:nil];
-    [Parse setFacebookApplicationId:kDH_FACEBOOK_ID];
+    [PFFacebookUtils initializeWithApplicationId:kDH_FACEBOOK_ID];
+//    [Parse setFacebookApplicationId:kDH_FACEBOOK_ID];
     [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge|
      UIRemoteNotificationTypeAlert|
      UIRemoteNotificationTypeSound];
@@ -165,12 +167,12 @@ didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
 #pragma mark - URL Open Handling
 
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
-    return [[PFUser facebook] handleOpenURL:url];
+    return [[PFFacebookUtils facebook] handleOpenURL:url];
 }
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
-    return [[PFUser facebook] handleOpenURL:url]; 
+    return [[PFFacebookUtils facebook] handleOpenURL:url]; 
 }
 
 #pragma mark - NetworkActivityIndicator
