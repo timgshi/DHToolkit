@@ -18,6 +18,7 @@
 #import <Twitter/Twitter.h>
 #import <Accounts/Accounts.h>
 #import <QuartzCore/QuartzCore.h>
+#import "Parse/PFFacebookUtils.h"
 
 @interface DHImageRatingTVC() <CLLocationManagerDelegate, GoogleWeatherFetcherDelegate, UITextFieldDelegate, UIAlertViewDelegate, PF_FBRequestDelegate>
 @property int imageRating;
@@ -152,7 +153,8 @@
 - (void)postMomentToFacebookWithImage:(UIImage *)image
 {
     NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:image, @"source", @"I just shared a happiness moment", @"message", self.descriptionField.text, @"name", nil];
-    [[PFUser facebook] requestWithGraphPath:@"me/photos" andParams:params andHttpMethod:@"POST" andDelegate:self];
+//    [[PFUser facebook] requestWithGraphPath:@"me/photos" andParams:params andHttpMethod:@"POST" andDelegate:self];
+    [[PFFacebookUtils facebook] requestWithGraphPath:@"me/photos" andParams:params andHttpMethod:@"POST" andDelegate:self];
 }
 
 - (void)savePhotoObject
@@ -419,16 +421,16 @@
 
 - (void)facebookSwitchMoved
 {
-    if (self.facebookSwitch.on) {
-        PFUser *curUser = [PFUser currentUser];
-        if (![curUser hasFacebook]) {
-            [curUser linkToFacebook:[NSArray arrayWithObjects:@"email", @"publish_stream", @"offline_access", nil] block:^(BOOL succeeded, NSError *error) {
-                
-            }];
-        } else if (![[PFUser facebook] accessToken]) {
-            [[PFUser facebook] authorize:[NSArray arrayWithObjects:@"email", @"publish_stream", @"offline_access", nil]];
-        }
-    }
+//    if (self.facebookSwitch.on) {
+//        PFUser *curUser = [PFUser currentUser];
+//        if (![curUser hasFacebook]) {
+//            [curUser linkToFacebook:[NSArray arrayWithObjects:@"email", @"publish_stream", @"offline_access", nil] block:^(BOOL succeeded, NSError *error) {
+//                
+//            }];
+//        } else if (![[PFUser facebook] accessToken]) {
+//            [[PFUser facebook] authorize:[NSArray arrayWithObjects:@"email", @"publish_stream", @"offline_access", nil]];
+//        }
+//    }
 }
 
 - (UIImageView *)twitterButton
@@ -501,12 +503,15 @@
     }
     if (self.facebookButton.tag == 1) {
         PFUser *curUser = [PFUser currentUser];
-        if (![curUser hasFacebook]) {
-            [curUser linkToFacebook:[NSArray arrayWithObjects:@"email", @"publish_stream", @"offline_access", nil] block:^(BOOL succeeded, NSError *error) {
+        if (![PFFacebookUtils isLinkedWithUser:curUser]) {
+            [PFFacebookUtils linkUser:curUser permissions:[NSArray arrayWithObjects:@"email", @"publish_stream", @"offline_access", nil] block:^(BOOL succeeded, NSError *error) {
                 
             }];
-        } else if (![[PFUser facebook] accessToken]) {
-            [[PFUser facebook] authorize:[NSArray arrayWithObjects:@"email", @"publish_stream", @"offline_access", nil]];
+//            [curUser linkToFacebook:[NSArray arrayWithObjects:@"email", @"publish_stream", @"offline_access", nil] block:^(BOOL succeeded, NSError *error) {
+//                
+//            }];
+        } else if (![[PFFacebookUtils facebook] accessToken]) {
+            [[PFFacebookUtils facebook] authorize:[NSArray arrayWithObjects:@"email", @"publish_stream", @"offline_access", nil]];
         }
     }
 }

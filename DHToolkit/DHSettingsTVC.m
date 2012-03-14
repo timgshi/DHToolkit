@@ -12,6 +12,7 @@
 #import "DHSignInAccountTVC.h"
 #import "DHCreateAccountTVC.h"
 #import "UIBarButtonItem+CustomImage.h"
+#import "Parse/PFFacebookUtils.h"
 
 @interface DHSettingsTVC() <DHSignInAccountTVCDelegate, DHCreateAccountTVCDelegate, UIAlertViewDelegate, PF_FBRequestDelegate>
 - (void)useFacebookSignin;
@@ -245,7 +246,7 @@
         onOff.on = [[NSUserDefaults standardUserDefaults] boolForKey:kPRIVACY_PREF_KEY];
         [cell.contentView addSubview:onOff];
     } else if (indexPath.section == 1 && indexPath.row == 1) {
-        if ([currentUser hasFacebook]) {
+        if ([PFFacebookUtils isLinkedWithUser:currentUser]) {
             cell.detailTextLabel.text = @"Unlink from Facebook";
         } else {
             cell.detailTextLabel.text = @"Link to Facebook";
@@ -311,20 +312,26 @@
 - (void)fbIconPressed
 {
     PFUser *currentUser = [PFUser currentUser];
-    if ([currentUser hasFacebook]) {
-        [currentUser unlinkFromFacebookWithBlock:^(BOOL succeeded, NSError *error) {
-            [self.tableView reloadData]; 
+    if ([PFFacebookUtils isLinkedWithUser:currentUser]) {
+        [PFFacebookUtils unlinkUserInBackground:currentUser block:^(BOOL succeeded, NSError *error) {
+            [self.tableView reloadData];
         }];
+//        [currentUser unlinkFromFacebookWithBlock:^(BOOL succeeded, NSError *error) {
+//            [self.tableView reloadData]; 
+//        }];
     } else {
-        [currentUser linkToFacebook:[NSArray arrayWithObjects:@"email", @"publish_stream", @"offline_access", nil] block:^(BOOL succeeded, NSError *error) {
-            [self.tableView reloadData]; 
+        [PFFacebookUtils linkUser:currentUser permissions:[NSArray arrayWithObjects:@"email", @"publish_stream", @"offline_access", nil] block:^(BOOL succeeded, NSError *error) {
+            [self.tableView reloadData];
         }];
+//        [currentUser linkToFacebook:[NSArray arrayWithObjects:@"email", @"publish_stream", @"offline_access", nil] block:^(BOOL succeeded, NSError *error) {
+//            [self.tableView reloadData]; 
+//        }];
     }
 }
 
 - (void)useFacebookSignin
 {
-    [PFUser logInWithFacebook:[NSArray arrayWithObjects:@"email", @"publish_stream", @"offline_access", nil] block:^(PFUser *user, NSError *error) {
+    [PFFacebookUtils logInWithPermissions:[NSArray arrayWithObjects:@"email", @"publish_stream", @"offline_access", nil] block:^(PFUser *user, NSError *error) {
         [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:kDHDecrementNetworkActivityNotification object:nil]];
         if (error) {
             NSLog(@"%@", [error description]);
@@ -334,12 +341,30 @@
                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Account Create" message:@"Please select a username" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Enter", nil];
                 alert.alertViewStyle = UIAlertViewStylePlainTextInput;
                 [alert show];
-                [[PFUser facebook] requestWithGraphPath:@"me" andDelegate:self];
+                [[PFFacebookUtils facebook] requestWithGraphPath:@"me" andDelegate:self];
+//                [[PFUser facebook] requestWithGraphPath:@"me" andDelegate:self];
             } else {
                 [self signinSuccess];
             }
         }
+
     }];
+//    [PFUser logInWithFacebook:[NSArray arrayWithObjects:@"email", @"publish_stream", @"offline_access", nil] block:^(PFUser *user, NSError *error) {
+//        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:kDHDecrementNetworkActivityNotification object:nil]];
+//        if (error) {
+//            NSLog(@"%@", [error description]);
+//        }
+//        if (user) {
+//            if (user.isNew) {
+//                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Account Create" message:@"Please select a username" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Enter", nil];
+//                alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+//                [alert show];
+//                [[PFUser facebook] requestWithGraphPath:@"me" andDelegate:self];
+//            } else {
+//                [self signinSuccess];
+//            }
+//        }
+//    }];
 }
 
 #pragma mark - Facebook Delegate Methods
