@@ -631,60 +631,13 @@
 		4B34353914A26EB8002831BD /* DHToolkit */ = {
 			isa = PBXGroup;
 			children = (
-				4B096A9914EF6D9F007AB50D /* PFObject+DHPhoto_MKAnnotation.h */,
-				4B096A9A14EF6D9F007AB50D /* PFObject+DHPhoto_MKAnnotation.m */,
-				4B096A8E14EDA7A5007AB50D /* DHImageSmileTagVC.h */,
-				4B096A8F14EDA7A5007AB50D /* DHImageSmileTagVC.m */,
-				4B48B1F414E8FE56009740D9 /* DHImageDetailMetaHeaderVC.h */,
-				4B48B1F514E8FE56009740D9 /* DHImageDetailMetaHeaderVC.m */,
-				4B48B1F614E8FE56009740D9 /* DHImageDetailMetaHeaderVC.xib */,
-				4B30D2E414E9186000134B50 /* DHImageDetailCommentTVC.h */,
-				4B30D2E514E9186000134B50 /* DHImageDetailCommentTVC.m */,
-				4BF19C0B14DCBB23007017ED /* DHImageDetailImageVC.h */,
-				4BF19C0C14DCBB23007017ED /* DHImageDetailImageVC.m */,
-				4B4A182E14DCB94500AC08FF /* DHImageDetailContainerViewController.h */,
-				4B4A182F14DCB94500AC08FF /* DHImageDetailContainerViewController.m */,
-				4BF19C0F14DCBBA7007017ED /* DHImageDetailMetaVC.h */,
-				4BF19C1014DCBBA7007017ED /* DHImageDetailMetaVC.m */,
-				4B30D2E814E91C2600134B50 /* DHCommentCell.h */,
-				4B30D2E914E91C2600134B50 /* DHCommentCell.m */,
-				4B9671C914D60A3000F2F9A9 /* DHSortBoxView.h */,
-				4B9671CA14D60A3000F2F9A9 /* DHSortBoxView.m */,
-				4B515CDC14CDD5A400CD6C7E /* GoogleWeatherFetcher.h */,
-				4B515CDD14CDD5A400CD6C7E /* GoogleWeatherFetcher.m */,
-				4B34356614A26F61002831BD /* DHMainStoryboard.storyboard */,
-				4B515CA914CD6C1C00CD6C7E /* UIBarButtonItem+CustomImage.h */,
-				4B515CAA14CD6C1C00CD6C7E /* UIBarButtonItem+CustomImage.m */,
-				4B7A68A014BCE7F00074B1CC /* DH_PFStreamTVC.h */,
-				4B7A68A114BCE7F00074B1CC /* DH_PFStreamTVC.m */,
-				4B7A686F14BA77C00074B1CC /* DHImageRatingTVC.h */,
-				4B7A687014BA77C00074B1CC /* DHImageRatingTVC.m */,
-				4B3435B514A27123002831BD /* DHStreamTVC.h */,
-				4B3435B614A27123002831BD /* DHStreamTVC.m */,
-				4B515CC114CD75D400CD6C7E /* DHStreamCell.h */,
-				4B515CC214CD75D400CD6C7E /* DHStreamCell.m */,
-				4B9BB09114A31E880062C1EE /* DHExpandingStreamCell.h */,
-				4B9BB09214A31E880062C1EE /* DHExpandingStreamCell.m */,
 				4B34354214A26EB8002831BD /* AppDelegate.h */,
 				4B34354314A26EB8002831BD /* AppDelegate.m */,
-				4B9BB0A614A4724B0062C1EE /* ParseFetcher.h */,
-				4B9BB0A714A4724B0062C1EE /* ParseFetcher.m */,
-				4B9BB0AC14A65EDF0062C1EE /* ParsePoster.h */,
-				4B9BB0AD14A65EE00062C1EE /* ParsePoster.m */,
-				4B9BB0DE14A66CD20062C1EE /* DHSettingsTVC.h */,
-				4B9BB0DF14A66CD20062C1EE /* DHSettingsTVC.m */,
-				4B98514614B28E410081CFB6 /* DHTableViewController.h */,
-				4B98514714B28E410081CFB6 /* DHTableViewController.m */,
-				4B9BB0E114A725DC0062C1EE /* DHSignInAccountTVC.h */,
-				4B9BB0EB14A7265B0062C1EE /* DHSignInAccountTVC.m */,
-				4B9BB0F014A726D00062C1EE /* DHCreateAccountTVC.h */,
-				4B9BB0F114A726D00062C1EE /* DHCreateAccountTVC.m */,
-				4B6C364A14BEE14D00367C90 /* DHGalleryVC.h */,
-				4B6C364B14BEE14D00367C90 /* DHGalleryVC.m */,
-				4B6C364C14BEE14D00367C90 /* DHGalleryPresenterVC.h */,
-				4B6C364D14BEE14D00367C90 /* DHGalleryPresenterVC.m */,
-				4B608ECC14D5404400020E69 /* DHUploadNotificationView.h */,
-				4B608ECD14D5404400020E69 /* DHUploadNotificationView.m */,
+				4B4521D9151097AF00D06F8C /* Stream */,
+				4B4521D51510965D00D06F8C /* Image Detail */,
+				4B4521DA1510984000D06F8C /* Image Rating */,
+				4B4521D81510978700D06F8C /* Parse Utils */,
+				4B4521D7151096DE00D06F8C /* Settings */,
 				4B9BB0EE14A7268B0062C1EE /* EditingTVCell */,
 				4B9BB09814A31F3C0062C1EE /* Outside Source */,
 				4B34353A14A26EB8002831BD /* Supporting Files */,
@@ -727,6 +680,91 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		4B4521D51510965D00D06F8C /* Image Detail */ = {
+			isa = PBXGroup;
+			children = (
+				4B48B1F414E8FE56009740D9 /* DHImageDetailMetaHeaderVC.h */,
+				4B48B1F514E8FE56009740D9 /* DHImageDetailMetaHeaderVC.m */,
+				4B48B1F614E8FE56009740D9 /* DHImageDetailMetaHeaderVC.xib */,
+				4B30D2E414E9186000134B50 /* DHImageDetailCommentTVC.h */,
+				4B30D2E514E9186000134B50 /* DHImageDetailCommentTVC.m */,
+				4BF19C0B14DCBB23007017ED /* DHImageDetailImageVC.h */,
+				4BF19C0C14DCBB23007017ED /* DHImageDetailImageVC.m */,
+				4B4A182E14DCB94500AC08FF /* DHImageDetailContainerViewController.h */,
+				4B4A182F14DCB94500AC08FF /* DHImageDetailContainerViewController.m */,
+				4BF19C0F14DCBBA7007017ED /* DHImageDetailMetaVC.h */,
+				4BF19C1014DCBBA7007017ED /* DHImageDetailMetaVC.m */,
+				4B30D2E814E91C2600134B50 /* DHCommentCell.h */,
+				4B30D2E914E91C2600134B50 /* DHCommentCell.m */,
+			);
+			name = "Image Detail";
+			sourceTree = "<group>";
+		};
+		4B4521D7151096DE00D06F8C /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				4B98514614B28E410081CFB6 /* DHTableViewController.h */,
+				4B98514714B28E410081CFB6 /* DHTableViewController.m */,
+				4B9BB0DE14A66CD20062C1EE /* DHSettingsTVC.h */,
+				4B9BB0DF14A66CD20062C1EE /* DHSettingsTVC.m */,
+				4B9BB0E114A725DC0062C1EE /* DHSignInAccountTVC.h */,
+				4B9BB0EB14A7265B0062C1EE /* DHSignInAccountTVC.m */,
+				4B9BB0F014A726D00062C1EE /* DHCreateAccountTVC.h */,
+				4B9BB0F114A726D00062C1EE /* DHCreateAccountTVC.m */,
+				4B6C364A14BEE14D00367C90 /* DHGalleryVC.h */,
+				4B6C364B14BEE14D00367C90 /* DHGalleryVC.m */,
+				4B6C364C14BEE14D00367C90 /* DHGalleryPresenterVC.h */,
+				4B6C364D14BEE14D00367C90 /* DHGalleryPresenterVC.m */,
+			);
+			name = Settings;
+			sourceTree = "<group>";
+		};
+		4B4521D81510978700D06F8C /* Parse Utils */ = {
+			isa = PBXGroup;
+			children = (
+				4B096A9914EF6D9F007AB50D /* PFObject+DHPhoto_MKAnnotation.h */,
+				4B096A9A14EF6D9F007AB50D /* PFObject+DHPhoto_MKAnnotation.m */,
+				4B9BB0A614A4724B0062C1EE /* ParseFetcher.h */,
+				4B9BB0A714A4724B0062C1EE /* ParseFetcher.m */,
+				4B9BB0AC14A65EDF0062C1EE /* ParsePoster.h */,
+				4B9BB0AD14A65EE00062C1EE /* ParsePoster.m */,
+			);
+			name = "Parse Utils";
+			sourceTree = "<group>";
+		};
+		4B4521D9151097AF00D06F8C /* Stream */ = {
+			isa = PBXGroup;
+			children = (
+				4B34356614A26F61002831BD /* DHMainStoryboard.storyboard */,
+				4B9BB09114A31E880062C1EE /* DHExpandingStreamCell.h */,
+				4B9BB09214A31E880062C1EE /* DHExpandingStreamCell.m */,
+				4B096A8E14EDA7A5007AB50D /* DHImageSmileTagVC.h */,
+				4B096A8F14EDA7A5007AB50D /* DHImageSmileTagVC.m */,
+				4B9671C914D60A3000F2F9A9 /* DHSortBoxView.h */,
+				4B9671CA14D60A3000F2F9A9 /* DHSortBoxView.m */,
+				4B7A68A014BCE7F00074B1CC /* DH_PFStreamTVC.h */,
+				4B7A68A114BCE7F00074B1CC /* DH_PFStreamTVC.m */,
+				4B608ECC14D5404400020E69 /* DHUploadNotificationView.h */,
+				4B608ECD14D5404400020E69 /* DHUploadNotificationView.m */,
+				4B3435B514A27123002831BD /* DHStreamTVC.h */,
+				4B3435B614A27123002831BD /* DHStreamTVC.m */,
+				4B515CC114CD75D400CD6C7E /* DHStreamCell.h */,
+				4B515CC214CD75D400CD6C7E /* DHStreamCell.m */,
+			);
+			name = Stream;
+			sourceTree = "<group>";
+		};
+		4B4521DA1510984000D06F8C /* Image Rating */ = {
+			isa = PBXGroup;
+			children = (
+				4B515CDC14CDD5A400CD6C7E /* GoogleWeatherFetcher.h */,
+				4B515CDD14CDD5A400CD6C7E /* GoogleWeatherFetcher.m */,
+				4B7A686F14BA77C00074B1CC /* DHImageRatingTVC.h */,
+				4B7A687014BA77C00074B1CC /* DHImageRatingTVC.m */,
+			);
+			name = "Image Rating";
+			sourceTree = "<group>";
+		};
 		4B9BB08D14A318C70062C1EE /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
@@ -757,6 +795,8 @@
 		4B9BB09814A31F3C0062C1EE /* Outside Source */ = {
 			isa = PBXGroup;
 			children = (
+				4B515CA914CD6C1C00CD6C7E /* UIBarButtonItem+CustomImage.h */,
+				4B515CAA14CD6C1C00CD6C7E /* UIBarButtonItem+CustomImage.m */,
 				4BE94E9014FDD0A7006DF736 /* SDWebImage */,
 				4B30D2F114E924D100134B50 /* HPGrowingTextView */,
 				4B6C365114BEE8B800367C90 /* UIImage+Alpha.h */,
