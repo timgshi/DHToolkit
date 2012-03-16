@@ -52,17 +52,17 @@
 @synthesize weatherCondition, weatherTemperature;
 @synthesize facebookButton, twitterButton;
 
-#define kDHDataSixWordKey @"DHDataSixWord"
-#define kDHDataHappinessLevelKey @"DHDataHappinessLevel"
-#define kDHDataWhoTookKey @"DHDataWhoTook"
-#define kDHDataGroupNameKey @"DHDataGroupName"
-#define kDHDataTimestampKey @"DHDataTimestamp"
-#define kDHDataGeoLatKey @"DHDataGeoLat"
-#define kDHDataGeoLongKey @"DHDataGeoLong"
-#define kDHDataWeatherConditionKey @"DHDataWeatherCondition"
-#define kDHDataWeatherTemperatureKey @"DHDataWeatherTemperature"
-#define kDHDataLocationStringKey @"DHDataLocationString"
-#define kDHDataPrivacyKey @"isPrivate"
+//#define kDHDataSixWordKey @"DHDataSixWord"
+//#define kDHDataHappinessLevelKey @"DHDataHappinessLevel"
+//#define kDHDataWhoTookKey @"DHDataWhoTook"
+//#define kDHDataGroupNameKey @"DHDataGroupName"
+//#define kDHDataTimestampKey @"DHDataTimestamp"
+//#define kDHDataGeoLatKey @"DHDataGeoLat"
+//#define kDHDataGeoLongKey @"DHDataGeoLong"
+//#define kDHDataWeatherConditionKey @"DHDataWeatherCondition"
+//#define kDHDataWeatherTemperatureKey @"DHDataWeatherTemperature"
+//#define kDHDataLocationStringKey @"DHDataLocationString"
+//#define kDHDataPrivacyKey @"isPrivate"
 
 
 - (id)init
