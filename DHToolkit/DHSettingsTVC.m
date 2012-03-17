@@ -264,7 +264,11 @@
         }
     } else if (indexPath.section == 2) {
         cell.textLabel.text = @"Groups";
-        cell.detailTextLabel.text = @"click";
+//        cell.detailTextLabel.text = @"click";
+        UIImageView *arrowView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"detailarrow.png"]];
+        arrowView.backgroundColor = [UIColor colorWithRed:45/255.0 green:45/255.0 blue:45/255.0 alpha:1.0];
+        cell.accessoryView = arrowView;
+//        cell.accessoryView.backgroundColor = [UIColor clearColor];
     }
     return cell;
 }

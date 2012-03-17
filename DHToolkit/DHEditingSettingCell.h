@@ -10,6 +10,8 @@
 
 @interface DHEditingSettingCell : UITableViewCell
 
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier;
+
 @property (nonatomic, strong) UITextField *editingField;
 
 @end

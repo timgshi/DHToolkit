@@ -35,6 +35,8 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         self.contentView.backgroundColor = [UIColor colorWithRed:45/255.0 green:45/255.0 blue:45/255.0 alpha:1.0];
+        self.backgroundView = [[UIView alloc] init];
+        self.backgroundView.backgroundColor = [UIColor colorWithRed:45/255.0 green:45/255.0 blue:45/255.0 alpha:1.0];
         self.textLabel.backgroundColor = [UIColor clearColor];
 //        self.textLabel.hidden = YES;
         self.detailTextLabel.backgroundColor = [UIColor clearColor];
