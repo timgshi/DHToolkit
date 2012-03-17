@@ -8,6 +8,15 @@
 
 #import "DHTableViewController.h"
 
+@class PFUser;
+
+@protocol DHFindUserDelegate
+- (void)addUser:(PFUser *)user;
+- (void)removeUser:(PFUser *)user;
+@end
+
 @interface DHFindUserTVC : DHTableViewController
+
+@property (nonatomic, weak) id <DHFindUserDelegate> delegate;
 
 @end

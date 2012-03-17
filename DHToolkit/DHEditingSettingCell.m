@@ -21,9 +21,10 @@
     if (!editingField) {
         CGRect frame = self.contentView.frame;
         NSLog(@"%@", NSStringFromCGRect(frame));
-        editingField = [[UITextField alloc] initWithFrame:CGRectMake(122, frame.origin.y + 9, 185, frame.size.height)];
-        editingField.textAlignment = UITextAlignmentRight;
+        editingField = [[UITextField alloc] initWithFrame:CGRectMake(5, frame.origin.y + 9, 300, frame.size.height)];
+        editingField.textAlignment = UITextAlignmentLeft;
         editingField.textColor = [UIColor whiteColor];
+        editingField.autocapitalizationType = UITextAutocapitalizationTypeNone;
         editingField.delegate = self;
     }
     return editingField;
@@ -35,6 +36,7 @@
     if (self) {
         self.contentView.backgroundColor = [UIColor colorWithRed:45/255.0 green:45/255.0 blue:45/255.0 alpha:1.0];
         self.textLabel.backgroundColor = [UIColor clearColor];
+//        self.textLabel.hidden = YES;
         self.detailTextLabel.backgroundColor = [UIColor clearColor];
         [self.textLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:16]];
         [self.detailTextLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:16]];

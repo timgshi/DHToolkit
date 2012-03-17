@@ -8,6 +8,16 @@
 
 #import "DHTableViewController.h"
 
+@class AddGroupTVC;
+@class PFObject;
+
+@protocol AddGroupTVCDelegate
+- (void)addGroupTVC:(AddGroupTVC *)vc didSaveGroup:(PFObject *)group;
+- (void)addGroupTVCdidCancel:(AddGroupTVC *)vc;
+@end
+
 @interface AddGroupTVC : DHTableViewController
+
+@property (nonatomic, weak) id <AddGroupTVCDelegate> delegate;
 
 @end

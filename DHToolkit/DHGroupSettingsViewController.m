@@ -10,14 +10,27 @@
 #import "Parse/PFUser.h"
 #import "Parse/PFFacebookUtils.h"
 #import "Parse/PFObject.h"
+#import "Parse/PFQuery.h"
 #import "UIBarButtonItem+CustomImage.h"
 #import "AddGroupTVC.h"
 
-@interface DHGroupSettingsViewController ()
-
+@interface DHGroupSettingsViewController () <AddGroupTVCDelegate>
+@property (nonatomic, strong) NSArray *groups;
 @end
 
 @implementation DHGroupSettingsViewController
+
+@synthesize groups;
+
+- (void)reloadGroups
+{
+    PFQuery *query = [PFQuery queryWithClassName:PFClass_DHGroup];
+    [query whereKey:kDHGroupMembers equalTo:[PFUser currentUser]];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        groups = [NSArray arrayWithArray:objects];
+        [self.tableView reloadData];
+    }];
+}
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -69,7 +82,6 @@
 {
     PFUser *curUser = [PFUser currentUser];
     if (curUser) {
-        NSArray *groups = [curUser objectForKey:kDHDataGroupsKey];
         if (groups) {
             return [groups count] + 1;
         } else {
@@ -88,12 +100,13 @@
     switch ([indexPath section]) {
         case 0:
             if (currentUser) {
-                NSArray *groups = [currentUser objectForKey:kDHDataGroupsKey];
                 if (groups) {
                     if (indexPath.row < [groups count]) {
                         PFObject *groupObject = [groups objectAtIndex:indexPath.row];
                         cell.textLabel.text = [groupObject objectForKey:kDHGroupName];
                         
+                    } else {
+                        cell.textLabel.text = @"Click to add a group";
                     }
                 } else {
                     cell.textLabel.text = @"Click to add a group";
@@ -114,14 +127,16 @@
     switch ([indexPath section]) {
         case 0:
             if (currentUser) {
-                NSArray *groups = [currentUser objectForKey:kDHDataGroupsKey];
                 if (groups) {
                     if (indexPath.row < [groups count]) {
-                        PFObject *groupObject = [groups objectAtIndex:indexPath.row];
+//                        PFObject *groupObject = [groups objectAtIndex:indexPath.row];
                         
                     }
                 } else {
-                    [self.navigationController pushViewController:[[AddGroupTVC alloc] initWithStyle:UITableViewStyleGrouped] animated:YES];
+                    AddGroupTVC *addTVC = [[AddGroupTVC alloc] initWithStyle:UITableViewStyleGrouped];
+                    addTVC.delegate = self;
+                    [self presentViewController:[[UINavigationController alloc] initWithRootViewController:addTVC] animated:YES completion:nil];
+//                    [self.navigationController pushViewController:[[AddGroupTVC alloc] initWithStyle:UITableViewStyleGrouped] animated:YES];
                 }
             } else {
                 
@@ -130,6 +145,22 @@
         default:
             break;
     }
+}
+
+#pragma mark - AddGroupTVC Delegate Methods
+
+- (void)addGroupTVC:(AddGroupTVC *)vc didSaveGroup:(PFObject *)group
+{
+    [self dismissViewControllerAnimated:YES completion:^{
+       [group saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+           [self reloadGroups];
+       }];
+    }];
+}
+
+- (void)addGroupTVCdidCancel:(AddGroupTVC *)vc
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end

@@ -27,5 +27,7 @@
 
 //Groups
 #define kDHGroupName @"groupName"
+#define kDHGroupMembers @"groupMembers"
+#define kDHGroupCreator @"creator"
 
 #endif
