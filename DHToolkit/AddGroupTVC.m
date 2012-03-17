@@ -13,9 +13,10 @@
 #import "DHEditingSettingCell.h"
 #import "DHFindUserTVC.h"
 
-@interface AddGroupTVC () <DHFindUserDelegate>
+@interface AddGroupTVC () <DHFindUserDelegate, UITextFieldDelegate>
 @property (nonatomic, strong) NSMutableArray *groupMembers;
 @property (nonatomic, strong) UITextField *nameField;
+@property (nonatomic, strong) NSString *groupName;
 @end
 
 @implementation AddGroupTVC
@@ -23,6 +24,7 @@
 @synthesize groupMembers;
 @synthesize delegate;
 @synthesize nameField;
+@synthesize groupName;
 
 - (NSMutableArray *)groupMembers
 {
@@ -47,10 +49,10 @@
 {
     [super viewDidLoad];
     self.title = @"Settings";
-    self.navigationItem.hidesBackButton = YES;
+//    self.navigationItem.hidesBackButton = YES;
 //    self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"backarrow.png"] target:self action:@selector(backArrowPressed)];
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelButtonPressed)];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(saveButtonPressed)];
+    self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"cancel.png"] target:self action:@selector(cancelButtonPressed)];
+    self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"plus.png"] target:self action:@selector(saveButtonPressed)];
 }
 
 - (void)viewDidUnload 
@@ -58,6 +60,7 @@
     [super viewDidUnload];
     [self setGroupMembers:nil];
     [self setNameField:nil];
+    [self setGroupName:nil];
 }
 
 - (void)backArrowPressed
@@ -107,7 +110,10 @@
         if (indexPath.row == 0) {
             cell.textLabel.hidden = YES;
             cell.editingField.placeholder = @"Enter a group name";
+            if (self.groupName) cell.editingField.text = self.groupName;
             cell.editingField.hidden = NO;
+            cell.editingField.delegate = self;
+            cell.editingField.returnKeyType = UIReturnKeyDone;
             self.nameField = cell.editingField;
         }
     } else if (indexPath.section == 1) {
@@ -161,24 +167,40 @@
 
 - (void)saveButtonPressed
 {
-    if ([self.nameField text]) {
+    if (self.groupName && ![self.groupName isEqualToString:@""]) {
         PFObject *groupObject = [PFObject objectWithClassName:PFClass_DHGroup];
-        [groupObject setObject:[self.nameField text] forKey:kDHGroupName];
+        [groupObject setObject:self.groupName forKey:kDHGroupName];
         [groupObject setObject:[PFUser currentUser] forKey:kDHGroupCreator];
-        NSArray *members = [NSArray arrayWithArray:self.groupMembers];
+        NSMutableArray *members = [NSMutableArray array];
+        for (PFUser *member in self.groupMembers) {
+            [members addObject:member.username];
+        }
         [groupObject setObject:members forKey:kDHGroupMembers];
         if (delegate) [delegate addGroupTVC:self didSaveGroup:groupObject];
     } else {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Please enter a name for your group!" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
         [alert show];
     }
-    
 }
 
 - (void)cancelButtonPressed
 {
     if (delegate) [delegate addGroupTVCdidCancel:self];
 }
+
+#pragma mark - UITextFieldDelegate Methods
+
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    self.groupName = textField.text;
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [textField resignFirstResponder];
+    return YES;
+}
+
 
 
 @end

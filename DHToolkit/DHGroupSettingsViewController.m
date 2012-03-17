@@ -13,6 +13,7 @@
 #import "Parse/PFQuery.h"
 #import "UIBarButtonItem+CustomImage.h"
 #import "AddGroupTVC.h"
+#import "GroupDetailTVC.h"
 
 @interface DHGroupSettingsViewController () <AddGroupTVCDelegate>
 @property (nonatomic, strong) NSArray *groups;
@@ -25,10 +26,12 @@
 - (void)reloadGroups
 {
     PFQuery *query = [PFQuery queryWithClassName:PFClass_DHGroup];
-    [query whereKey:kDHGroupMembers equalTo:[PFUser currentUser]];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kDHIncrementNetworkActivityNotification object:nil];
+    [query whereKey:kDHGroupMembers equalTo:[[PFUser currentUser] username]];
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         groups = [NSArray arrayWithArray:objects];
         [self.tableView reloadData];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kDHDecrementNetworkActivityNotification object:nil];
     }];
 }
 
@@ -44,9 +47,16 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.title = @"Settings";
+    self.title = @"Groups";
     self.navigationItem.hidesBackButton = YES;
     self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonItemWithImage:[UIImage imageNamed:@"backarrow.png"] target:self action:@selector(backArrowPressed)];
+    [self reloadGroups];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self reloadGroups];
 }
 
 - (void)backArrowPressed
@@ -129,8 +139,14 @@
             if (currentUser) {
                 if (groups) {
                     if (indexPath.row < [groups count]) {
-//                        PFObject *groupObject = [groups objectAtIndex:indexPath.row];
-                        
+                        PFObject *groupObject = [groups objectAtIndex:indexPath.row];
+                        GroupDetailTVC *detailTVC = [[GroupDetailTVC alloc] initWithStyle:UITableViewStyleGrouped];
+                        detailTVC.groupObject = groupObject;
+                        [self.navigationController pushViewController:detailTVC animated:YES];
+                    } else {
+                        AddGroupTVC *addTVC = [[AddGroupTVC alloc] initWithStyle:UITableViewStyleGrouped];
+                        addTVC.delegate = self;
+                        [self presentViewController:[[UINavigationController alloc] initWithRootViewController:addTVC] animated:YES completion:nil];
                     }
                 } else {
                     AddGroupTVC *addTVC = [[AddGroupTVC alloc] initWithStyle:UITableViewStyleGrouped];
