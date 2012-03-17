@@ -18,6 +18,7 @@
     #define kDH_FACEBOOK_ID @"171752956231417"
     #define kPRIVACY_PREF_KEY @"privacy"
     #define PHOTO_CACHE_NAME @"dhphotocache"
+#import "DHParseConstants.h"
 
 #define DH_PHOTO_UPLOAD_BEGIN_NOTIFICATION @"photo upload begin"
 #define DH_PHOTO_UPLOAD_SUCCESS_NOTIFICATION @"photo upload success"

@@ -13,6 +13,7 @@
 #import "DHCreateAccountTVC.h"
 #import "UIBarButtonItem+CustomImage.h"
 #import "Parse/PFFacebookUtils.h"
+#import "DHGroupSettingsViewController.h"
 
 @interface DHSettingsTVC() <DHSignInAccountTVCDelegate, DHCreateAccountTVCDelegate, UIAlertViewDelegate, PF_FBRequestDelegate>
 - (void)useFacebookSignin;
@@ -177,7 +178,7 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 2;
+    return 3;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -193,6 +194,9 @@
     if (section == 1) {
         return 1;
     }
+    if (section == 2) {
+        return 1;
+    }
     return 2;
 }
 
@@ -206,6 +210,8 @@
             break;
         case 1:
             text = @"  SHARING SETTINGS";
+        case 2:
+            text = @"  GROUP SETTINGS";
         default:
             break;
     }
@@ -256,6 +262,13 @@
 //            fbButton.frame = CGRectMake(255, 5, 28, 28);
 //            [cell.contentView addSubview:fbButton];
         }
+    } else if (indexPath.section == 2) {
+        cell.textLabel.text = @"Groups";
+//        cell.detailTextLabel.text = @"click";
+        UIImageView *arrowView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"detailarrow.png"]];
+        arrowView.backgroundColor = [UIColor colorWithRed:45/255.0 green:45/255.0 blue:45/255.0 alpha:1.0];
+        cell.accessoryView = arrowView;
+//        cell.accessoryView.backgroundColor = [UIColor clearColor];
     }
     return cell;
 }
@@ -266,6 +279,8 @@
         if (![PFUser currentUser]) [self signinButtonPressed];
     } else if (indexPath.section == 1 && indexPath.row == 1) {
         [self performSelector:@selector(fbIconPressed)];
+    } else if (indexPath.section == 2 && indexPath.row == 0) {
+        [self.navigationController pushViewController:[[DHGroupSettingsViewController alloc] initWithStyle:UITableViewStyleGrouped] animated:YES];
     }
 }
 
