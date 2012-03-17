@@ -14,6 +14,7 @@
 #import "UIBarButtonItem+CustomImage.h"
 #import "AddGroupTVC.h"
 #import "GroupDetailTVC.h"
+#import "Parse/PFPush.h"
 
 @interface DHGroupSettingsViewController () <AddGroupTVCDelegate>
 @property (nonatomic, strong) NSArray *groups;
@@ -170,6 +171,16 @@
     [self dismissViewControllerAnimated:YES completion:^{
        [group saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
            [self reloadGroups];
+           NSArray *members = [group objectForKey:kDHGroupMembers];
+           for (NSString *member in members) {
+               if ([member isEqualToString:((PFUser *)[PFUser currentUser]).username]) continue;
+               NSString *channel = [NSString stringWithFormat:@"user-%@", member];
+               NSString *message = [NSString stringWithFormat:@"%@ just added you to the group: %@!", ((PFUser *)[group objectForKey:kDHGroupCreator]).username, [group objectForKey:kDHGroupName]];
+               NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:[group objectForKey:kDHGroupName], kDHGroupName, message, @"alert", kDHNotificationTypeGroupCreation, @"type", nil];
+               [PFPush sendPushDataToChannelInBackground:channel withData:data block:^(BOOL succeeded, NSError *error) {
+                   
+               }];
+           }
        }];
     }];
 }

@@ -30,4 +30,7 @@
 #define kDHGroupMembers @"groupMembers"
 #define kDHGroupCreator @"creator"
 
+//Notifications
+#define kDHNotificationTypeGroupCreation @"groupCreation"
+
 #endif
